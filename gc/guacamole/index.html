@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GuacaMOLE: everything goes through the pit | ACE DAT</title>
+<meta name="description" content="Moles are the pit: grams, particles and liters of gas all go through moles. Board, whiteboard, practice ladder and a step-by-step walkthrough when you miss.">
+<link rel="icon" type="image/svg+xml" href="/shared/ace-dat-mark.svg">
+<link rel="stylesheet" href="/shared/ace-ui.css?v=8">
+<link rel="stylesheet" href="/shared/ace-walkthrough.css?v=1">
+<style>
+:root{--paper:#F5F0E8;--card:#fbfaf6;--ink:#14281f;--brand:#1B3A2D;--gold:#8C7235;--gold2:#C9A84C;--trap:#9a3b2e;--trapbg:#f6e4dd;--ok:#1f5c43;--okbg:#e0eee6;--blue:#3f5f86;--line:#DDD6C6}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--paper);color:var(--ink);font:17px/1.55 "DM Sans","Helvetica Neue",Arial,system-ui,sans-serif;overflow-x:hidden}
+header{background:var(--brand);color:#fff;padding:18px 16px 16px}
+header .brand{font-weight:700;letter-spacing:.12em;font-size:16px;color:var(--gold2)}
+header h1{margin:6px 0 4px;font-size:30px;line-height:1.15}
+header p{margin:0;font-size:17px;color:#eef2ec}
+nav{position:sticky;top:0;z-index:5;background:var(--card);border-bottom:2px solid var(--line)}
+nav details summary{list-style:none;min-height:48px;display:flex;align-items:center;padding:0 16px;font-weight:700;cursor:pointer;color:var(--brand)}
+nav details summary::-webkit-details-marker{display:none}
+nav details summary::after{content:"";margin-left:auto;width:10px;height:10px;border-right:3px solid var(--brand);border-bottom:3px solid var(--brand);transform:rotate(45deg);margin-top:-4px}
+nav details[open] summary::after{transform:rotate(-135deg);margin-top:4px}
+nav ol{margin:0;padding:0 8px 10px;list-style:none;display:grid;grid-template-columns:1fr 1fr;gap:6px}
+nav a{display:flex;align-items:center;min-height:44px;padding:6px 10px;border-radius:10px;background:var(--paper);color:var(--ink);text-decoration:none;font-size:16px}
+main{max-width:980px;margin:0 auto;padding:12px 12px 40px}
+main>section{background:var(--card);border:2px solid var(--line);border-radius:16px;padding:16px;margin:14px 0;scroll-margin-top:60px}
+main h2{margin:0 0 4px;font-size:23px;color:var(--brand);line-height:1.25}
+.num{display:inline-block;min-width:30px;height:30px;line-height:30px;text-align:center;border-radius:50%;background:var(--gold2);color:var(--brand);font-size:16px;font-weight:700;margin-right:8px;vertical-align:2px}
+.lead{margin:2px 0 12px;color:#3d4d44}
+main img{max-width:100%;height:auto;display:block;border-radius:10px;border:1px solid var(--line)}
+.stack img+img{margin-top:10px}
+.note{font-size:16px;color:#4a5a51}
+.slot{aspect-ratio:16/9;border:3px dashed var(--gold);border-radius:14px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:16px;background:repeating-linear-gradient(45deg,#fbfaf6,#fbfaf6 14px,#f3eee2 14px,#f3eee2 28px)}
+.slot b{font-size:22px;color:var(--brand)} .slot span{font-size:16px;color:#4a5a51;margin-top:6px}
+main button,main .btn{font:inherit;min-height:48px;padding:10px 16px;border-radius:12px;border:2px solid var(--brand);background:var(--brand);color:#fff;font-weight:700;cursor:pointer;touch-action:manipulation}
+main button.ghost{background:var(--card);color:var(--brand)}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--gold2);outline-offset:2px}
+main label{display:block;font-weight:700;margin:12px 0 6px}
+main input,main select{font:inherit;font-size:18px;width:100%;min-height:48px;padding:8px 12px;border:2px solid var(--line);border-radius:12px;background:#fff;color:var(--ink)}
+.seg{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.seg button{background:var(--card);color:var(--brand);font-size:16px;padding:8px 6px}
+.seg button[aria-pressed="true"]{background:var(--brand);color:#fff}
+.steps{margin:14px 0 0;padding:0;list-style:none}
+.steps li{border-left:5px solid var(--gold2);background:var(--paper);border-radius:10px;padding:10px 12px;margin:8px 0}
+.steps li.out{border-color:var(--blue)}
+.row{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px} .row>*{flex:1 1 140px}
+.trapcard{background:var(--trapbg);border:3px solid var(--trap);border-radius:14px;padding:16px;font-size:19px}
+.trapcard b{color:var(--trap)}
+.q{border:2px solid var(--line);border-radius:14px;padding:14px;margin:12px 0;background:#fff}
+.qhead{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-bottom:6px;font-size:16px}
+.chip{display:inline-block;padding:3px 10px;border-radius:999px;background:var(--paper);border:1px solid var(--line);font-weight:700}
+.chip.tag{font-family:ui-monospace,Menlo,monospace;font-weight:400;color:var(--blue)}
+.choices{display:grid;gap:8px;margin-top:10px}
+.choices button{background:#fff;color:var(--ink);text-align:left;font-weight:400;border-color:var(--line)}
+.choices button.right{background:var(--okbg);border-color:var(--ok)}
+.choices button.wrong{background:var(--trapbg);border-color:var(--trap)}
+.fb{margin-top:10px;padding:10px 12px;border-radius:10px;display:none}
+.fb.show{display:block} .fb.good{background:var(--okbg)} .fb.bad{background:var(--trapbg)}
+.walkbtn{margin-top:8px}
+.fb a{color:var(--brand);font-weight:700;display:inline-flex;align-items:center;min-height:44px}
+.lvl{margin:18px 0 0;font-size:19px;color:var(--gold)}
+.cards{display:grid;gap:10px}
+.flip{width:100%;min-height:96px;text-align:left;background:#fff;color:var(--ink);border-color:var(--line);font-weight:400}
+.flip .side{display:block;font-size:16px;font-weight:700;letter-spacing:.08em;color:var(--gold)}
+.flip[aria-pressed="true"]{background:var(--okbg);border-color:var(--ok)}
+.sched{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:12px 0}
+.sched div{background:var(--paper);border-radius:10px;padding:8px;text-align:center;font-size:16px}
+.sched b{display:block;font-size:17px;color:var(--brand)}
+details.ans{margin-top:10px} details.ans summary{min-height:48px;display:flex;align-items:center;padding:0 14px;border:2px solid var(--brand);border-radius:12px;font-weight:700;color:var(--brand);cursor:pointer;list-style:none}
+details.ans summary::-webkit-details-marker{display:none}
+details.ans[open] summary{background:var(--brand);color:#fff}
+details.ans p{margin:10px 2px 0}
+.route li{margin:8px 0} .route a{color:var(--brand);font-weight:700;display:inline-flex;min-height:44px;align-items:center}
+@media (min-width:701px){.mob2{display:none}}
+.mob2 img{margin-top:10px}
+footer{text-align:center;color:#4f5c55;font-size:16px;padding:10px 16px 30px}
+@media (min-width:760px){
+ body{font-size:18px} header{padding:28px 32px} header h1{font-size:40px} main{padding:16px 24px 48px}
+ main>section{padding:24px 28px} main h2{font-size:27px}
+ nav ol{grid-template-columns:repeat(5,1fr)}
+ .cards{grid-template-columns:1fr 1fr} .choices{grid-template-columns:1fr 1fr}
+}
+</style></head>
+<body>
+<header><div class="brand">ACE DAT . GEN CHEM . STOICHIOMETRY</div>
+<h1>GuacaMOLE</h1><p>Holy guaca-MOLE, everything goes through the pit.</p></header>
+<nav aria-label="Pieces"><details><summary>Jump to a piece (10)</summary><ol><li><a href="#p1-board">1. Trick board</a></li><li><a href="#p2-whiteboard">2. Whiteboard notes</a></li><li><a href="#p3-explainer">3. Thomas explains it</a></li><li><a href="#p4-interactive">4. Walk it through the pit</a></li><li><a href="#p5-idoyoudo">5. I do, we do, you do</a></li><li><a href="#p6-trap">6. Trap card</a></li><li><a href="#p7-ladder">7. Practice ladder</a></li><li><a href="#p8-review">8. Review cards</a></li><li><a href="#p9-mixed">9. Mixed practice</a></li><li><a href="#p10-routing">10. Where to go if you miss</a></li></ol></details></nav>
+<main>
+
+<section id="p1-board"><h2><span class="num">1</span>Trick board</h2>
+<p class="lead">The pit is moles. Grams, particles and liters of gas live in the flesh. You never go flesh to flesh.</p>
+<picture><source media="(max-width: 700px)" srcset="/gc/guacamole/img/board-phone.jpg"><img src="/gc/guacamole/img/board.jpg" alt="GuacaMOLE trick board: an avocado whose pit is MOLES. Grams connect by molar mass, particles by 6.022 times 10 to the 23rd, liters of gas at STP by 22.4 L per mol. A red arc marks the forbidden shortcut. Worked example: 22.0 g CO2 is 0.500 mol, 3.01 times 10 to the 23rd molecules, 11.2 L at STP." width="1600" height="900"></picture>
+<ul>
+<li><b>Grams to moles:</b> divide by molar mass. Moles to grams: multiply.</li>
+<li><b>Particles:</b> moles &times; 6.022 &times; 10<sup>23</sup>, and divide to come back.</li>
+<li><b>Liters of gas at STP (0 &deg;C, 1 atm):</b> moles &times; 22.4 L/mol, and divide to come back.</li>
+</ul></section>
+
+<section id="p2-whiteboard"><h2><span class="num">2</span>Whiteboard notes</h2>
+<p class="lead">The same idea on the crash-course board: moles are king. Start with what they give you, get to moles as fast as you can.</p>
+<picture><source media="(max-width: 700px)" srcset="/gc/guacamole/img/wb-phone.jpg"><img src="/gc/guacamole/img/wb.jpg" alt="Gen Chem crash course whiteboard: the stoichiometry highway from grams of Na to grams of NaCl through moles, the coefficient step called the magic sauce, the 22.4 L on-ramp, limiting reagent and percent by mass." width="1800" height="1391"></picture>
+<picture class="mob2"><source media="(max-width: 700px)" srcset="/gc/guacamole/img/wb2-phone.jpg"><img class="mob2img" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="Second half of the whiteboard: limiting reagent run twice, and percent by mass." width="900" height="1600"></picture>
+<ul>
+<li><b>The highway:</b> grams of A, to moles of A, to moles of B (the coefficients, the "magic sauce"), to grams of B.</li>
+<li><b>Diatomic gases:</b> O<sub>2</sub> is 32.0, N<sub>2</sub> is 28.0, Cl<sub>2</sub> is 71. Double the atom.</li>
+<li><b>On-ramp:</b> 5.6 L O<sub>2</sub> at STP is 5.6 / 22.4 = 0.25 mol, &times; 32 = 8.0 g.</li>
+</ul></section>
+
+<section id="p3-explainer"><h2><span class="num">3</span>Thomas explains it</h2>
+<div class="slot" role="note" aria-label="Video placeholder"><b>Thomas explainer goes here</b><span>A short video of Thomas walking this board. It is not recorded yet.</span></div>
+</section>
+
+<section id="p4-interactive"><h2><span class="num">4</span>Walk it through the pit</h2>
+<p class="lead">Pick a substance, an amount and where you are going. Then tap Next step, one arrow at a time.</p>
+<label for="sub">Substance</label>
+<select id="sub"><option value="44.0" data-n="CO2">CO2 (44.0 g/mol)</option><option value="18.0" data-n="H2O">H2O (18.0 g/mol)</option><option value="32.0" data-n="O2">O2 (32.0 g/mol)</option><option value="28.0" data-n="N2">N2 (28.0 g/mol)</option><option value="17.0" data-n="NH3">NH3 (17.0 g/mol)</option><option value="16.0" data-n="CH4">CH4 (16.0 g/mol)</option></select>
+<label for="amt">Amount you are given</label>
+<input id="amt" inputmode="decimal" value="22.0" autocomplete="off" aria-describedby="amthint">
+<div class="note" id="amthint">For particles you can type 3.011e23.</div>
+<label id="fromL">Starting from</label>
+<div class="seg" role="group" aria-labelledby="fromL" id="from"><button type="button" data-u="g" aria-pressed="true">grams</button><button type="button" data-u="p" aria-pressed="false">particles</button><button type="button" data-u="L" aria-pressed="false">liters (STP)</button></div>
+<label id="toL">Going to</label>
+<div class="seg" role="group" aria-labelledby="toL" id="to"><button type="button" data-u="g" aria-pressed="false">grams</button><button type="button" data-u="p" aria-pressed="true">particles</button><button type="button" data-u="L" aria-pressed="false">liters (STP)</button></div>
+<div class="row"><button type="button" id="next">Next step</button><button type="button" class="ghost" id="reset">Start over</button></div>
+<ol class="steps" id="steps" aria-live="polite"></ol>
+</section>
+
+<section id="p5-idoyoudo"><h2><span class="num">5</span>I do, we do, you do</h2>
+<h3>I do</h3><p><b>36.0 g of water. How many molecules?</b></p><ol><li>First things first, molar mass of water: two hydrogens at 1.0 plus oxygen at 16.0, so 18.0 grams per mole.</li><li>Into the pit: 36.0 divided by 18.0 is 2.00 moles.</li><li>Out to particles: 2.00 times 6.022 &times; 10<sup>23</sup> is 1.20 &times; 10<sup>24</sup> molecules.</li></ol>
+<h3>We do</h3><p><b>44.8 L of N<sub>2</sub> at STP. How many grams?</b></p><ol><li>Done for you: into the pit. 44.8 divided by 22.4 is 2.00 moles.</li><li>Your turn: out to grams. N<sub>2</sub> is diatomic, so what is its molar mass? Multiply.</li></ol>
+<details class="ans"><summary>Show the finish</summary><p>N<sub>2</sub> is 28.0 g/mol, so 2.00 x 28.0 = 56.0 g.</p></details>
+<h3>You do</h3><p><b>3.011 &times; 10<sup>23</sup> molecules of NH<sub>3</sub> (17.0 g/mol).</b></p>
+<label for="yg">(a) How many grams?</label><input id="yg" inputmode="decimal" autocomplete="off">
+<label for="yl">(b) How many liters at STP?</label><input id="yl" inputmode="decimal" autocomplete="off">
+<div class="row"><button type="button" id="ycheck">Check my answers</button></div>
+<div class="fb" id="yfb" aria-live="polite"></div>
+</section>
+
+<section id="p6-trap"><h2><span class="num">6</span>Trap card</h2>
+<div class="trapcard"><b>Trap:</b> jumping from grams straight to particles or liters. Stop at the pit (moles) first: two arrows, never one.</div>
+<p class="note">Example: 22.0 g CO<sub>2</sub> to molecules. The trap answer is 22.0 &times; 6.022 &times; 10<sup>23</sup> = 1.32 &times; 10<sup>25</sup>. The real answer goes through 0.500 mol: 3.01 &times; 10<sup>23</sup>.</p>
+</section>
+
+<section id="p7-ladder"><h2><span class="num">7</span>Practice ladder</h2>
+<p class="lead">5 easy, 5 test level, 3 hard. Wrong answers tell you exactly which piece to go back to. <span id="score"></span></p>
+<div id="ladder"></div></section>
+
+<section id="p8-review"><h2><span class="num">8</span>Review cards</h2>
+<p class="lead">Tap a card to flip it. Come back to these four times:</p>
+<div class="sched" id="sched"></div>
+<p class="note">Day 1 is the day after you first study this page. Short and spaced beats long and once.</p>
+<div class="cards" id="cards"></div></section>
+
+<section id="p9-mixed"><h2><span class="num">9</span>Mixed practice</h2>
+<p class="lead">GuacaMOLE hides inside other topics. Spot the pit, then finish the other skill.</p>
+<div id="mixed"></div></section>
+
+<section id="p10-routing"><h2><span class="num">10</span>Where to go if you miss</h2>
+<p class="lead">Every wrong answer on this page links back to one of these. If you keep missing for the same reason, redo that piece first.</p>
+<ul class="route"><li>Multiplied by molar mass when going from grams to moles (or the reverse): <a href="#p1-board">Trick board</a></li><li>Divided the wrong way round (small over big): <a href="#p4-interactive">Walk it through the pit</a></li><li>Jumped from grams or liters straight to the answer without moles: <a href="#p6-trap">Trap card</a></li><li>Stopped in the pit and gave moles as the answer: <a href="#p5-idoyoudo">I do, we do, you do</a></li><li>Used the wrong exit (22.4 L/mol for grams, or molar mass for liters): <a href="#p1-board">Trick board</a></li><li>Forgot that O<sub>2</sub>, N<sub>2</sub>, H<sub>2</sub> are diatomic, or skipped the coefficient step: <a href="#p2-whiteboard">Whiteboard notes</a></li><li>Still fuzzy on why moles are the bridge: <a href="#p3-explainer">Thomas explains it</a></li></ul></section>
+</main>
+<footer>ACE DAT . Gen Chem . GuacaMOLE</footer>
+<script src="/shared/ace-record.js?v=6"></script>
+<script src="/shared/ace-question.js?v=8"></script>
+<script src="/shared/ace-walkthrough.js?v=1"></script>
+<script src="/gc/guacamole/guac-walk.js"></script>
+<script>
+const D={items:GuacWalk.ITEMS,cards:GuacWalk.CARDS};
+function fmt(x){if(!isFinite(x))return '?';if(x===0)return '0';const e=Math.floor(Math.log10(Math.abs(x)));
+ if(e>=-2&&e<=3){return x.toFixed(Math.max(0,2-e));}
+ let m=x/Math.pow(10,e);m=Math.round(m*100)/100;let ee=e;if(m>=10){m/=10;ee++;}
+ return m.toFixed(2)+' &times; 10<sup>'+ee+'</sup>';}
+function parseAmt(s){s=String(s).trim().replace(/\s+/g,'').replace(/,/g,'');
+ const m=s.match(/^([0-9.]+)(?:[x*]10\^?(-?[0-9]+))$/i);if(m)return parseFloat(m[1])*Math.pow(10,parseInt(m[2],10));
+ return Number(s);}
+const NA=6.022e23,VM=22.4,UN={g:'g',p:'particles',L:'L at STP'};
+let from='g',to='p',step=0;
+function seg(id,set){document.querySelectorAll('#'+id+' button').forEach(b=>{b.addEventListener('click',()=>{set(b.dataset.u);document.querySelectorAll('#'+id+' button').forEach(x=>x.setAttribute('aria-pressed',x===b?'true':'false'));reset();});});}
+seg('from',u=>from=u);seg('to',u=>to=u);
+const steps=document.getElementById('steps');
+function reset(){step=0;steps.innerHTML='';document.getElementById('next').disabled=false;}
+function nextStep(){const sel=document.getElementById('sub');const M=parseFloat(sel.value);const name=sel.options[sel.selectedIndex].dataset.n;
+ const a=parseAmt(document.getElementById('amt').value);
+ if(!(a>0)){steps.innerHTML='<li>Type a positive amount first.</li>';return;}
+ if(from===to){steps.innerHTML='<li>Pick a different place to go. Same unit in and out means no trip through the pit.</li>';return;}
+ const mol=from==='g'?a/M:from==='p'?a/NA:a/VM;
+ if(step===0){const how=from==='g'?'divide by molar mass: '+fmt(a)+' g / '+M.toFixed(1)+' g/mol':from==='p'?'divide by Avogadro: '+fmt(a)+' / 6.022 &times; 10<sup>23</sup>':'divide by 22.4 L/mol: '+fmt(a)+' L / 22.4';
+  steps.insertAdjacentHTML('beforeend','<li><b>Step 1: into the pit.</b> '+how+' = <b>'+fmt(mol)+' mol '+name+'</b></li>');step=1;}
+ else if(step===1){const out=to==='g'?mol*M:to==='p'?mol*NA:mol*VM;const how=to==='g'?'multiply by molar mass: '+fmt(mol)+' &times; '+M.toFixed(1):to==='p'?'multiply by Avogadro: '+fmt(mol)+' &times; 6.022 &times; 10<sup>23</sup>':'multiply by 22.4 L/mol: '+fmt(mol)+' &times; 22.4';
+  steps.insertAdjacentHTML('beforeend','<li class="out"><b>Step 2: out of the pit.</b> '+how+' = <b>'+fmt(out)+' '+UN[to]+'</b></li>');
+  steps.insertAdjacentHTML('beforeend','<li><b>Done.</b> Two arrows, and both touched the pit.</li>');step=2;document.getElementById('next').disabled=true;}}
+document.getElementById('next').addEventListener('click',nextStep);
+document.getElementById('reset').addEventListener('click',reset);
+['sub','amt'].forEach(id=>document.getElementById(id).addEventListener('input',reset));
+// you do
+document.getElementById('ycheck').addEventListener('click',()=>{const g=parseAmt(document.getElementById('yg').value),l=parseAmt(document.getElementById('yl').value);
+ const ok=(v,t)=>Math.abs(v-t)/t<0.011;const fb=document.getElementById('yfb');let msg=[];
+ const gOK=ok(g,8.5),lOK=ok(l,11.2);
+ msg.push(gOK?'(a) 8.50 g: correct.':'(a) Not quite. Into the pit first: 3.011 &times; 10<sup>23</sup> / 6.022 &times; 10<sup>23</sup> = 0.500 mol, then &times; 17.0. <a href="#p4-interactive">Walk it through the pit</a>');
+ msg.push(lOK?'(b) 11.2 L: correct.':'(b) Not quite. From the pit to liters: 0.500 &times; 22.4. <a href="#p1-board">Back to the trick board</a>');
+ fb.innerHTML=msg.join('<br>');fb.className='fb show '+(gOK&&lOK?'good':'bad');});
+// ladder
+let right=0,done=new Set(),missed=new Set(),logged=new Set();
+/* Every first answer goes to the one progress record (shared/ace-record.js), like every other Ace Labs tool. */
+function logAnswer(it,i,ok){if(logged.has(it.id)||!window.AceRecord)return;logged.add(it.id);
+ try{AceRecord.record({item:{id:'gc:guac:'+it.id,section:'gchem',topic:'stoich',topicName:'Moles (GuacaMOLE)',skill:it.tag,difficulty:it.level==='Easy'?1:it.level==='Hard'?3:2},picked:i,answer:GuacWalk.keyIndex(it),ok:ok,src:'guacamole',tool:'concept-page'});}catch(e){}}
+/* The miss walkthrough: opens on the trap in the choice picked, draws the route through the pit, then 3 more like it. */
+function sessionToken(){try{const s=JSON.parse(localStorage.getItem('ace.v1.session')||'null');return s&&s.token&&s.exp*1000>Date.now()?s.token:null;}catch(e){return null;}}
+function approvedPool(){const tok=sessionToken();if(!tok)return Promise.resolve([]);
+ return fetch('/.netlify/functions/'+'ace-bank-pool',{credentials:'same-origin',headers:{'X-Ace-Session':tok}}).then(r=>r.ok?r.json():{items:[]}).then(j=>j.items||[]).catch(()=>[]);}
+const ROUTE={'p1-board':'Trick board','p2-whiteboard':'Whiteboard notes','p4-interactive':'Walk it through the pit','p5-idoyoudo':'I do, we do, you do','p6-trap':'Trap card'};
+function walk(it,pi,opener){if(!window.AceWalk)return;const w=GuacWalk.explain(it.id,pi),fam=w.family||'skip';
+ const go=it.ch[pi]&&it.ch[pi].go;const routes=[];if(go)routes.push({label:ROUTE[go]||'Back to the board',href:'#'+go});
+ if(go!=='p2-whiteboard')routes.push({label:'Whiteboard notes',href:'#p2-whiteboard'});if(go!=='p1-board')routes.push({label:'Trick board',href:'#p1-board'});
+ AceWalk.open({id:'gc-guacamole-'+it.id,title:'Through the pit, step by step',item:{id:'gc:guac:'+it.id,section:'gchem',topic:'stoich',topicName:'Moles (GuacaMOLE)',skill:it.tag},
+  picked:pi,explain:w.explain,board:w.board,voice:{src:null},opener:opener,
+  more:{n:3,family:GuacWalk.FAMILIES[fam].bank,subtopic:'gc_mole_concept',poolIds:GuacWalk.POOL_IDS[fam],pool:approvedPool,generate:GuacWalk.generator(fam,Date.now()%100000)},
+  routes:routes});}
+function renderQ(it,host){const d=document.createElement('div');d.className='q';d.id='q-'+it.id;
+ d.innerHTML='<div class="qhead"><span class="chip">'+it.id+'</span><span class="chip tag" title="Portal subtopic id">'+it.tag+'</span></div><div>'+it.stem+'</div><div class="choices"></div><div class="fb" aria-live="polite"></div>';
+ const c=d.querySelector('.choices'),fb=d.querySelector('.fb');
+ it.ch.forEach(ch=>{const b=document.createElement('button');b.type='button';b.innerHTML=ch.t;c.appendChild(b);
+  b.addEventListener('click',()=>{if(ch.ok){b.classList.add('right');fb.className='fb show good';fb.innerHTML='<b>Correct.</b> '+it.why;
+     if(!done.has(it.id)&&it.level!=='Mixed'){done.add(it.id);right++;}c.querySelectorAll('button').forEach(x=>x.disabled=true);updScore();}
+   else{b.classList.add('wrong');b.disabled=true;fb.className='fb show bad';fb.innerHTML='<b>Not quite.</b> That answer comes from: '+ch.err+'. Go back to <a href="#'+ch.go+'">'+ch.goname+'</a>, then try again.';
+     const wb=document.createElement('button');wb.type='button';wb.className='walkbtn';wb.textContent='Walk me through it';const pi=it.ch.indexOf(ch);
+     wb.addEventListener('click',()=>walk(it,pi,wb));fb.appendChild(document.createElement('br'));fb.appendChild(wb);
+     if(!missed.has(it.id)){missed.add(it.id);walk(it,pi,b);}
+     if(it.level!=='Mixed')done.add(it.id);}
+   logAnswer(it,it.ch.indexOf(ch),ch.ok);});});
+ host.appendChild(d);}
+function updScore(){const n=D.items.filter(i=>i.level!=='Mixed').length;document.getElementById('score').textContent='First-try correct: '+right+' of '+n+'.';}
+const L=document.getElementById('ladder');let last='';
+D.items.forEach(it=>{if(it.level==='Mixed'){renderQ(it,document.getElementById('mixed'));return;}
+ if(it.level!==last){const h=document.createElement('h3');h.className='lvl';h.textContent=it.level;L.appendChild(h);last=it.level;}renderQ(it,L);});
+updScore();
+// review cards
+const cards=document.getElementById('cards');
+D.cards.forEach((c,i)=>{const b=document.createElement('button');b.type='button';b.className='flip';b.setAttribute('aria-pressed','false');
+ const show=()=>{const back=b.getAttribute('aria-pressed')==='true';b.innerHTML='<span class="side">'+(back?'BACK':'FRONT')+'</span>'+(back?c[1]:c[0]);};
+ b.addEventListener('click',()=>{b.setAttribute('aria-pressed',b.getAttribute('aria-pressed')==='true'?'false':'true');show();});show();cards.appendChild(b);});
+const t0=new Date();const sc=document.getElementById('sched');
+[1,3,7,21].forEach(n=>{const d=new Date(t0);d.setDate(d.getDate()+n);sc.insertAdjacentHTML('beforeend','<div><b>Day '+n+'</b>'+d.toLocaleDateString(undefined,{month:'short',day:'numeric'})+'</div>');});
+</script>
+</body></html>

@@ -7,15 +7,17 @@
 <meta name="description" content="Build a galvanic cell, predict which way electrons flow, then watch it happen.">
 <link rel="icon" type="image/svg+xml" href="/shared/ace-dat-mark.svg">
 <link rel="stylesheet" href="/shared/ace-ui.css?v=8">
+<link rel="stylesheet" href="/shared/ace-walkthrough.css?v=1">
 <style>
   .gv-stage { position: relative; background: #FFFDF7; border: 1px solid var(--aui-line); border-radius: var(--aui-r); overflow: hidden; }
   .gv-stage svg { display: block; width: 100%; height: auto; }
-  .gv-pick { display: grid; grid-template-columns: 1fr 1fr; gap: var(--aui-3); }
-  .gv-pick label { display: flex; flex-direction: column; gap: 4px; font-size: var(--aui-t-sm); font-weight: 700; color: var(--aui-ink-2); }
-  .gv-pick select { min-height: 44px; border-radius: var(--aui-r-sm); border: 1.5px solid var(--aui-line-2); background: var(--aui-paper); font: 500 var(--aui-t-md) var(--aui-font); padding: 0 10px; color: var(--aui-ink); }
+  .gv-pick { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: var(--aui-3); }
+  .gv-pick label { min-width: 0; display: flex; flex-direction: column; gap: 4px; font-size: var(--aui-t-md); font-weight: 700; color: var(--aui-ink-2); }
+  .gv-pick select { width: 100%; min-width: 0; text-overflow: ellipsis; min-height: 44px; border-radius: var(--aui-r-sm); border: 1.5px solid var(--aui-line-2); background: var(--aui-paper); font: 500 var(--aui-t-md) var(--aui-font); padding: 0 10px; color: var(--aui-ink); }
   .gv-ask { display: grid; gap: var(--aui-3); padding: var(--aui-4); border-radius: var(--aui-r); background: var(--aui-forest); color: #fffdf7; }
   .gv-ask h2 { font-family: var(--aui-display); font-size: 22px; margin: 0; }
-  .gv-ask p { margin: 0; color: #e9e4d8; font-size: var(--aui-t-sm); }
+  .gv-ask p { margin: 0; color: #e9e4d8; font-size: var(--aui-t-md); }
+  #cap { font-size: var(--aui-t-md); }
   .gv-ask .aui-row button { min-height: 48px; padding: 0 16px; border-radius: 999px; border: 1.5px solid #5d7f6c; background: transparent; color: #fffdf7; font: 700 var(--aui-t-md) var(--aui-font); cursor: pointer; }
   .gv-ask .aui-row button[aria-pressed="true"] { background: var(--aui-gold); border-color: var(--aui-gold); color: var(--aui-ink); }
   .gv-out { display: grid; gap: var(--aui-3); }
@@ -78,31 +80,38 @@
     </div>
   </div>
 
-  <section class="aui-card aui-card--flat aui-stack" aria-labelledby="rule-h">
+  <section class="aui-card aui-card--flat ax" data-explain="gc-galvanic-rule" aria-labelledby="rule-h">
     <h2 class="aui-h3" id="rule-h">The rule the DAT tests</h2>
-    <p class="aui-p">The half-cell with the higher standard reduction potential is reduced: it is the cathode. The other is oxidized: it is the anode. Electrons leave the anode through the wire and arrive at the cathode, and E°cell = E°cathode minus E°anode, which is positive for a galvanic cell. In the salt bridge, anions drift toward the anode and cations toward the cathode, which keeps both beakers neutral.</p>
-    <p class="aui-small">Sources: OpenStax Chemistry 2e, 17.2 Galvanic Cells and 17.3 Electrode and Cell Potentials; potentials from Appendix L.</p>
+    <p class="ax-answer"><span class="ax-k">The answer</span>Higher reduction potential is reduced: that electrode is the cathode.</p>
+    <p class="ax-trick" data-said="Zoom 2026-04-28 #84183655423 ~0:14:46"><span class="ax-k">Thomas's trick</span>&ldquo;Reduction is at the cathode, red cat. The oxidation occurs at the anode and ox.&rdquo;</p>
+    <ol class="ax-steps">
+      <li data-frame="1">Compare the two <b>reduction potentials</b>.</li>
+      <li data-frame="2">Higher one is <b>reduced</b>: cathode. The other is oxidized: anode.</li>
+      <li data-frame="3"><b>Electrons</b> leave the anode and run the wire to the cathode.</li>
+      <li data-frame="4"><b>Salt bridge</b>: anions drift to the anode, cations to the cathode.</li>
+      <li data-frame="5"><b>E&deg;cell</b> = E&deg;cathode &minus; E&deg;anode, positive for a galvanic cell.</li>
+    </ol>
+    <p class="ax-trap"><span class="ax-k">The trap</span>Direction comes from the potentials, not left or right in the picture.</p>
+    <div class="ax-check"><span class="ax-k">Check yourself</span><span class="ax-q">Silver and zinc: which one is the anode?</span>
+      <details class="ax-a"><summary>Show answer</summary><span>Zinc. Lower potential, so it is oxidized.</span></details></div>
+    <div class="aui-row"><button class="aui-btn" type="button" id="rule-watch">Watch it on the board</button></div>
+    <details class="ax-sources"><summary>Sources</summary>
+      <ul><li>OpenStax Chemistry 2e, 17.2 Galvanic Cells and 17.3 Electrode and Cell Potentials.</li>
+        <li>Potentials: OpenStax Chemistry 2e, Appendix L, 25 &deg;C.</li>
+        <li>Thomas's line: Zoom 2026-04-28 #84183655423 ~0:14:46 (Gen Chem playbook 9.3).</li></ul></details>
   </section>
 </main>
 <script src="/shared/ace-ui.js?v=4"></script>
 <script src="/shared/ace-skills.js?v=2"></script>
 <script src="/shared/ace-record.js?v=6"></script>
 <script src="/shared/ace-question.js?v=8"></script>
+<script src="/shared/ace-walkthrough.js?v=1"></script>
+<script src="/gc/galvanic/galvanic-walk.js"></script>
 <script>
 (function () {
   'use strict';
-  /* Standard reduction potentials at 25 °C, volts. OpenStax Chemistry 2e, Appendix L. */
-  var HALF = [
-    { id: 'Ag', ion: 'Ag⁺', n: 1, e: 0.7996, metal: 'silver', color: '#c9ccd1', sol: null },
-    { id: 'Cu', ion: 'Cu²⁺', n: 2, e: 0.337, metal: 'copper', color: null, sol: '#7fb6d6' },
-    { id: 'Pb', ion: 'Pb²⁺', n: 2, e: -0.1262, metal: 'lead', color: '#7d8188', sol: null },
-    { id: 'Sn', ion: 'Sn²⁺', n: 2, e: -0.1375, metal: 'tin', color: '#b8bcc2', sol: null },
-    { id: 'Ni', ion: 'Ni²⁺', n: 2, e: -0.257, metal: 'nickel', color: '#a7a596', sol: '#9fcf9a' },
-    { id: 'Fe', ion: 'Fe²⁺', n: 2, e: -0.447, metal: 'iron', color: '#6f6a64', sol: '#cfe3b8' },
-    { id: 'Zn', ion: 'Zn²⁺', n: 2, e: -0.7618, metal: 'zinc', color: null, sol: null },
-    { id: 'Al', ion: 'Al³⁺', n: 3, e: -1.662, metal: 'aluminum', color: '#d6d8dc', sol: null },
-    { id: 'Mg', ion: 'Mg²⁺', n: 2, e: -2.372, metal: 'magnesium', color: '#e3e4e6', sol: null }
-  ];
+  /* Standard reduction potentials at 25 °C, volts: OpenStax Chemistry 2e, Appendix L. One table, in galvanic-walk.js. */
+  var GW = window.GalvanicWalk, HALF = GW.HALF;
   var byId = {}; HALF.forEach(function (h) { byId[h.id] = h; });
   var $ = function (id) { return document.getElementById(id); };
   var NS = 'http://www.w3.org/2000/svg';
@@ -201,27 +210,45 @@
       var eq = document.createElement('div'); eq.className = 'gv-eq'; eq.textContent = r[1]; out.appendChild(eq);
     });
     if (window.AceRecord) window.AceRecord.event('lab-galvanic', { left: c.L.id, right: c.R.id, guess: guess, ok: ok });
+    if (!ok) {
+      var again = document.createElement('button'); again.type = 'button'; again.className = 'aui-btn'; again.textContent = 'Walk me through it';
+      again.addEventListener('click', function () { walk(c, guess, null, again); });
+      var row = document.createElement('div'); row.className = 'aui-row'; row.appendChild(again); out.appendChild(row);
+    }
     check(c);
+    if (!ok) setTimeout(function () { if (revealed && cell() && cell().dir === c.dir) walk(c, guess, null, document.querySelector('[data-dir="' + guess + '"]')); }, window.AceWalk && window.AceWalk.reduced() ? 0 : 900);
   }
   function sign(x) { return (x > 0 ? '+' : '') + x.toFixed(x === 0.337 ? 3 : 4).replace(/0+$/, '').replace(/\.$/, ''); }
 
-  /* A DAT-style check on the cell just built. The key is computed from the potentials, so it is right by construction. */
+  /* A DAT-style check on the cell just built. The key is computed from the potentials, so it is right
+     by construction; every wrong choice carries its own trap line (galvanic-walk.js). */
   function check(c) {
-    var A = c.an.metal, C = c.cat.metal;
-    var right = 'Electrons travel through the wire from the ' + A + ' electrode to the ' + C + ' electrode.';
-    var wrong = [
-      'Electrons travel through the wire from the ' + C + ' electrode to the ' + A + ' electrode.',
-      'The ' + A + ' electrode is the cathode and gains mass as the cell runs.',
-      'Electrons travel through the salt bridge to complete the circuit.',
-      'E°cell equals E°anode minus E°cathode, so the cell potential is negative.'
-    ];
-    var choices = wrong.slice(); var at = Math.floor(Math.random() * 5); choices.splice(at, 0, right);
-    var item = { id: 'gc:galvanic:' + c.an.id + '-' + c.cat.id, section: 'gchem', topic: 'electrochem-lab', topicName: 'Galvanic cells',
-      stem: 'A galvanic cell is built from a ' + c.L.ion + '|' + c.L.id + ' half-cell and a ' + c.R.ion + '|' + c.R.id + ' half-cell under standard conditions. Which statement about the operating cell is true?',
-      choices: choices, answer: at,
-      why: C.charAt(0).toUpperCase() + C.slice(1) + ' has the higher reduction potential, so it is the cathode. Electrons are released by oxidation at the ' + A + ' anode and travel through the external wire to the cathode. Ions, not electrons, carry charge through the salt bridge, and E°cell = E°cathode − E°anode = +' + c.ecell.toFixed(3) + ' V.' };
+    var item = GW.checkItem(c, Math.floor(Math.random() * 5));
     window.AceQuestion.mount($('check'), item, { label: 'Check yourself', nextLabel: 'Try another pair', onNext: next,
-      onAnswer: function (res) { if (window.AceRecord) window.AceRecord.record({ item: item, picked: res.picked, answer: res.answer, ok: res.ok, ms: res.ms, src: 'lab-galvanic', first: res.first, changes: res.changes, change: res.change, tool: 'lab' }); } });
+      onAnswer: function (res) {
+        if (window.AceRecord) window.AceRecord.record({ item: item, picked: res.picked, answer: res.answer, ok: res.ok, ms: res.ms, src: 'lab-galvanic', first: res.first, changes: res.changes, change: res.change, tool: 'lab' });
+        if (!res.ok) walk(c, res.picked, item, null);
+      } });
+  }
+
+  /* The miss walkthrough (shared/ace-walkthrough.js). picked: 'lr' / 'rl' for the call, 0-4 on the check. */
+  function sessionToken() { try { var s = JSON.parse(localStorage.getItem('ace.v1.session') || 'null'); return s && s.token && s.exp * 1000 > Date.now() ? s.token : null; } catch (e) { return null; } }
+  function approvedPool() {
+    var tok = sessionToken(); if (!tok) return Promise.resolve([]);   // the pool is for signed-in students only
+    return fetch('/.netlify/functions/' + 'ace-bank-pool', { credentials: 'same-origin', headers: { 'X-Ace-Session': tok } })
+      .then(function (r) { return r.ok ? r.json() : { items: [] }; }).then(function (j) { return j.items || []; }).catch(function () { return []; });
+  }
+  function walk(c, picked, item, opener) {
+    if (!window.AceWalk) return;
+    var ex = item ? GW.explainCheck(c, item) : GW.explain(c);
+    window.AceWalk.open({
+      id: item ? 'gc-galvanic-check' : (picked ? 'gc-galvanic-direction' : 'gc-galvanic-rule'),
+      title: picked == null ? 'The rule, on the board' : (item ? 'Walk through this cell' : 'Which way the electrons go'),
+      item: item || { id: 'gc:galvanic-call:' + c.L.id + '-' + c.R.id, section: 'gchem', topic: 'electrochem-lab', topicName: 'Galvanic cells', skill: GW.SUBTOPIC },
+      picked: picked, explain: ex, board: GW.board(c), voice: { src: null }, opener: opener,
+      more: { n: 3, family: GW.FAMILY, subtopic: GW.SUBTOPIC, poolIds: GW.POOL_IDS, pool: approvedPool, generate: GW.generator(c, Date.now() % 100000) },
+      routes: [{ label: 'Whiteboard notes: the rule, step by step', href: '#rule-h' }, { label: 'Trick board: Red Cat, An Ox', href: '/tricks/sheets.html' }, { label: 'Full lesson: Galvanic cells', href: '/tools/gc/' }]
+    });
   }
   function next() {
     var ids = HALF.map(function (h) { return h.id; });
@@ -238,6 +265,7 @@
     });
   });
   $('again').addEventListener('click', next);
+  $('rule-watch').addEventListener('click', function () { var c = cell(); if (c) walk(c, null, null, $('rule-watch')); });
   reset();
 })();
 </script>

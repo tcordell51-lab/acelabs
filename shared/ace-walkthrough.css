@@ -1,0 +1,96 @@
+/* ace-walkthrough.css : the miss walkthrough panel (shared/ace-walkthrough.js).
+   Mobile first: one column, full-screen sheet on a phone; board beside the steps from 900 px.
+   Body text 16 px and up everywhere; every control is at least 44 px tall.
+   Handwriting: Kalam (OFL) and Permanent Marker (Apache 2.0), subset, with the arrow, minus and
+   Delta glyphs the whiteboards use. Licenses: shared/fonts/OFL-kalam.txt, LICENSE-permanent-marker.txt. */
+@font-face { font-family: "Kalam ACE"; src: url("/shared/fonts/kalam-ace-bold.woff2") format("woff2"); font-weight: 700; font-style: normal; font-display: swap; }
+@font-face { font-family: "Permanent Marker ACE"; src: url("/shared/fonts/permanent-marker-ace.woff2") format("woff2"); font-weight: 400; font-style: normal; font-display: swap; }
+
+html.awk-lock, html.awk-lock body { overflow: hidden; }
+.awk { position: fixed; inset: 0; z-index: 1000; background: rgba(13,32,24,.55); display: flex; align-items: stretch; justify-content: center;
+  font-family: "DM Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; font-size: 17px; line-height: 1.5; color: #0d2018; }
+.awk *, .awk *::before, .awk *::after { box-sizing: border-box; }
+.awk [hidden] { display: none !important; }
+.awk__sheet { width: 100%; max-width: 1080px; background: #F5F0E8; overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch;
+  padding: 0 14px 28px; display: flex; flex-direction: column; gap: 12px; }
+@media (min-width: 720px) { .awk { align-items: center; padding: 24px; } .awk__sheet { max-height: 100%; border-radius: 22px; padding: 0 28px 32px; box-shadow: 0 24px 60px rgba(0,0,0,.25); } }
+
+.awk__head { position: sticky; top: 0; z-index: 2; display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  background: #F5F0E8; padding: 12px 0 10px; border-bottom: 1px solid rgba(27,58,45,.16); }
+.awk__kick { margin: 0; font-size: 16px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: #7c6113; }
+.awk__title { margin: 2px 0 0; font: 700 22px/1.2 "Playfair Display", Georgia, serif; color: #1B3A2D; }
+.awk__x { flex: none; min-height: 44px; min-width: 64px; padding: 0 14px; border-radius: 999px; border: 1.5px solid rgba(27,58,45,.3); background: #FCFAF6; color: #1B3A2D; font-weight: 700; font-size: 16px; line-height: 1; font-family: inherit; cursor: pointer; }
+
+.awk__card { margin: 0; border-radius: 14px; padding: 12px 14px; background: #FCFAF6; border: 1px solid rgba(27,58,45,.16); }
+.awk__k { margin: 0 0 2px; font-size: 16px; font-weight: 700; letter-spacing: .04em; color: #7c6113; }
+.awk__line { margin: 0; font-size: 18px; line-height: 1.45; }
+.awk__line b, .awk__steps b { color: #1B3A2D; }
+.awk__trap { background: #f6e4dd; border: 2px solid #b0503b; }
+.awk__trap .awk__k { color: #8a3324; }
+.awk__top { display: grid; gap: 12px; }
+@media (min-width: 720px) { .awk__top { grid-template-columns: 1fr 1fr; } }
+.awk__trick .awk__line { font-weight: 600; color: #1B3A2D; }
+.awk__tag { margin: 4px 0 0; font-size: 16px; color: #5c6a63; }
+
+.awk__body { display: grid; gap: 12px; }
+@media (min-width: 900px) { .awk__body { grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); align-items: start; } .awk__board { position: sticky; top: 76px; } }
+.awk__board { margin: 0; background: #FFFDF8; border: 2px solid #d9cfba; border-radius: 16px; padding: 6px;
+  background-image: radial-gradient(rgba(27,58,45,.035) 1px, transparent 1px); background-size: 6px 6px; }
+.awk__svg { display: block; width: 100%; height: auto; max-height: 78vh; }
+.awk__svg .wb-frame { transition: opacity .35s ease; }
+.awk__svg .wb-frame.is-past { opacity: .62; }
+.awk__side { display: grid; gap: 10px; align-content: start; }
+.awk__count { margin: 0; font-size: 16px; font-weight: 700; color: #3a4a42; }
+.awk__steps { margin: 0; padding: 0; list-style: none; counter-reset: awk; display: grid; gap: 8px; }
+.awk__steps li { counter-increment: awk; position: relative; padding: 10px 12px 10px 52px; min-height: 48px; border-radius: 12px; background: #FCFAF6;
+  border: 1px solid rgba(27,58,45,.16); font-size: 18px; line-height: 1.4; }
+.awk__steps li::before { content: counter(awk); position: absolute; left: 10px; top: 9px; width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center;
+  background: #EFE7D6; color: #1B3A2D; font-weight: 700; font-size: 16px; }
+.awk__steps li.is-on { border: 2px solid #C9A84C; background: #fffaf0; }
+.awk__steps li.is-on::before { background: #C9A84C; }
+.awk__ctl { display: grid; grid-template-columns: 1fr 1.4fr 1fr; gap: 8px; }
+.awk__btn { min-height: 48px; padding: 0 14px; border-radius: 999px; border: 1.5px solid #1B3A2D; background: #1B3A2D; color: #FFFDF8;
+  font-weight: 700; font-size: 17px; line-height: 1.1; font-family: inherit; cursor: pointer; touch-action: manipulation; }
+.awk__btn--quiet { background: #FCFAF6; color: #1B3A2D; }
+.awk__btn[disabled] { opacity: .45; cursor: default; }
+.awk__btn--big { width: 100%; min-height: 54px; font-size: 18px; }
+.awk__btn--big.is-ready { background: #C9A84C; border-color: #C9A84C; color: #0d2018; }
+.awk :focus-visible { outline: 3px solid #C9A84C; outline-offset: 2px; }
+.awk__voice { border: 2px dashed #b9a571; border-radius: 14px; padding: 10px 14px; background: #fbf7ec; }
+.awk__voice audio { width: 100%; margin-top: 6px; }
+.awk__muted { margin: 0; font-size: 16px; color: #5c6a63; }
+.awk__check .awk__btn { margin-top: 8px; }
+.awk__ans { margin-top: 8px; font-weight: 600; color: #1B3A2D; }
+.awk__more { display: grid; gap: 12px; }
+.awk__more-host:empty { display: none; }
+.awk__more-host .aui-q { box-shadow: none; }
+.awk__more-host .aui-q__hint, .awk__more-host .aui-chip, .awk__more-host .aui-small, .awk__more-host .aui-q__block dt, .awk__more-host .aui-q__tag { font-size: 16px; }
+.awk__route { background: #f6e4dd; border: 2px solid #b0503b; }
+.awk__win { background: rgba(0,158,115,.10); border: 2px solid #007a59; }
+.awk__routes { margin: 8px 0 0; padding: 0; list-style: none; display: grid; gap: 6px; }
+.awk__link { display: flex; align-items: center; min-height: 48px; padding: 0 14px; border-radius: 12px; background: #FCFAF6; border: 1.5px solid #1B3A2D; color: #1B3A2D; font-weight: 700; text-decoration: none; }
+.awk__src { font-size: 16px; color: #3a4a42; }
+.awk__src summary { min-height: 44px; display: flex; align-items: center; cursor: pointer; font-weight: 700; color: #3a4a42; }
+.awk__src ul { margin: 0; padding-left: 1.2em; }
+.awk--still .awk__svg .wb-frame { opacity: 1 !important; }
+@media (prefers-reduced-motion: reduce) { .awk__svg .wb-frame { transition: none; } }
+
+/* The explanation standard as page markup (docs/EXPLANATION-STANDARD.md):
+   <section class="ax" data-explain="id"> .ax-answer, .ax-trick, ol.ax-steps > li[data-frame],
+   .ax-trap, .ax-check, details.ax-sources. One line each; steps 3 to 5; sources collapsed. */
+.ax { display: grid; gap: 10px; }
+.ax > * { margin: 0; }
+.ax-k { display: block; font-size: 16px; font-weight: 700; letter-spacing: .04em; color: #7c6113; }
+.ax-answer, .ax-trick, .ax-trap, .ax-check { font-size: 18px; line-height: 1.45; border-radius: 12px; padding: 10px 14px; background: #FCFAF6; border: 1px solid rgba(27,58,45,.16); }
+.ax-answer { font-weight: 600; }
+.ax-trick { color: #1B3A2D; font-weight: 600; }
+.ax-trap { background: #f6e4dd; border: 2px solid #b0503b; }
+.ax-trap .ax-k { color: #8a3324; }
+.ax-steps { list-style: none; padding: 0; counter-reset: ax; display: grid; gap: 8px; }
+.ax-steps li { counter-increment: ax; position: relative; padding: 10px 12px 10px 52px; min-height: 48px; border-radius: 12px; background: #FCFAF6; border: 1px solid rgba(27,58,45,.16); font-size: 18px; line-height: 1.4; }
+.ax-steps li::before { content: counter(ax); position: absolute; left: 10px; top: 9px; width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; background: #C9A84C; color: #0d2018; font-weight: 700; font-size: 16px; }
+.ax-q { display: block; }
+.ax-a summary, .ax-sources summary { min-height: 44px; display: flex; align-items: center; cursor: pointer; font-weight: 700; color: #1B3A2D; font-size: 16px; }
+.ax-a span { display: block; font-weight: 600; color: #1B3A2D; }
+.ax-sources { font-size: 16px; color: #3a4a42; }
+.ax-sources ul { margin: 0; padding-left: 1.2em; }
