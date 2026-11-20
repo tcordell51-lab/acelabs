@@ -29,7 +29,7 @@ export const FREE_FILE_PREFIXES = Object.freeze(['/shared/', '/sign-in/']);
 
 /** Free single files. */
 // /data/topics.json is topic ids and names only (no questions): Labs and the review read it.
-export const FREE_FILES = Object.freeze(['/robots.txt', '/favicon.ico', '/data/free/diagnostic-bank.json', '/data/topics.json']);
+export const FREE_FILES = Object.freeze(['/robots.txt', '/favicon.ico', '/data/free/diagnostic-bank.json', '/data/topics.json', '/gc/galvanic/galvanic-walk.js']);
 
 /** Question banks that live under a free prefix but are locked. */
 export const LOCKED_FILES = Object.freeze([
