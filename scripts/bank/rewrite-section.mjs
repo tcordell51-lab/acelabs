@@ -123,11 +123,13 @@ if (fs.existsSync(set.dir)) for (const f of fs.readdirSync(set.dir).filter((x) =
       trickKind: trick.approved ? 'approved' : 'draft', trickCode: code, calc: r.calc || null, flag: r.flag || null, explain };
   });
 }
+const EXCL = (JSON.parse(fs.readFileSync(path.join(ROOT, 'scripts/bank/scope-exclusions.json'), 'utf8'))[SECTION]) || {};
+for (const [id, why] of Object.entries(EXCL)) if (done[id]) Object.assign(done[id], { status: 'excluded', flag: why });
 const records = set.items.map((it) => done[it.id] || { id: it.id, key: it.key, subtopic: it.sub, status: 'not-yet-rewritten', method: null, review: 'pending', explain: null });
 const count = (f) => records.filter(f).length;
-const summary = { bank: set.name, made: TODAY, items: records.length, rewritten: count((r) => r.status === 'rewritten'), notYet: count((r) => r.status !== 'rewritten'),
+const summary = { bank: set.name, made: TODAY, items: records.length, rewritten: count((r) => r.status === 'rewritten'), excluded: count((r) => r.status === 'excluded'), notYet: count((r) => r.status === 'not-yet-rewritten'),
   trick: { approved: count((r) => r.trickKind === 'approved'), draft: count((r) => r.trickKind === 'draft') },
   calc: count((r) => r.calc), flagged: count((r) => r.flag), refused: refused.length };
-fs.writeFileSync(set.sidecar, JSON.stringify({ format: 2, note: 'Explanation-standard rewrites in new wording (docs/EXPLANATION-STANDARD.md). Sidecar only: the bank is unchanged. Every record is review pending.', summary, records }, null, 1) + '\n');
+fs.writeFileSync(set.sidecar, JSON.stringify({ format: 2, note: 'Explanation-standard rewrites in new wording (docs/EXPLANATION-STANDARD.md). Sidecar only: the bank is unchanged. Every record is review pending. status excluded (DAT scope rule): the item stays in the bank but must not be served to students; the reason is in flag.', summary, records }, null, 1) + '\n');
 console.log(JSON.stringify(summary));
 refused.forEach((x) => console.log('REFUSED ' + x));
