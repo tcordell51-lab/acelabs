@@ -1,0 +1,1047 @@
+{
+  "format": 1,
+  "note": "OChem visual lessons, pilot: Units 1 to 3 in the blueprint's teaching order. Lesson text only, adapted from Thomas's own teaching (the Roots of Organic stories, crash course v8 CARDIO segment, content library explainers). Check items are bank ids only; no question text lives here. Trap families are the blueprint's provisional list (section D5); a family marked proposed is not on that list yet and needs Thomas's approval. Built into data/oc-lessons.json by scripts/build-oc-lessons.py, which draws every structure with RDKit.",
+  "families": {
+    "source": "scripts/oc-lessons/trap-families.json (copied from ace-bank-ochem main, trap-families/families.json, approved 2026-11-17)",
+    "basis": "measured = most-missed families on this subtopic, counted from wrong-option tags of bank items mapped through trap-families/tag-map.json; judgment = picked by hand where the bank has too few items on the subtopic."
+  },
+  "units": [
+    {
+      "n": 1,
+      "title": "Bonding and electron language"
+    },
+    {
+      "n": 2,
+      "title": "Acid-base and CARDIO"
+    },
+    {
+      "n": 3,
+      "title": "Properties and naming"
+    }
+  ],
+  "lessons": [
+    {
+      "id": "oc_hybridization",
+      "unit": 1,
+      "order": 1,
+      "title": "Hybridization",
+      "idea": "Count the domains around the atom, not the bonds: four domains is sp3, three is sp2, two is sp.",
+      "visual": {
+        "kind": "structure",
+        "caption": "Same middle carbon, three jobs. Each bond counts once, single, double or triple, and each lone pair counts once. Water's oxygen makes two bonds but carries two lone pairs: four domains, sp3, bent."
+      },
+      "steps": [
+        "Pick the atom and count what is around it. Each bond is one domain.",
+        "Add one domain for each lone pair, even when nobody drew it.",
+        "Four is sp3 and 109.5 degrees, three is sp2 and 120, two is sp and 180."
+      ],
+      "connect": {
+        "letters": [
+          "O"
+        ],
+        "text": "Orbital, the O in CARDIO: more s-character holds a pair closer to the nucleus. sp is 50 percent s, sp2 33, sp3 25, so an sp C-H (pKa about 25) is far more acidic than sp2 (about 44) or sp3 (about 50). That is why NaNH2 can pull the proton off a terminal alkyne in Unit 8. And a flat sp2 carbocation is why SN1 comes out racemic in Unit 7.",
+        "links": [
+          "oc_pka",
+          "oc_terminal_alkyne",
+          "oc_sn1_mechanism"
+        ]
+      },
+      "traps": [
+        {
+          "family": "hybridization-s-character",
+          "basis": "measured",
+          "misses": 35,
+          "example": "Here: a double bond is one domain, not two, and a lone pair counts too. Water's oxygen is sp3 even with only two bonds."
+        },
+        {
+          "family": "resonance-missed",
+          "basis": "measured",
+          "misses": 14,
+          "example": "Here: an atom with a lone pair next to a pi bond can be sp2, because the pair joins the pi system (the N of an amide)."
+        },
+        {
+          "family": "arrows-formal-charge",
+          "basis": "measured",
+          "misses": 11,
+          "example": "Here: count lone pairs from the formal charge before you count domains; a minus adds a pair."
+        }
+      ],
+      "check": {
+        "ids": [
+          "oc:oc-0221",
+          "oc:oc-0222",
+          "oc:oc-0230"
+        ],
+        "publicIds": []
+      },
+      "clip": {
+        "status": "weak",
+        "useNow": "C282",
+        "record": "V041"
+      },
+      "sources": [
+        "Roots of Organic, l1-geometry (tools/ochem/roots/roots/l1-geometry.js)",
+        "Content library topics/oc-10-acidity.md (s-character ladder)",
+        "Crash course v8, acids segment (pKa anchors)"
+      ]
+    },
+    {
+      "id": "oc_formal_charge",
+      "unit": 1,
+      "order": 2,
+      "title": "Formal charge",
+      "idea": "Formal charge is bookkeeping: what the atom brought minus what it is holding, where a lone pair counts two and a bond counts one.",
+      "visual": {
+        "kind": "structure",
+        "caption": "One oxygen, three charges. Oxygen always brings six. Holding: two for each lone pair, one for each bond. Brought minus holding is the charge."
+      },
+      "steps": [
+        "Write what the atom brought: carbon 4, nitrogen 5, oxygen 6.",
+        "Count what it holds: two per lone pair, one per bond.",
+        "Brought minus holding is the formal charge."
+      ],
+      "connect": {
+        "letters": [
+          "C"
+        ],
+        "text": "Charge, the C in CARDIO, starts here: a positive acid like CH3OH2+ is far stronger than a neutral one. You need formal charge to check every curved arrow (Unit 1) and every resonance form, and the minus on methoxide is what makes it a strong base and a good nucleophile in Unit 6.",
+        "links": [
+          "oc_arrow_pushing",
+          "oc_resonance",
+          "oc_nucleophilicity"
+        ]
+      },
+      "traps": [
+        {
+          "family": "arrows-formal-charge",
+          "basis": "measured",
+          "misses": 13,
+          "example": "Here: a bond counts one electron for the atom, a lone pair counts two. In CH3OH2+ the plus sits on oxygen even though oxygen is the most electronegative atom."
+        },
+        {
+          "family": "resonance-missed",
+          "basis": "measured",
+          "misses": 2,
+          "example": "Here: a neutral molecule can still carry a plus and a minus. Trimethylamine N-oxide, (CH3)3N-O, has N+ and O-."
+        },
+        {
+          "family": "atom-size-vs-electronegativity",
+          "basis": "judgment",
+          "misses": 0,
+          "example": "Here: formal charge comes from the count, not from which atom pulls harder."
+        }
+      ],
+      "check": {
+        "ids": [
+          "oc:oc-0223",
+          "oc:oc-0596"
+        ],
+        "gap": "Only 2 practice items carry this subtopic; 1 more learn-level item is needed.",
+        "publicIds": []
+      },
+      "clip": {
+        "status": "missing",
+        "useNow": null,
+        "record": "V070"
+      },
+      "sources": [
+        "Roots of Organic, l1-charge"
+      ]
+    },
+    {
+      "id": "oc_resonance",
+      "unit": 1,
+      "order": 3,
+      "title": "Resonance structures",
+      "idea": "Resonance spreads a charge over more atoms by moving only pi electrons and lone pairs, and every atom that shares the charge makes it more stable.",
+      "visual": {
+        "kind": "mechanism",
+        "caption": "Acetate. A lone pair on the negative oxygen makes a new pi bond while the old pi bond moves onto the other oxygen. No atom moves and no single bond breaks. The real ion is the average: about minus one half on each oxygen."
+      },
+      "steps": [
+        "Find the pi bond or lone pair next to the charge. Only those move.",
+        "Push one step: lone pair into a bond, or pi bond onto the neighbor atom.",
+        "Count the atoms that end up sharing the charge. More helpers, more stable."
+      ],
+      "connect": {
+        "letters": [
+          "R"
+        ],
+        "text": "Resonance, the R in CARDIO: acetate shares its charge over two oxygens, so acetic acid (pKa 4.8) beats ethanol (16) in Unit 2. The same spreading makes allylic and benzylic cations stable (Unit 6), steers EAS (Unit 11) and makes the alpha-H acidic (Unit 14).",
+        "links": [
+          "oc_conj_base_stability",
+          "oc_carbocation",
+          "oc_directing_effects",
+          "oc_alpha_acidity"
+        ]
+      },
+      "traps": [
+        {
+          "family": "resonance-missed",
+          "basis": "measured",
+          "misses": 13,
+          "example": "Here: acetate never sits as one form; both oxygens are the same all the time, and the real ion is the average."
+        },
+        {
+          "family": "arrows-formal-charge",
+          "basis": "measured",
+          "misses": 11,
+          "example": "Here: if your arrow moved a hydrogen or broke a single bond, that is a different molecule, not a resonance form."
+        },
+        {
+          "family": "hybridization-s-character",
+          "basis": "measured",
+          "misses": 5,
+          "example": "Here: resonance cannot pass through an sp3 carbon, because it has no p orbital to share."
+        }
+      ],
+      "check": {
+        "ids": [
+          "oc:oc-0224",
+          "oc:oc-0599",
+          "oc:oc-0605"
+        ],
+        "publicIds": []
+      },
+      "clip": {
+        "status": "weak",
+        "useNow": "C196",
+        "record": "V041"
+      },
+      "sources": [
+        "Roots of Organic, l2-resonance (the couch)",
+        "Crash course v8, acids segment lab scene (ethoxide vs acetate)"
+      ]
+    },
+    {
+      "id": "oc_conjugation",
+      "unit": 1,
+      "order": 4,
+      "title": "Conjugation",
+      "idea": "Conjugated means the p orbitals sit side by side with no sp3 carbon between them, so electrons and charge can spread along the whole run.",
+      "visual": {
+        "kind": "structure",
+        "caption": "Top: hexa-1,3-diene, four p orbitals in a row, one conjugated system. Bottom: hexa-1,5-diene, two sp3 carbons break the row into two isolated pi bonds."
+      },
+      "steps": [
+        "Mark every sp2 or sp atom with a p orbital.",
+        "Look for an unbroken row of them. One sp3 carbon breaks the row.",
+        "An unbroken row, or a charge right next to a pi bond, is conjugated."
+      ],
+      "connect": {
+        "letters": [
+          "R"
+        ],
+        "text": "Conjugation is resonance with room to run. A charge next to a pi bond is allylic, next to a ring is benzylic, and either one jumps up the cation and radical stability ladders (Units 6 and 10). Diels-Alder needs a conjugated diene (Unit 10), and an enone is attacked at the beta carbon in Michael addition (Unit 14).",
+        "links": [
+          "oc_carbocation",
+          "oc_allylic_benzylic",
+          "oc_diels_alder_mechanism",
+          "oc_michael_addition"
+        ]
+      },
+      "traps": [
+        {
+          "family": "resonance-missed",
+          "basis": "measured",
+          "misses": 6,
+          "example": "Here: two pi bonds with an sp3 carbon between them are isolated, not conjugated."
+        },
+        {
+          "family": "hybridization-s-character",
+          "basis": "judgment",
+          "misses": 0,
+          "example": "Here: mark each atom sp2, sp or sp3 first; one sp3 carbon breaks the row of p orbitals."
+        },
+        {
+          "family": "aromaticity",
+          "basis": "judgment",
+          "misses": 0,
+          "example": "Here: a ring alone means nothing. Cyclohexene is a ring with one pi bond; count p orbitals in a row."
+        }
+      ],
+      "check": {
+        "ids": [],
+        "gap": "No practice items carry this subtopic outside the full-length forms; 3 learn-level items are needed.",
+        "publicIds": []
+      },
+      "clip": {
+        "status": "weak",
+        "useNow": "C029",
+        "record": "V041"
+      },
+      "sources": [
+        "Content library topics/oc-12-resonance-stability.md (resonance wins)",
+        "Roots of Organic, l2-resonance"
+      ]
+    },
+    {
+      "id": "oc_polarity",
+      "unit": 1,
+      "order": 5,
+      "title": "Polarity and dipole moments",
+      "idea": "Each polar bond points toward the more electronegative atom, and the molecule is polar only if those bond dipoles do not cancel in 3D.",
+      "visual": {
+        "kind": "structure",
+        "caption": "Acetone: one C=O dipole, nothing to cancel it, net dipole. Carbon dioxide: two C=O dipoles on a straight line pointing opposite ways, net zero."
+      },
+      "steps": [
+        "Find the bully: the more electronegative atom gets the partial minus.",
+        "Draw each bond dipole toward it.",
+        "Add them in 3D. Equal and opposite cancel; anything left over is the net dipole."
+      ],
+      "connect": {
+        "letters": [
+          "D"
+        ],
+        "text": "Dipole, the D in CARDIO: a polar bond next to a charge pulls density, which is induction. The partial plus carbon of C=O is the target for every nucleophile in Units 12 and 13, and polarity sets boiling point, solubility and TLC Rf in Units 3 and 5.",
+        "links": [
+          "oc_inductive_resonance_acidity",
+          "oc_imfs",
+          "oc_tlc_column"
+        ]
+      },
+      "traps": [
+        {
+          "family": "polarity-imf-lab",
+          "basis": "measured",
+          "misses": 46,
+          "example": "Here: a long carbon tail can outweigh one OH or C=O, so one polar group does not make a molecule water soluble."
+        },
+        {
+          "family": "symmetry-missed",
+          "basis": "judgment",
+          "misses": 0,
+          "example": "Here: CO2 and CCl4 have polar bonds but no net dipole, because the bond dipoles cancel. CH2Cl2 does not cancel in 3D."
+        },
+        {
+          "family": "atom-size-vs-electronegativity",
+          "basis": "judgment",
+          "misses": 0,
+          "example": "Here: the dipole points to the more electronegative atom: F, then O, then Cl and N."
+        }
+      ],
+      "check": {
+        "ids": [
+          "oc:oc-0282",
+          "oc:oc-0481",
+          "oc:oc-0477"
+        ],
+        "publicIds": []
+      },
+      "clip": {
+        "status": "weak",
+        "useNow": "C202",
+        "record": "V041"
+      },
+      "sources": [
+        "Roots of Organic, l2-bully (the electron bully)"
+      ]
+    },
+    {
+      "id": "oc_arrow_pushing",
+      "unit": 1,
+      "order": 6,
+      "title": "Arrow-pushing",
+      "idea": "A curved arrow starts at electrons and ends where they go: a full head moves a pair, a fishhook moves one electron.",
+      "visual": {
+        "kind": "mechanism",
+        "caption": "Top: hydroxide's lone pair attacks the carbon, and the C-Br bond leaves with Br. Two full-headed arrows, two electrons each. Bottom: light splits Br2 evenly. Two fishhooks, one electron each, two radicals."
+      },
+      "steps": [
+        "Find the electrons: a lone pair, a pi bond or a minus. The arrow starts there.",
+        "Find the poor atom: a partial plus carbon or an acidic H. The arrow ends there.",
+        "If that atom already has four bonds, a second arrow kicks one bond onto the leaving group."
+      ],
+      "connect": {
+        "letters": [
+          "C"
+        ],
+        "text": "The ADA asks it both ways: predict the product from the arrows, and draw the arrows from the product. Every mechanism unit uses this one move. The first ADA single mechanism, proton transfer, is the same arrows on a hydrogen (Unit 2), and fishhooks come back in radical halogenation (Unit 10).",
+        "links": [
+          "oc_bronsted_lowry",
+          "oc_sn2_mechanism",
+          "oc_radical_halogenation"
+        ]
+      },
+      "traps": [
+        {
+          "family": "arrows-formal-charge",
+          "basis": "measured",
+          "misses": 6,
+          "example": "Here: an arrow never starts at a positive charge or at an atom, and a fishhook moves only one electron."
+        },
+        {
+          "family": "synthesis-order",
+          "basis": "measured",
+          "misses": 2,
+          "example": "Here: a carbon with four bonds cannot take a fifth. When the nucleophile attacks, draw the bond to the leaving group breaking in the same step."
+        },
+        {
+          "family": "radical-vs-ionic",
+          "basis": "judgment",
+          "misses": 0,
+          "example": "Here: light splitting Br2 is radical, so fishhooks; hydroxide attacking carbon is polar, so full heads."
+        }
+      ],
+      "check": {
+        "ids": [
+          "oc:oc-0097"
+        ],
+        "gap": "Only 1 practice item carries this subtopic; 2 more are needed, including one of each ADA arrow format.",
+        "publicIds": [
+          "oc:OC_arr002",
+          "oc:OC_arr004"
+        ]
+      },
+      "clip": {
+        "status": "weak",
+        "useNow": "C215",
+        "record": "V082"
+      },
+      "sources": [
+        "Roots of Organic, l2-arrows (attack, kick it off, attach)",
+        "ADA DAT 2026 Candidate Guide, curved-arrow formats (blueprint, official outline)"
+      ]
+    },
+    {
+      "id": "oc_bronsted_lowry",
+      "unit": 2,
+      "order": 1,
+      "title": "Bronsted-Lowry acids and bases",
+      "idea": "An acid gives a proton and a base takes it, and the equilibrium always lies on the side of the weaker acid.",
+      "visual": {
+        "kind": "mechanism",
+        "caption": "Acetic acid gives its proton to hydroxide. Two arrows: the lone pair takes the H, and the O-H bond stays behind on acetate. Acetic acid (pKa 4.8) is a far stronger acid than water (15.7), so the right side wins."
+      },
+      "steps": [
+        "Find the H that moves. The one that loses it is the acid; its leftover is the conjugate base.",
+        "The one that gains it is the base; it becomes the conjugate acid.",
+        "Compare the two acids by pKa. The equilibrium favors the side with the weaker acid, the higher pKa."
+      ],
+      "connect": {
+        "letters": [],
+        "text": "This is GChem acid-base with skeletal drawings. It is also the first ADA single mechanism: a proton transfer drawn with two curved arrows. Every CARDIO ranking in this unit answers one question: which side of an equation like this one wins.",
+        "links": [
+          "oc_arrow_pushing",
+          "oc_pka",
+          "oc_extraction"
+        ]
+      },
+      "traps": [
+        {
+          "family": "acid-base-direction",
+          "basis": "judgment",
+          "misses": 0,
+          "example": "Here: acetic acid (4.8) gives its proton to hydroxide because water (15.7) is the weaker acid."
+        },
+        {
+          "family": "conjugate-base-not-acid",
+          "basis": "judgment",
+          "misses": 0,
+          "example": "Here: acetate is the conjugate base of acetic acid, not of water. A conjugate pair differs by exactly one H+."
+        },
+        {
+          "family": "arrows-formal-charge",
+          "basis": "judgment",
+          "misses": 0,
+          "example": "Here: the base's lone pair attacks the H. The arrow starts at the base's electrons, never at the proton."
+        }
+      ],
+      "check": {
+        "ids": [],
+        "gap": "This is a new subtopic id (PR #35, not merged). No items carry it yet; 3 learn-level items are needed.",
+        "publicIds": []
+      },
+      "clip": {
+        "status": "not audited",
+        "useNow": null,
+        "record": "V025"
+      },
+      "sources": [
+        "Crash course v8, acids segment (pKa anchors)",
+        "Blueprint C3: V025 edit adds conjugate pairs and equilibrium direction"
+      ]
+    },
+    {
+      "id": "oc_pka",
+      "unit": 2,
+      "order": 2,
+      "title": "pKa and relative acidity",
+      "idea": "Lower pKa means a stronger acid, and a base can fully deprotonate any acid with a lower pKa than its own conjugate acid.",
+      "visual": {
+        "kind": "scale",
+        "caption": "The anchors. When two compounds sit in different anchor groups, the anchors answer the question before CARDIO does."
+      },
+      "steps": [
+        "Place each acid on the anchor line.",
+        "Lower pKa, stronger acid. Each pKa unit is a factor of 10.",
+        "A base works on any acid below its own conjugate acid. NaNH2 (NH3, 38) takes the H off a terminal alkyne (25); NaOH (water, 15.7) cannot."
+      ],
+      "connect": {
+        "letters": [
+          "R",
+          "O"
+        ],
+        "text": "The line is CARDIO in numbers: acids (4 to 5) beat alcohols (16 to 18) by Resonance, and alkyne (25) beats alkene (44) by Orbital. Unit 5 uses it to pick the extraction layer, and Unit 14 uses it for enolates: a 1,3-dicarbonyl sits near pKa 9, a plain ketone near 19 to 20.",
+        "links": [
+          "oc_conj_base_stability",
+          "oc_terminal_alkyne",
+          "oc_extraction",
+          "oc_alpha_acidity"
+        ]
+      },
+      "traps": [
+        {
+          "family": "acid-base-direction",
+          "basis": "measured",
+          "misses": 147,
+          "example": "Here: pKa 4.8 is a stronger acid than pKa 16, and NaOH (water, 15.7) cannot fully deprotonate a terminal alkyne (25)."
+        },
+        {
+          "family": "resonance-missed",
+          "basis": "measured",
+          "misses": 26,
+          "example": "Here: carboxylic acids (4 to 5) beat alcohols (16 to 18) because the carboxylate shares its charge over two oxygens."
+        },
+        {
+          "family": "induction-misjudged",
+          "basis": "measured",
+          "misses": 23,
+          "example": "Here: a nearby halogen lowers the pKa; an alkyl group nudges it up."
+        }
+      ],
+      "check": {
+        "ids": [
+          "oc:oc-0234",
+          "oc:oc-0236",
+          "oc:oc-0247"
+        ],
+        "publicIds": [
+          "oc:OC_abo266",
+          "oc:OC_abo267",
+          "oc:OC_ab008"
+        ]
+      },
+      "clip": {
+        "status": "weak",
+        "useNow": "C172",
+        "record": "V025"
+      },
+      "sources": [
+        "Crash course v8, acids segment (fastLane anchors)",
+        "Content library topics/oc-10-acidity.md"
+      ]
+    },
+    {
+      "id": "oc_conj_base_stability",
+      "unit": 2,
+      "order": 3,
+      "title": "Conjugate base stability",
+      "idea": "Judge the conjugate base: the more stable the base an acid leaves behind, the stronger the acid.",
+      "visual": {
+        "kind": "structure",
+        "caption": "Ethoxide holds its minus on one oxygen. Acetate shares it over two. Charge, Atom tie (both minus, both on O), so Resonance decides: acetic acid (4.8) is far stronger than ethanol (16)."
+      },
+      "steps": [
+        "Take the acidic H off both acids. Now compare the two bases.",
+        "Walk C, A, R, D and I, O in order: Charge, Atom, Resonance, Dipole and Induction, Orbital.",
+        "Stop at the first letter that differs. That letter decides."
+      ],
+      "connect": {
+        "letters": [
+          "A",
+          "R"
+        ],
+        "text": "The happy base comes back everywhere. A stable anion is a weak base and a good leaving group (I- beats Br- beats Cl-, Unit 6), and the carbonyl ladder ranks acid derivatives by how stable their leaving group is (Unit 13).",
+        "links": [
+          "oc_leaving_groups",
+          "oc_acyl_reactivity",
+          "oc_inductive_resonance_acidity"
+        ]
+      },
+      "traps": [
+        {
+          "family": "resonance-missed",
+          "basis": "measured",
+          "misses": 4,
+          "example": "Here: acetate shares its minus over two oxygens; ethoxide holds it on one. Resonance decides once Charge and Atom tie."
+        },
+        {
+          "family": "conjugate-base-not-acid",
+          "basis": "measured",
+          "misses": 3,
+          "example": "Here: the proton is the same H+ every time, so strip it and compare the two bases."
+        },
+        {
+          "family": "acid-base-direction",
+          "basis": "measured",
+          "misses": 1,
+          "example": "Here: the more stable base belongs to the stronger acid, which has the lower pKa."
+        }
+      ],
+      "check": {
+        "ids": [],
+        "gap": "Both items on this subtopic are already in full-length forms; 3 learn-level practice items are needed.",
+        "publicIds": []
+      },
+      "clip": {
+        "status": "weak",
+        "useNow": "C074",
+        "record": "V025"
+      },
+      "sources": [
+        "Crash course v8, acids segment (CARDIO method, the couch line, the Orbital trap)",
+        "Roots of Organic, l2-acidity"
+      ]
+    },
+    {
+      "id": "oc_inductive_resonance_acidity",
+      "unit": 2,
+      "order": 4,
+      "title": "Inductive and resonance effects on acidity",
+      "idea": "An electron-withdrawing group near the charge pulls density through the bonds and stabilizes the conjugate base, and the pull fades fast with distance.",
+      "visual": {
+        "kind": "structure",
+        "caption": "Propanoic acid, then a chlorine on carbon 3, then on carbon 2, right next to the COOH. The closer the chlorine, the stronger the acid. pKa values are standard reference values, rounded."
+      },
+      "steps": [
+        "Find the electron-withdrawing atom and the charge on the conjugate base.",
+        "Count the bonds between them. Close is a strong pull, a few bonds away is almost nothing.",
+        "More pullers and more electronegative pullers pull harder: F beats Cl beats Br beats I."
+      ],
+      "connect": {
+        "letters": [
+          "D",
+          "I",
+          "R"
+        ],
+        "text": "One idea, three units: an electron-withdrawing group raises acidity here, is meta-directing and deactivating in EAS (Unit 11), and makes an acyl carbon more reactive (Unit 13). A para nitro group pulls by resonance as well as induction, which is why it makes a phenol more acidic.",
+        "links": [
+          "oc_directing_effects",
+          "oc_acyl_reactivity",
+          "oc_conj_base_stability"
+        ]
+      },
+      "traps": [
+        {
+          "family": "induction-misjudged",
+          "basis": "measured",
+          "misses": 4,
+          "example": "Here: chlorine on carbon 2 (pKa about 2.8) pulls far harder than on carbon 3 (about 4.0); a few bonds farther and it barely counts."
+        },
+        {
+          "family": "atom-size-vs-electronegativity",
+          "basis": "measured",
+          "misses": 2,
+          "example": "Here: F pulls harder than Cl, which pulls harder than Br; for induction, electronegativity is what counts."
+        },
+        {
+          "family": "resonance-missed",
+          "basis": "measured",
+          "misses": 1,
+          "example": "Here: a para nitro group pulls by resonance too, which does not fade along the ring the way induction does."
+        }
+      ],
+      "check": {
+        "ids": [],
+        "gap": "Both items on this subtopic are already in full-length forms; 3 learn-level practice items are needed.",
+        "publicIds": [
+          "oc:OC_abo268",
+          "oc:OC_ab004",
+          "oc:OC_abo274"
+        ]
+      },
+      "clip": {
+        "status": "weak",
+        "useNow": "C281",
+        "record": "V025"
+      },
+      "sources": [
+        "Roots of Organic, l2-induction (the vacuum through the wire)",
+        "Crash course v8 handout p.24 pairs (nitro, induction)",
+        "pKa values: standard reference values (propanoic acid 4.87, 3-chloropropanoic acid about 4.0, 2-chloropropanoic acid about 2.8)"
+      ]
+    },
+    {
+      "id": "oc_amine_basicity",
+      "unit": 2,
+      "order": 5,
+      "title": "Amine basicity",
+      "idea": "An amine is basic when its lone pair is free to grab a proton; tie that pair up in resonance and the base gets weaker.",
+      "visual": {
+        "kind": "mechanism",
+        "caption": "Methylamine's lone pair is free. Aniline's lone pair spreads into the ring, and an amide's spreads onto the carbonyl oxygen. Numbers are the pKa of each conjugate acid; the amide value is approximate."
+      },
+      "steps": [
+        "Find the nitrogen's lone pair.",
+        "Is it next to a pi bond or ring? If yes, it is in resonance and less available.",
+        "More available pair, stronger base, higher conjugate-acid pKa."
+      ],
+      "connect": {
+        "letters": [
+          "R"
+        ],
+        "text": "Lone-pair donors push density: the same NH2 that is a weak base in aniline makes the ring an ortho/para activator in EAS (Unit 11). And an amide's tied-up nitrogen is why amides sit at the bottom of the carbonyl ladder (Unit 13).",
+        "links": [
+          "oc_directing_effects",
+          "oc_acyl_reactivity",
+          "oc_imines_enamines"
+        ]
+      },
+      "traps": [
+        {
+          "family": "acid-base-direction",
+          "basis": "measured",
+          "misses": 33,
+          "example": "Here: a strong base has a high conjugate-acid pKa. Methylamine (10.6) is a stronger base than aniline (4.6)."
+        },
+        {
+          "family": "resonance-missed",
+          "basis": "measured",
+          "misses": 14,
+          "example": "Here: aniline's lone pair spreads into the ring and an amide's onto the C=O, so both are weak bases. Pyrrole's pair is part of its aromatic sextet."
+        },
+        {
+          "family": "induction-misjudged",
+          "basis": "judgment",
+          "misses": 9,
+          "example": "Here: alkyl groups donate and raise basicity a little; a CF3 group nearby withdraws and lowers it a lot."
+        }
+      ],
+      "check": {
+        "ids": [
+          "oc:oc-0497",
+          "oc:oc-0248",
+          "oc:oc-0761"
+        ],
+        "publicIds": [
+          "oc:OC_ami195",
+          "oc:OC_ami189",
+          "oc:OC_ami198"
+        ]
+      },
+      "clip": {
+        "status": "weak",
+        "useNow": "C077",
+        "record": "V081"
+      },
+      "sources": [
+        "Crash course v8 handout p.24 pairs (aniline)",
+        "Blueprint A2 tie: lone-pair donors push density",
+        "pKa of conjugate acids: standard values (methylammonium 10.6, anilinium 4.6); protonated acetamide about 0, approximate"
+      ]
+    },
+    {
+      "id": "oc_imfs",
+      "unit": 3,
+      "order": 1,
+      "title": "Intermolecular forces",
+      "idea": "Molecules hold each other by the strongest force they can make: hydrogen bonds beat dipole-dipole, which beats London dispersion.",
+      "visual": {
+        "kind": "structure",
+        "caption": "Methanol: an O-H on one molecule reaches a lone pair on the next, a hydrogen bond. Acetone: the partial plus carbon of one C=O lines up with the partial minus oxygen of the next. Propane: only London forces, which every molecule has."
+      },
+      "steps": [
+        "H-bond donor: H on N, O or F. Acceptor: a lone pair on N, O or F.",
+        "No donor but a net dipole: dipole-dipole.",
+        "Everything has London forces, and they grow with surface area and size."
+      ],
+      "connect": {
+        "letters": [],
+        "text": "This is GChem liquids and solids. Ethanol and dimethyl ether share the formula C2H6O, but ethanol boils at 78 C and the ether at -24 C: one O-H makes the difference. The same forces decide solubility, TLC Rf and which layer a compound sits in during extraction (Unit 5), and protic vs aprotic solvent (Unit 7).",
+        "links": [
+          "oc_physical_trends",
+          "oc_tlc_column",
+          "oc_extraction",
+          "oc_sn_e_solvent"
+        ]
+      },
+      "traps": [
+        {
+          "family": "polarity-imf-lab",
+          "basis": "measured",
+          "misses": 70,
+          "example": "Here: acetone accepts H-bonds but has no O-H to give, so pure acetone has no hydrogen bonding. Butan-1-ol and diethyl ether weigh the same (74 g/mol), yet the alcohol boils about 80 degrees higher."
+        },
+        {
+          "family": "functional-group-id",
+          "basis": "judgment",
+          "misses": 0,
+          "example": "Here: find the H on N, O or F first. An ether O or a ketone O is an acceptor only."
+        },
+        {
+          "family": "lab-technique",
+          "basis": "judgment",
+          "misses": 0,
+          "example": "Here: the same forces set TLC Rf and which layer a compound sits in during extraction (Unit 5)."
+        }
+      ],
+      "check": {
+        "ids": [
+          "oc:oc-0478",
+          "oc:oc-0695",
+          "oc:oc-0705"
+        ],
+        "publicIds": []
+      },
+      "clip": {
+        "status": "missing",
+        "useNow": null,
+        "record": "V077"
+      },
+      "sources": [
+        "Blueprint A2 tie: polarity and IMFs",
+        "Boiling points: ethanol 78 C, dimethyl ether -24 C (standard values)"
+      ],
+      "authorNote": "Written teaching for Unit 3 is thin (blueprint C1). This lesson follows the shot list V077 points; Thomas should check the wording."
+    },
+    {
+      "id": "oc_physical_trends",
+      "unit": 3,
+      "order": 2,
+      "title": "Boiling point and solubility trends",
+      "idea": "Same forces, more contact, higher boiling point: branching makes a molecule rounder, cuts its surface contact and lowers its boiling point.",
+      "visual": {
+        "kind": "structure",
+        "caption": "Three C5H12 isomers, the same mass and the same force (London only). The straight chain touches its neighbors the most and boils highest. Boiling points are standard values."
+      },
+      "steps": [
+        "Rank by the strongest IMF first: H-bonding, then dipole, then London.",
+        "Same IMF type: bigger molecule, higher boiling point.",
+        "Same formula: more branching, lower boiling point."
+      ],
+      "connect": {
+        "letters": [],
+        "text": "Boiling point order is what comes over first in distillation (Unit 5), and polarity is what moves on silica in TLC. Melting point is different: a compact, symmetric molecule packs well, so branching can raise a melting point even as it lowers the boiling point.",
+        "links": [
+          "oc_distillation",
+          "oc_tlc_column",
+          "oc_imfs"
+        ]
+      },
+      "traps": [
+        {
+          "family": "polarity-imf-lab",
+          "basis": "measured",
+          "misses": 86,
+          "example": "Here: for isomers with the same forces, branching lowers the boiling point: pentane 36 C, 2,2-dimethylpropane 10 C."
+        },
+        {
+          "family": "lab-technique",
+          "basis": "measured",
+          "misses": 76,
+          "example": "Here: on silica TLC the nonpolar compound travels farther and has the higher Rf; in distillation the lower boiling compound comes over first."
+        },
+        {
+          "family": "acid-base-direction",
+          "basis": "measured",
+          "misses": 5,
+          "example": "Here: an acid moves into a basic water layer only if the base is strong enough to deprotonate it; compare the pKa values."
+        }
+      ],
+      "check": {
+        "ids": [
+          "oc:oc-0273",
+          "oc:oc-0464",
+          "oc:oc-0468"
+        ],
+        "publicIds": []
+      },
+      "clip": {
+        "status": "weak",
+        "useNow": "C267",
+        "record": "V077"
+      },
+      "sources": [
+        "Shot list V077 (H-bond > dipole > London; branching lowers boiling point)",
+        "Boiling points: pentane 36 C, 2-methylbutane 28 C, 2,2-dimethylpropane 10 C (standard values)"
+      ],
+      "authorNote": "Written teaching for Unit 3 is thin (blueprint C1). Thomas should check the wording."
+    },
+    {
+      "id": "oc_ihd",
+      "unit": 3,
+      "order": 3,
+      "title": "Degrees of unsaturation (IHD)",
+      "idea": "Each ring or pi bond is one degree of unsaturation: look and count when you have a drawing, use the formula only when you have just a molecular formula.",
+      "visual": {
+        "kind": "structure",
+        "caption": "C6H10 has IHD 2. Three ways to spend it: one ring and one pi bond, two pi bonds, or one triple bond (two pi bonds). Every drawing here is checked to be C6H10."
+      },
+      "steps": [
+        "Drawing in front of you: rings plus pi bonds. A triple bond is two.",
+        "Formula only: IHD = (2C + 2 + N - H - X) / 2. Ignore oxygen.",
+        "IHD 4 or more with six carbons: think benzene ring first."
+      ],
+      "connect": {
+        "letters": [],
+        "text": "IHD is the first move in every structure-from-spectra item (Unit 5): the formula tells you how many rings and pi bonds to look for before IR and NMR place them. A benzene ring is 4 by itself, which also matters for aromaticity counts in Unit 11.",
+        "links": [
+          "oc_multi_spectra",
+          "oc_h_nmr",
+          "oc_huckel"
+        ]
+      },
+      "traps": [
+        {
+          "family": "spectroscopy-landmark",
+          "basis": "measured",
+          "misses": 16,
+          "example": "Here: in the formula a halogen counts like an H, a nitrogen adds one, and oxygen changes nothing."
+        },
+        {
+          "family": "arithmetic-ratio",
+          "basis": "judgment",
+          "misses": 0,
+          "example": "Here: the bracket counts missing hydrogens; each degree is two missing H, so divide by two."
+        },
+        {
+          "family": "product-bookkeeping",
+          "basis": "judgment",
+          "misses": 0,
+          "example": "Here: a benzene ring is four degrees, one ring plus three double bonds, whether drawn with lines or a circle."
+        }
+      ],
+      "check": {
+        "ids": [
+          "oc:oc-0261"
+        ],
+        "gap": "Only 1 practice item carries this subtopic; 2 more are needed.",
+        "publicIds": [
+          "oc:OC_sp017",
+          "oc:OC_sp018",
+          "oc:OC_spe204"
+        ]
+      },
+      "clip": {
+        "status": "weak",
+        "useNow": "C277",
+        "record": "V077"
+      },
+      "sources": [
+        "Roots of Organic, l1-unsat (look, do not compute)"
+      ]
+    },
+    {
+      "id": "oc_alkane_naming",
+      "unit": 3,
+      "order": 4,
+      "title": "Alkane and functional group naming",
+      "idea": "Longest chain, lowest numbers, alphabetical prefixes: number from the end that hits a branch first.",
+      "visual": {
+        "kind": "structure",
+        "caption": "The same six-carbon chain numbered both ways. From the right the branches land on 2 and 4; from the left, 3 and 5. The first point of difference picks 2,4: 2,4-dimethylhexane."
+      },
+      "steps": [
+        "Find the longest continuous chain. It may turn a corner. Count it: that is the base name.",
+        "Number from the end that gives the first branch the lowest number.",
+        "Name the branches as prefixes in alphabetical order, then add the suffix."
+      ],
+      "connect": {
+        "letters": [],
+        "text": "Every product question is read through the name in the stem and the choices. Counting carbons carefully also keeps you safe in synthesis (Unit 15), where a step that adds or removes a carbon changes the base name.",
+        "links": [
+          "oc_priority_order",
+          "oc_multistep_synthesis"
+        ]
+      },
+      "traps": [
+        {
+          "family": "naming-chain-numbering",
+          "basis": "measured",
+          "misses": 197,
+          "example": "Here: the longest chain can turn a corner, and you keep the locant set that is lower at the first difference (2,4 beats 3,5)."
+        },
+        {
+          "family": "cip-priority",
+          "basis": "measured",
+          "misses": 15,
+          "example": "Here: prefixes go in alphabetical order (ethyl before methyl); di, tri and tetra do not count for the alphabet."
+        },
+        {
+          "family": "functional-group-id",
+          "basis": "measured",
+          "misses": 14,
+          "example": "Here: name the group on the chain before you pick the suffix: ol, al, one, oic acid."
+        }
+      ],
+      "check": {
+        "ids": [
+          "oc:oc-0005",
+          "oc:oc-0008",
+          "oc:oc-0013"
+        ],
+        "publicIds": []
+      },
+      "clip": {
+        "status": "weak",
+        "useNow": "C031",
+        "record": "V078"
+      },
+      "sources": [
+        "Roots of Organic, l1-naming (count your carbons)"
+      ]
+    },
+    {
+      "id": "oc_priority_order",
+      "unit": 3,
+      "order": 5,
+      "title": "Functional group priority",
+      "idea": "The highest-priority group gets the suffix and the lowest number; every other group becomes a prefix.",
+      "visual": {
+        "kind": "ladder",
+        "caption": "The suffix ladder, highest at the top. Below: a ketone outranks an alcohol, so the name ends in -one and the OH becomes hydroxy: 4-hydroxybutan-2-one."
+      },
+      "steps": [
+        "Find every functional group.",
+        "The one highest on the ladder takes the suffix and the lowest locant.",
+        "The rest become prefixes (hydroxy, oxo, amino). Halo, nitro and alkyl groups are always prefixes."
+      ],
+      "connect": {
+        "letters": [],
+        "text": "Do not mix this ladder up with the carbonyl reactivity ladder in Unit 13. There, acid chlorides are the most reactive; here, a carboxylic acid outranks an acid chloride for the suffix. The two ladders answer different questions. Naming the group also tells you which IR landmark to look for in Unit 5.",
+        "links": [
+          "oc_alkane_naming",
+          "oc_ir_spec",
+          "oc_acyl_reactivity"
+        ]
+      },
+      "traps": [
+        {
+          "family": "naming-chain-numbering",
+          "basis": "judgment",
+          "misses": 0,
+          "example": "Here: with a ketone and an alcohol, the ketone takes the suffix and the lowest number; the OH becomes hydroxy: 4-hydroxybutan-2-one."
+        },
+        {
+          "family": "functional-group-id",
+          "basis": "judgment",
+          "misses": 0,
+          "example": "Here: chloro, bromo, nitro and alkyl are always prefixes; they never take the suffix."
+        },
+        {
+          "family": "carbonyl-ladder",
+          "basis": "judgment",
+          "misses": 0,
+          "example": "Here: the naming ladder is not the reactivity ladder. An acid chloride is the most reactive acyl group, but a carboxylic acid outranks it for the suffix."
+        }
+      ],
+      "check": {
+        "ids": [],
+        "gap": "The one item on this subtopic is in a full-length form; 3 learn-level practice items are needed.",
+        "publicIds": []
+      },
+      "clip": {
+        "status": "weak",
+        "useNow": "C065",
+        "record": "V078"
+      },
+      "sources": [
+        "IUPAC 2013 seniority order of suffix classes (standard reference)",
+        "Roots of Organic, l1-groups (name the face)"
+      ],
+      "authorNote": "No written priority ladder by Thomas was found; the ladder follows the standard IUPAC order. Thomas should confirm it matches what he teaches."
+    }
+  ]
+}
