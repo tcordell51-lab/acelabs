@@ -149,7 +149,7 @@ for iid, s in bank.items():
         tot['rewritten'] += 1
         e = r['explain']
         parts = [e['answer']] + e['steps'] + [t for t in e['traps'].values() if t] + [e['check']['q'], e['check'].get('a', '')]
-        if e['trick'].get('draft'): parts.append(e['trick']['text'])
+        if e['trick'].get('draft') and not e['trick'].get('code'): parts.append(e['trick']['text'])   # dictionary lines are generic, listed for Thomas in unapproved-lines.md
         have = set(numbers(norm(s['all']))) | set(numbers(s['all']))
         rtext = ' '.join(parts).replace('**', '').replace('^{', '^').replace('}', '')
         rcl = list(claims(rtext)); ncl = len(rcl)
