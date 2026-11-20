@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Student accounts | Ace Labs coach</title>
+<link rel="icon" href="/favicon.ico">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&display=swap">
+<link rel="stylesheet" href="/sign-in/ace-account.css?v=1">
+</head>
+<body>
+<main class="wide">
+  <a class="mark" href="/"><img src="/shared/ace-dat-mark.svg" alt="" width="30" height="30"><span>Ace Labs coach</span></a>
+
+  <section id="s-wait" aria-live="polite"><h1>One moment</h1></section>
+  <section id="s-no" hidden>
+    <h1>Coaches only</h1>
+    <p id="no-why">This page is for Thomas. Sign in with your coach email or your portal account.</p>
+    <a class="btn" href="/sign-in/?next=%2Fcoach%2Faccounts%2F">Sign in</a>
+  </section>
+
+  <section id="s-list" hidden>
+    <h1>Student accounts</h1>
+    <p class="small" id="count"></p>
+    <div class="list" id="list"></div>
+
+    <h2>Give full access</h2>
+    <p class="small">For a student you want to include without a payment. Coaching students and crash course buyers get it on their own when they sign in with the email on file.</p>
+    <form id="f-comp" class="card" novalidate>
+      <label for="c-email">Student email</label>
+      <input id="c-email" type="email" autocomplete="off" autocapitalize="off" spellcheck="false" required>
+      <label for="c-days">Days (0 means no end date)</label>
+      <input id="c-days" type="number" inputmode="numeric" min="0" max="800" value="90">
+      <label for="c-note">Note (only you see it)</label>
+      <input id="c-note" type="text" maxlength="200">
+      <p id="c-msg" class="note" role="status" hidden></p>
+      <button class="btn" type="submit">Give full access</button>
+    </form>
+  </section>
+
+  <section id="s-one" hidden>
+    <button class="quiet" id="back" type="button" style="background:none;border:0;padding:0;font:inherit;cursor:pointer">Back to all accounts</button>
+    <h1 id="o-email"></h1>
+    <div class="card"><dl class="rows" id="o-rows"></dl></div>
+    <h2>Open misses</h2>
+    <p class="small">Each one comes back to the student on later days until they get it right on their own.</p>
+    <div id="o-open"></div>
+    <h2>Recently cleared</h2>
+    <div id="o-cleared"></div>
+    <button class="btn alt" id="o-uncomp" type="button" hidden>Take back the free access</button>
+  </section>
+</main>
+<script src="/sign-in/ace-session.js?v=2"></script>
+<script>
+(function () {
+  var S = window.AceSession;
+  var PLAN = { free: 'Free', pass: 'Pass', coaching: 'Coaching', crash: 'Crash course', comp: 'Free access', coach: 'Coach' };
+  var SECTION = { bio: 'Biology', gchem: 'Gen Chem', gc: 'Gen Chem', ochem: 'OChem', oc: 'OChem', qr: 'QR', rc: 'Reading', pat: 'PAT' };
+  var REASON = { know: 'Did not know it', trap: 'Fell for a trap', misread: 'Misread', time: 'Ran out of time', changed: 'Changed a right answer' };
+  function $(id) { return document.getElementById(id); }
+  function show(id) { ['s-wait', 's-no', 's-list', 's-one'].forEach(function (x) { $(x).hidden = x !== id; }); }
+  function day(ms) { return ms ? new Date(ms).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'never'; }
+  function el(tag, cls, text) { var e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
+  function api(query, body) {
+    var s = S.current(), h = { 'Content-Type': 'application/json' }; if (s) h['X-Ace-Session'] = s.token;
+    return fetch('/.netlify/functions/ace-coach' + (query || ''), { method: body ? 'POST' : 'GET', headers: h, credentials: 'same-origin', body: body ? JSON.stringify(body) : undefined })
+      .then(function (r) { return r.json().catch(function () { return {}; }).then(function (j) { j.status = r.status; return j; }); });
+  }
+  var current = null;
+
+  function list() {
+    api('').then(function (r) {
+      if (!r.ok) { if (r.status === 403) $('no-why').textContent = 'This account is not a coach account.'; show('s-no'); return; }
+      $('count').textContent = r.accounts.length + (r.accounts.length === 1 ? ' account' : ' accounts') + ', newest activity first.';
+      var box = $('list'); box.textContent = '';
+      r.accounts.forEach(function (a) {
+        var b = el('button', 'row'); b.type = 'button';
+        b.appendChild(el('b', null, a.email));
+        var line = el('span'); line.appendChild(el('span', 'tag' + (a.plan === 'free' ? ' free' : ''), PLAN[a.plan] || a.plan));
+        line.appendChild(document.createTextNode('Last sign-in ' + day(a.lastLogin)));
+        b.appendChild(line);
+        b.addEventListener('click', function () { one(a.id); });
+        box.appendChild(b);
+      });
+      if (!r.accounts.length) box.appendChild(el('p', 'small', 'No accounts yet.'));
+      show('s-list');
+    });
+  }
+
+  function missCard(m, clearedList) {
+    var c = el('div', 'card');
+    c.appendChild(el('b', null, (m.topic || m.id) + (m.section ? ' (' + (SECTION[m.section] || m.section) + ')' : '')));
+    var bits = [];
+    if (m.reason) bits.push(REASON[m.reason] || m.reason);
+    if (m.trap) bits.push('Trap: ' + m.trap);
+    bits.push(clearedList ? 'Cleared ' + day(m.cleared) : 'Missed ' + day(m.missedAt) + ', ' + m.wins + ' of 2 wins');
+    c.appendChild(el('p', 'small', bits.join('. ') + '.'));
+    return c;
+  }
+
+  function one(id) {
+    show('s-wait');
+    api('?account=' + encodeURIComponent(id)).then(function (r) {
+      if (!r.ok) { list(); return; }
+      var a = r.account, p = r.progress; current = a;
+      $('o-email').textContent = a.email;
+      var rows = $('o-rows'); rows.textContent = '';
+      [['Access', PLAN[a.plan] || a.plan], ['Pass until', a.passUntil ? day(a.passUntil) : 'none'], ['Free access', a.comp ? (a.comp.until ? 'until ' + day(a.comp.until) : 'no end date') : 'none'],
+       ['Answers saved', p ? String(p.answers) : 'progress store not set up'], ['Right', p && p.answers ? Math.round(100 * p.right / p.answers) + '%' : 'none yet'], ['Misses cleared', p ? String(p.clearedCount) : '0']]
+        .forEach(function (kv) { var d = el('div'); d.appendChild(el('dt', null, kv[0])); d.appendChild(el('dd', null, kv[1])); rows.appendChild(d); });
+      var open = $('o-open'), cl = $('o-cleared'); open.textContent = ''; cl.textContent = '';
+      (p ? p.open : []).forEach(function (m) { open.appendChild(missCard(m, false)); });
+      (p ? p.cleared.slice(0, 10) : []).forEach(function (m) { cl.appendChild(missCard(m, true)); });
+      if (!open.children.length) open.appendChild(el('p', 'small', 'No open misses.'));
+      if (!cl.children.length) cl.appendChild(el('p', 'small', 'None yet.'));
+      $('o-uncomp').hidden = !a.comp;
+      show('s-one');
+    });
+  }
+
+  $('back').addEventListener('click', list);
+  $('o-uncomp').addEventListener('click', function () { if (current) api('', { action: 'uncomp', email: current.email }).then(function () { one(current.id); }); });
+  $('f-comp').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var msg = $('c-msg');
+    api('', { action: 'comp', email: $('c-email').value.trim(), days: Number($('c-days').value) || 0, note: $('c-note').value })
+      .then(function (r) {
+        msg.hidden = false;
+        msg.textContent = r.ok ? 'Done. ' + r.account.email + ' has full access the next time they open Ace Labs.' : 'That did not save. Check the email address.';
+        if (r.ok) { $('c-email').value = ''; $('c-note').value = ''; list(); }
+      });
+  });
+
+  S.status().then(function (st) {
+    if (!st || !st.enabled || !st.accounts) { $('no-why').textContent = 'Accounts are switched off.'; show('s-no'); return; }
+    if (!st.signedIn) { show('s-no'); return; }
+    list();
+  }, function () { show('s-no'); });
+})();
+</script>
+</body>
+</html>

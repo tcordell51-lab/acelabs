@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>The Ace Labs pass | Ace Labs</title>
+<link rel="icon" href="/favicon.ico">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&display=swap">
+<link rel="stylesheet" href="/sign-in/ace-account.css?v=1">
+</head>
+<body>
+<main>
+  <a class="mark" href="/"><img src="/shared/ace-dat-mark.svg" alt="" width="30" height="30"><span>Ace Labs</span></a>
+
+  <section id="s-wait" aria-live="polite"><h1>One moment</h1></section>
+
+  <section id="s-off" hidden>
+    <h1>Ace Labs is open</h1>
+    <p>Everything in Ace Labs is open right now. There is nothing to buy.</p>
+    <a class="btn" href="/">Back to Ace Labs</a>
+  </section>
+
+  <section id="s-pass" hidden>
+    <h1 id="title">Get the Ace Labs pass</h1>
+    <p id="lead">You have reached the end of the free sample. The pass opens all of Ace Labs.</p>
+    <p id="canceled" class="note" hidden>Checkout was canceled. Nothing was charged.</p>
+
+    <div class="card">
+      <div class="price" id="price"></div>
+      <p class="small" id="terms"></p>
+      <ul class="ticks">
+        <li>Every practice set in Biology, General Chemistry, Organic Chemistry and Quantitative Reasoning, not only the sample</li>
+        <li>Reading Comprehension passages and the Perceptual Ability trainers</li>
+        <li>Full-length practice tests in the DAT format</li>
+        <li>Repair: each miss comes back on later days until you get it right on your own</li>
+        <li>Your progress saved to your account, the same on your phone and your laptop</li>
+      </ul>
+    </div>
+
+    <p id="err" class="warn" role="alert" hidden></p>
+    <button class="btn" id="buy" type="button" hidden>Get the pass</button>
+    <a class="btn" id="make" href="/sign-in/?next=%2Fpass%2F" hidden>Make a free account to start</a>
+    <a class="btn alt" id="back" href="/">Keep using the free version</a>
+
+    <h2>Free account</h2>
+    <p>The diagnostic, the free labs, and a sample of 10 questions in each science section and QR, with your misses saved to Repair.</p>
+    <div class="note">In AceTheDAT coaching or a crash course? The pass is included. Sign in with the email you used to sign up and it opens on its own.</div>
+  </section>
+
+  <section id="s-have" hidden>
+    <h1>You have full access</h1>
+    <p id="have-why">Everything in Ace Labs is open on your account.</p>
+    <a class="btn" id="have-go" href="/">Keep studying</a>
+    <a class="quiet" href="/account/">Your account</a>
+  </section>
+</main>
+<script src="/sign-in/ace-session.js?v=2"></script>
+<script>
+(function () {
+  var S = window.AceSession, q = new URLSearchParams(location.search);
+  var next = S.safeNext(q.get('next') || '/');
+  function $(id) { return document.getElementById(id); }
+  function show(id) { ['s-wait', 's-off', 's-pass', 's-have'].forEach(function (x) { $(x).hidden = x !== id; }); }
+  function fill(pass) {
+    var days = (pass && pass.days) || 90;
+    $('price').textContent = pass && pass.price ? pass.price : days + ' days';
+    $('terms').textContent = (pass && pass.price ? days + ' days of full access. ' : 'Full access. ') + 'One payment. It does not renew.';
+  }
+  if (q.get('canceled')) $('canceled').hidden = false;
+
+  $('buy').addEventListener('click', function () {
+    var b = $('buy'), err = $('err');
+    err.hidden = true; b.disabled = true; b.textContent = 'Opening checkout';
+    S.checkout().then(function (r) {
+      if (r && r.ok && r.url && /^https:\/\/checkout\.stripe\.com\//.test(r.url)) { location.assign(r.url); return; }
+      b.disabled = false; b.textContent = 'Get the pass';
+      if (r && r.error === 'already_included') { show('s-have'); return; }
+      if (r && r.status === 401) { location.assign('/sign-in/?next=' + encodeURIComponent('/pass/')); return; }
+      err.textContent = r && /not_configured|live_mode_locked/.test(r.error || '') ? 'Checkout is not open yet. Please try again later.' : 'Checkout did not open. Please try again in a minute.';
+      err.hidden = false;
+    });
+  });
+
+  S.status().then(function (st) {
+    if (!st || st.enabled === false || !st.accounts) { show('s-off'); return; }
+    fill(st.pass);
+    if (st.signedIn && st.full) {
+      $('have-why').textContent = st.plan === 'coaching' ? 'The pass is included with your AceTheDAT coaching.'
+        : st.plan === 'crash' ? 'The pass is included with your crash course.'
+        : st.src === 'portal' ? 'You are signed in with your portal account, which includes everything.'
+        : 'Everything in Ace Labs is open on your account.';
+      $('have-go').href = next;
+      show('s-have'); return;
+    }
+    if (!st.signedIn) {
+      $('lead').textContent = 'Start with a free account. When you want everything, the pass opens all of Ace Labs.';
+      $('make').hidden = false;
+    } else {
+      $('buy').hidden = false;
+    }
+    show('s-pass');
+  }, function () { show('s-off'); });
+})();
+</script>
+</body>
+</html>

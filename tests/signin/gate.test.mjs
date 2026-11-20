@@ -94,6 +94,7 @@ test('every free page exists, and loads no locked script or data', () => {
     for (const u of refs) {
       const abs = new URL(u, 'https://x' + (key === '/' ? '/' : file.endsWith('index.html') ? key + '/' : key)).pathname;
       if (abs === '/scripts/dat-mock-bank.json') continue;   // the diagnostic: served as the free form
+      if (abs.startsWith('/.netlify/')) continue;              // functions never reach the gate; each checks its own caller
       assert.equal(classify(abs), 'free', `${key} loads locked ${abs}`);
     }
   }

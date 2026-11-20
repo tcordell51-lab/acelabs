@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Your account | Ace Labs</title>
+<link rel="icon" href="/favicon.ico">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&display=swap">
+<link rel="stylesheet" href="/sign-in/ace-account.css?v=1">
+</head>
+<body>
+<main>
+  <a class="mark" href="/"><img src="/shared/ace-dat-mark.svg" alt="" width="30" height="30"><span>Ace Labs</span></a>
+
+  <section id="s-wait" aria-live="polite"><h1 id="wait-h">One moment</h1><p id="wait-p">Loading your account.</p></section>
+
+  <section id="s-off" hidden>
+    <h1>No account needed</h1>
+    <p>Ace Labs is open right now, and your work is saved in this browser.</p>
+    <a class="btn" href="/">Back to Ace Labs</a>
+  </section>
+
+  <section id="s-out" hidden>
+    <h1>Your account</h1>
+    <p>Sign in to see your account. Your misses and progress are saved to it, so they follow you to any device.</p>
+    <a class="btn" href="/sign-in/?next=%2Faccount%2F">Sign in</a>
+  </section>
+
+  <section id="s-portal" hidden>
+    <h1>Your account</h1>
+    <p>You are signed in with your AceTheDAT portal account. It includes everything in Ace Labs, and your progress is saved there.</p>
+    <a class="btn" href="/repair/">Go to Repair</a>
+    <a class="btn alt" href="/sign-in/?out=1">Sign out</a>
+  </section>
+
+  <section id="s-acct" hidden>
+    <h1>Your account</h1>
+    <p id="paid" class="note" role="status" hidden></p>
+    <p id="paid-err" class="warn" role="alert" hidden></p>
+    <div class="card">
+      <dl class="rows">
+        <div><dt>Email</dt><dd id="a-email"></dd></div>
+        <div><dt>Access</dt><dd id="a-plan"></dd></div>
+        <div id="row-until" hidden><dt>Full access until</dt><dd id="a-until"></dd></div>
+        <div><dt>Progress</dt><dd>Saved to this account</dd></div>
+      </dl>
+    </div>
+    <a class="btn" id="get" href="/pass/" hidden>Get the pass</a>
+    <a class="btn" id="study" href="/">Keep studying</a>
+    <a class="btn alt" href="/repair/">Go to Repair</a>
+    <a class="btn alt" id="coach" href="/coach/accounts/" hidden>Coach: student accounts</a>
+    <a class="quiet" href="/sign-in/?out=1">Sign out</a>
+  </section>
+</main>
+<script src="/sign-in/ace-session.js?v=2"></script>
+<script>
+(function () {
+  var S = window.AceSession, q = new URLSearchParams(location.search);
+  function $(id) { return document.getElementById(id); }
+  function show(id) { ['s-wait', 's-off', 's-out', 's-portal', 's-acct'].forEach(function (x) { $(x).hidden = x !== id; }); }
+  function day(ms) { return new Date(ms).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }); }
+  var PLAN = { free: 'Free account', pass: 'Ace Labs pass', coaching: 'Included with your coaching', crash: 'Included with your crash course', comp: 'Full access from AceTheDAT', coach: 'Coach' };
+
+  function draw(a) {
+    $('a-email').textContent = a.email;
+    $('a-plan').textContent = PLAN[a.plan] || 'Free account';
+    $('row-until').hidden = !a.until;
+    if (a.until) $('a-until').textContent = day(a.until);
+    $('get').hidden = a.plan !== 'free';
+    $('study').className = a.plan === 'free' ? 'btn alt' : 'btn';
+    $('coach').hidden = a.plan !== 'coach';
+    show('s-acct');
+  }
+
+  function load() {
+    return S.account().then(function (r) {
+      if (r && r.ok && r.src === 'portal') { show('s-portal'); return null; }
+      if (!r || !r.ok || !r.account) { show('s-out'); return null; }
+      draw(r.account); return r.account;
+    });
+  }
+
+  S.status().then(function (st) {
+    if (!st || st.enabled === false || !st.accounts) { show('s-off'); return; }
+    if (!st.signedIn) { show('s-out'); return; }
+    var paid = q.get('paid');
+    if (paid && /^cs_(test|live)_[A-Za-z0-9]+$/.test(paid)) {
+      try { history.replaceState(null, '', location.pathname); } catch (e) { /* keep the address */ }
+      $('wait-h').textContent = 'Confirming your payment'; $('wait-p').textContent = 'This takes a few seconds.';
+      S.confirm(paid).then(function (r) {
+        if (r && r.ok && r.account) {
+          draw(r.account);
+          $('paid').textContent = 'Thank you. Your pass is active' + (r.account.until ? ' until ' + day(r.account.until) : '') + '.';
+          $('paid').hidden = false;
+        } else {
+          load().then(function (a) {
+            if (a && a.plan !== 'free') return;
+            $('paid-err').textContent = 'We could not confirm the payment yet. If you were charged, it will show here within a few minutes. Refresh this page, or reply to your receipt email.';
+            $('paid-err').hidden = false;
+          });
+        }
+      });
+      return;
+    }
+    load();
+  }, function () { show('s-out'); });
+})();
+</script>
+</body>
+</html>

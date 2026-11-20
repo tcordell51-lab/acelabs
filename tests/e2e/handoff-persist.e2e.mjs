@@ -178,7 +178,12 @@ async function signedInContext(next) {
   await page.goto(`${portalBase}/labs/go?next=${encodeURIComponent(next)}`, { waitUntil: 'load' });
   await page.waitForURL((u) => u.toString().startsWith(labsBase) && !u.pathname.startsWith('/sign-in'), { timeout: 30000 });
   await page.waitForLoadState('load');
-  const session = await page.evaluate(() => (window.AceSession && window.AceSession.current()) || null);
+  // Repair and Progress reload once when the server copy arrives: read the session across that reload
+  let session = null;
+  for (let i = 0; ; i++) {
+    try { await page.waitForFunction(() => window.AceSession && window.AceSession.current()); session = await page.evaluate(() => window.AceSession.current()); break; }
+    catch (e) { if (i >= 3 || !/context was destroyed|navigation/i.test(String(e && e.message))) throw e; await page.waitForLoadState('load'); }
+  }
   assert.ok(session && session.role === 'student' && session.sub, 'signed in to Ace Labs through the portal');
   assert.equal(new URL(page.url()).searchParams.get('student'), null, 'no student id in the Ace Labs address');
   return { context, page, sub: session.sub };
