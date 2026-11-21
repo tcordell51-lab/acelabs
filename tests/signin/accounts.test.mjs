@@ -4,7 +4,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { decide } from '../../netlify/lib/ace-gate-core.mjs';
 import { SESSION_COOKIE } from '../../netlify/lib/ace-token.mjs';
-import { memoryKv, findOrCreate, accountByEmail, accountById, resolveAccess, grantPass, passUntil, issueMagic, consumeMagic, saveAccount, airtableLookups, DAY_MS } from '../../netlify/lib/ace-accounts.mjs';
+import { memoryKv, findOrCreate, accountByEmail, accountById, resolveAccess, grantPass, passUntil, issueMagic, consumeMagic, saveAccount, airtableLookups, DAY_MS, compStatuses, passPriceLabel, passPriceCents, crashDays, passDays } from '../../netlify/lib/ace-accounts.mjs';
 import { signStripePayload, verifyStripeSignature } from '../../netlify/lib/ace-stripe.mjs';
 import { signInEmail, brandProblems } from '../../netlify/lib/ace-mail.mjs';
 import { handleMagicRequest } from '../../netlify/functions/ace-magic-request.mjs';
@@ -151,6 +151,31 @@ test('access: a failing Airtable lookup never grants anything', async () => {
   assert.equal(await L2.student('a@b.co'), null, 'a row for another address is ignored');
 });
 
+test('comp: Active, Inactive and DAT complete coaching students get everything; Removed and others do not', async () => {
+  assert.deepEqual(compStatuses({}), ['active', 'inactive', 'dat complete']);
+  assert.deepEqual(compStatuses({ ACE_LABS_COMP_STATUSES: 'Active' }), ['active']);
+  const lookupFor = (Status, env = {}) => airtableLookups({ AIRTABLE_PAT: 'x', ...env }, async () => new Response(JSON.stringify({ records: [{ fields: { Email: 'kid@x.com', Status, 'Portal ID': 'S35' } }] }), { status: 200 }));
+  for (const st of ['Active', 'Inactive', 'DAT complete', 'dat complete']) assert.deepEqual(await lookupFor(st).student('kid@x.com'), { portalId: 'S35' }, st);
+  for (const st of ['Removed', 'Todo', 'In progress', 'Done', 'DAT', 'complete']) assert.equal(await lookupFor(st).student('kid@x.com'), null, st);
+  assert.equal(await lookupFor('Inactive', { ACE_LABS_COMP_STATUSES: 'Active' }).student('kid@x.com'), null, 'the env override still narrows it');
+  const kv = memoryKv(); const a = await findOrCreate(kv, 'kid@x.com', MS);
+  const r = await resolveAccess(a, ACC, { now: MS, lookups: lookupFor('DAT complete') });
+  assert.equal(r.plan, 'coaching'); assert.equal(r.until, 0); assert.deepEqual(r.ent, ['all']);
+});
+
+test('crash course buyers: everything for exactly 90 days from purchase, then the free account', async () => {
+  assert.equal(crashDays({}), 90);
+  const kv = memoryKv(); const a = await findOrCreate(kv, 'crash@x.com', MS);
+  const since = MS - 5 * DAY_MS; const L = { ...noLookups, crash: async () => ({ since }) };
+  const on = await resolveAccess(a, ACC, { now: MS, lookups: L });
+  assert.equal(on.plan, 'crash'); assert.equal(on.until, since + 90 * DAY_MS);
+  assert.equal((await resolveAccess(a, ACC, { now: since + 90 * DAY_MS - 1, lookups: L })).plan, 'crash', 'last millisecond of day 90');
+  assert.equal((await resolveAccess(a, ACC, { now: since + 90 * DAY_MS, lookups: L })).plan, 'free', 'ends at 90 days');
+  await grantPass(kv, a, { cs: 'cs_test_CR', days: 90, at: since + 60 * DAY_MS });
+  const both = await resolveAccess(a, ACC, { now: since + 100 * DAY_MS, lookups: L });
+  assert.equal(both.plan, 'pass', 'a pass bought later runs on after the crash window');
+});
+
 test('pass grants stack and a second purchase starts when the first ends', () => {
   const g = [{ cs: 'a', at: MS, days: 90 }, { cs: 'b', at: MS + DAY_MS, days: 90 }];
   assert.equal(passUntil(g), MS + 180 * DAY_MS);
@@ -164,10 +189,12 @@ async function emailSession(kv, email = 'buyer@x.com', extra = {}) {
   const tok = await sessionToken({ sub: a.id, acct: a.id, src: 'email', role: 'student', plan: 'free', ent: ['free-account'], ...extra });
   return { a, headers: { 'x-ace-session': tok } };
 }
-function fakeStripe(sessions = {}) {
+const PASS_PRICE = { object: 'price', id: 'price_TEST123', active: true, type: 'one_time', recurring: null, currency: 'usd', unit_amount: 24900 };
+function fakeStripe(sessions = {}, price = PASS_PRICE) {
   const calls = [];
   const fetchImpl = async (url, init = {}) => {
     calls.push({ url: String(url), init });
+    if (String(url).includes('/v1/prices/')) return price ? new Response(JSON.stringify(price), { status: 200 }) : new Response('{"error":{"type":"invalid_request_error"}}', { status: 404 });
     if ((init.method || 'GET') === 'POST') return new Response(JSON.stringify({ id: 'cs_test_NEW', url: 'https://checkout.stripe.com/c/pay/cs_test_NEW' }), { status: 200 });
     const id = String(url).split('/').pop();
     return sessions[id] ? new Response(JSON.stringify(sessions[id]), { status: 200 }) : new Response('{"error":{"type":"invalid_request_error"}}', { status: 404 });
@@ -186,10 +213,35 @@ test('checkout: needs a session; a one-time payment for this account; refuses li
   assert.equal((await call({ 'x-ace-session': await sessionToken() })).status, 409, 'portal students have it already');
   const r = await call(headers);
   assert.equal(r.status, 200); assert.match((await r.json()).url, /^https:\/\/checkout\.stripe\.com\//);
-  const form = new URLSearchParams(st.calls[0].init.body);
+  assert.match(st.calls[0].url, /\/v1\/prices\/price_TEST123$/, 'the price is checked first');
+  const form = new URLSearchParams(st.calls.find((c) => c.init.method === 'POST').init.body);
   assert.equal(form.get('mode'), 'payment'); assert.equal(form.get('client_reference_id'), a.id); assert.equal(form.get('metadata[product]'), 'acelabs-pass');
   assert.equal(form.get('line_items[0][price]'), 'price_TEST123'); assert.equal(form.get('customer_email'), 'buyer@x.com');
   assert.match(form.get('success_url'), /^https:\/\/acelabs\.netlify\.app\/account\/\?paid=\{CHECKOUT_SESSION_ID\}$/);
+});
+
+test('checkout: refuses unless the Stripe price is exactly $249, one-time, USD and active', async () => {
+  const kv = memoryKv();
+  const { headers } = await emailSession(kv);
+  const cases = [
+    [{ ...PASS_PRICE, unit_amount: 34900 }, 'price_mismatch'],
+    [{ ...PASS_PRICE, currency: 'eur' }, 'price_mismatch'],
+    [{ ...PASS_PRICE, type: 'recurring', recurring: { interval: 'month' } }, 'price_recurring'],
+    [{ ...PASS_PRICE, active: false }, 'price_inactive'],
+    [null, 'price_lookup_failed'],
+  ];
+  for (const [price, why] of cases) {
+    const st = fakeStripe({}, price);
+    const r = await handleCheckout(req('/.netlify/functions/ace-checkout', { method: 'POST', headers, body: {} }), { env: { ...ACC, ...STRIPE }, kv, lookups: noLookups, fetchImpl: st.fetchImpl, now: MS });
+    assert.equal(r.status, 503, why); assert.equal((await r.json()).error, why);
+    assert.equal(st.calls.filter((c) => c.init.method === 'POST').length, 0, 'no Checkout session is created: ' + why);
+  }
+});
+
+test('the decided pass: $249 (24900 cents), 90 days; a bad label override falls back to $249', () => {
+  assert.equal(passPriceLabel({}), '$249'); assert.equal(passPriceCents({}), 24900); assert.equal(passDays({}), 90);
+  assert.equal(passPriceLabel({ ACE_LABS_PASS_PRICE_LABEL: '249 dollars' }), '$249');
+  assert.equal(passPriceCents({ ACE_LABS_PASS_PRICE_LABEL: '$199.50' }), 19950);
 });
 
 test('checkout confirm: only a paid pass session for this same account grants it', async () => {
@@ -263,6 +315,8 @@ test('session status: says nothing about accounts while the flag is off', async 
   assert.equal(off.accounts, false); assert.equal(off.pass, undefined);
   const on = await (await handleSession(req('/.netlify/functions/ace-session'), { env: { ...ACC, ACE_LABS_PASS_PRICE_LABEL: '$249' }, now: NOW })).json();
   assert.equal(on.accounts, true); assert.deepEqual(on.pass, { price: '$249', days: 90 });
+  const dflt = await (await handleSession(req('/.netlify/functions/ace-session'), { env: ACC, now: NOW })).json();
+  assert.deepEqual(dflt.pass, { price: '$249', days: 90 }, 'no label set: the decided $249 for 90 days');
 });
 
 /* ------------------------------------------------------------------ progress and the coach view */

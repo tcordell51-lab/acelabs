@@ -5,12 +5,12 @@
 // thing the answer says, and no page asks unless a visitor opens /sign-in/ by hand.
 import { json, signInEnabled, accountsEnabled, sessionFromRequest, SESSION_COOKIE } from '../lib/ace-token.mjs';
 import { effectiveEnt } from '../lib/ace-access.mjs';
+import { passPriceLabel, passDays } from '../lib/ace-accounts.mjs';
 
 /** What the pages need to know about accounts and the pass. Nothing at all while ACE_LABS_ACCOUNTS is off. */
 export function accountsInfo(env) {
   if (!accountsEnabled(env)) return { accounts: false };
-  const label = String(env.ACE_LABS_PASS_PRICE_LABEL || '').trim();
-  return { accounts: true, pass: { price: /^\$\d{1,4}(\.\d{2})?$/.test(label) ? label : '', days: Math.max(1, Math.min(400, Math.round(Number(env.ACE_LABS_PASS_DAYS) || 90))) } };
+  return { accounts: true, pass: { price: passPriceLabel(env), days: passDays(env) } };
 }
 
 export const DEFAULT_PORTAL = 'https://acethedat-portal.netlify.app';

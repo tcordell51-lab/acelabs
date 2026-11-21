@@ -21,12 +21,13 @@
 //
 // Who gets the pass without paying (the "comp" rule, all automatic at sign-in):
 //   coach      email listed in ACE_LABS_COACH_EMAILS                         -> role master
-//   coaching   Students row with this Email and Status in ACE_LABS_COMP_STATUSES (default Active)
+//   coaching   Students row with this Email and Status in ACE_LABS_COMP_STATUSES (default
+//              Active, Inactive, DAT complete: current, paused and finished coaching students)
 //              -> the session uses that student's Portal ID, so it joins their portal progress
 //   crash      Leads row with this Email, Enrolled, Source crash-course-*    -> ACE_LABS_CRASH_DAYS
-//              (default 90) from the row's Created At
+//              (default 90) from the row's Created At (the purchase), then free
 //   comp       set by hand by Thomas on /coach/accounts/
-//   pass       paid through Stripe Checkout
+//   pass       paid through Stripe Checkout: $249 once for 90 days, no auto-renew
 import crypto from 'node:crypto';
 import { signToken, sessionSecret, SESSION_TYP, SESSION_COOKIE, STUDENT_ID, usableSecret } from './ace-token.mjs';
 
@@ -42,7 +43,21 @@ const BASE = 'appDXSpdJuc3WvtYU';
 export const sha = (s) => crypto.createHash('sha256').update(String(s)).digest('hex');
 export const normEmail = (e) => String(e || '').trim().toLowerCase();
 export function validEmail(e) { const n = normEmail(e); return n.length <= 254 && EMAIL.test(n) && !n.includes('..'); }
-export function passDays(env) { return Math.max(1, Math.min(400, Math.round(Number(env && env.ACE_LABS_PASS_DAYS) || 90))); }
+// Thomas's decisions (2026-11-21). The env vars below can still override them without a code change.
+export const PASS_PRICE_LABEL = '$249';                           // ACE_LABS_PASS_PRICE_LABEL
+export const PASS_DAYS = 90;                                       // ACE_LABS_PASS_DAYS
+export const CRASH_DAYS = 90;                                      // ACE_LABS_CRASH_DAYS
+export const COMP_STATUSES = 'Active, Inactive, DAT complete';     // ACE_LABS_COMP_STATUSES (comma separated)
+const PRICE_LABEL = /^\$\d{1,4}(\.\d{2})?$/;
+
+export function passDays(env) { return Math.max(1, Math.min(400, Math.round(Number(env && env.ACE_LABS_PASS_DAYS) || PASS_DAYS))); }
+export function crashDays(env) { return Math.max(1, Math.min(400, Math.round(Number(env && env.ACE_LABS_CRASH_DAYS) || CRASH_DAYS))); }
+/** The price shown on the pass page, like "$249". A malformed override falls back to the decided price. */
+export function passPriceLabel(env) { const l = String((env && env.ACE_LABS_PASS_PRICE_LABEL) || '').trim(); return PRICE_LABEL.test(l) ? l : PASS_PRICE_LABEL; }
+/** The same price in cents (24900). Checkout refuses a Stripe price that does not match it. */
+export function passPriceCents(env) { return Math.round(Number(passPriceLabel(env).slice(1)) * 100); }
+/** Students.Status values that keep free access, lower case. Split on commas only: "DAT complete" has a space. */
+export function compStatuses(env) { return String((env && env.ACE_LABS_COMP_STATUSES) || COMP_STATUSES).split(',').map((x) => x.trim().toLowerCase()).filter(Boolean); }
 
 /* ------------------------------------------------------------------ key-value store */
 
@@ -155,7 +170,7 @@ export function airtableLookups(env, fetchImpl = fetch) {
   }
   return {
     async student(email) {
-      const statuses = list(env.ACE_LABS_COMP_STATUSES || 'active');
+      const statuses = compStatuses(env);
       const e = escFormula(normEmail(email));
       const found = await rows('Students', `LOWER({Email})='${e}'`, ['Portal ID', 'Status', 'Email']);
       const hit = found.find((f) => normEmail(f.Email) === normEmail(email) && statuses.includes(String(f.Status || 'Active').toLowerCase()) && STUDENT_ID.test(String(f['Portal ID'] || '')));
@@ -186,7 +201,7 @@ export async function resolveAccess(acct, env, { now = Date.now(), lookups } = {
   const pu = passUntil(acct.pass && acct.pass.grants);
   if (pu > now) options.push({ plan: 'pass', until: pu });
   const crash = await L.crash(email).catch(() => null);
-  if (crash) { const cu = crash.since + Math.max(1, Number(env.ACE_LABS_CRASH_DAYS) || 90) * DAY_MS; if (cu > now) options.push({ plan: 'crash', until: cu }); }
+  if (crash) { const cu = crash.since + crashDays(env) * DAY_MS; if (cu > now) options.push({ plan: 'crash', until: cu }); }
   if (options.length) {
     options.sort((a, b) => (a.until === 0 ? Infinity : a.until) - (b.until === 0 ? Infinity : b.until));
     const best = options[options.length - 1];

@@ -102,8 +102,13 @@ const store = fakeToolState();
 const mail = [];
 const stripeSessions = {};
 const mailer = async (m) => { mail.push(m); return true; };
-const lookups = { student: async (e) => (e === 'coaching.student@example.com' ? { portalId: 'S35' } : null), crash: async () => null };
+// coaching.student = Status Active, paused.student = Status Inactive (the Status filter itself is unit tested)
+const COACHING = { 'coaching.student@example.com': 'S35', 'paused.student@example.com': 'S36' };
+const lookups = { student: async (e) => (COACHING[e] ? { portalId: COACHING[e] } : null), crash: async () => null };
+// nothing a coaching student sees may talk about money
+const MONEY = /\$|\bpay|price|buy|purchase|checkout|refund|charge|cost|subscription/i;
 const stripeFetch = async (url, init = {}) => {
+  if (String(url).includes('/v1/prices/')) return new Response(JSON.stringify({ object: 'price', id: 'price_LOCAL', active: true, type: 'one_time', recurring: null, currency: 'usd', unit_amount: 24900 }), { status: 200 });
   if ((init.method || 'GET') === 'POST') {
     const form = new URLSearchParams(init.body); const id = 'cs_test_E2E' + crypto.randomBytes(4).toString('hex');
     stripeSessions[id] = { object: 'checkout.session', id, mode: 'payment', status: 'complete', payment_status: 'paid', client_reference_id: form.get('client_reference_id'), customer_email: form.get('customer_email'),
@@ -256,6 +261,7 @@ try {
   assert.equal(new URL(A.page.url()).pathname, '/pass/');
   await A.page.waitForSelector('#s-pass:not([hidden])');
   assert.equal(await A.page.textContent('#price'), '$249');
+  assert.equal(await A.page.textContent('#terms'), '90 days of full access. One payment, no subscription. It does not renew.');
   await check(A.page, 'paywall'); await shot(A.page, '05-paywall-390');
   const st402 = await A.page.evaluate(() => fetch('/shared/dat-mock-tests.js', { credentials: 'same-origin' }).then((r) => r.status));
   assert.equal(st402, 402);
@@ -300,14 +306,25 @@ try {
   ok('checkout, signed webhook and return page: the pass is active and the full banks open', full.items.length + ' Gen Chem items');
   await A.context.close();
 
-  // 6. a coaching student's email: everything, no payment, on their portal id
-  const C = await phone(390);
-  const s3 = await (await emailSignIn(C.page, 'coaching.student@example.com', '/account/')).verify();
-  assert.equal(s3.plan, 'coaching'); assert.equal(s3.sub, 'S35');
-  await C.page.waitForSelector('#s-acct:not([hidden])');
-  await check(C.page, 'account, coaching'); await shot(C.page, '09-account-coaching-390');
-  await C.context.close();
-  ok('a coaching student signing in by email gets everything free, on their portal id', 'S35');
+  // 6. coaching students (current and paused): everything, no money language, on their portal id
+  for (const [email, w, tag] of [['coaching.student@example.com', 390, 'coaching'], ['coaching.student@example.com', 360, 'coaching'], ['paused.student@example.com', 390, 'paused'], ['paused.student@example.com', 360, 'paused']]) {
+    const C = await phone(w);
+    const s3 = await (await emailSignIn(C.page, email, '/account/')).verify();
+    assert.equal(s3.plan, 'coaching'); assert.equal(s3.sub, COACHING[email]);
+    await C.page.waitForSelector('#s-acct:not([hidden])');
+    assert.equal(await C.page.textContent('#a-plan'), 'Included with your coaching');
+    assert.equal(await C.page.isVisible('#get'), false, 'no Get the pass button');
+    const acctText = await C.page.evaluate(() => document.body.innerText);
+    assert.ok(!MONEY.test(acctText), 'account page, ' + tag + ': ' + (acctText.match(MONEY) || [''])[0]);
+    await check(C.page, 'account, ' + tag); await shot(C.page, `09-account-${tag}-${w}`);
+    await C.page.goto(`${base}/pass/`, { waitUntil: 'load' }); await C.page.waitForSelector('#s-have:not([hidden])');
+    const passText = await C.page.evaluate(() => document.body.innerText);
+    assert.ok(!MONEY.test(passText), 'pass page, ' + tag + ': ' + (passText.match(MONEY) || [''])[0]);
+    assert.match(passText, /comes with your AceTheDAT coaching/);
+    await check(C.page, 'pass page, ' + tag); await shot(C.page, `14-pass-${tag}-${w}`);
+    await C.context.close();
+  }
+  ok('current and paused coaching students get everything free on their portal id, with no money language', 'S35, S36 at 390 and 360');
 
   // 7. the coach page
   const T = await phone(390);
@@ -323,6 +340,11 @@ try {
   await check(T.page, 'coach student'); await shot(T.page, '11-coach-student-390');
   await T.context.close();
   ok("Thomas's coach page lists the accounts and shows the student's open miss", rows + ' accounts');
+  const T2 = await phone(360);
+  await (await emailSignIn(T2.page, 'coach@example.com', '/coach/accounts/')).verify();
+  await T2.page.waitForSelector('#s-list:not([hidden])');
+  await check(T2.page, 'coach list'); await shot(T2.page, '10-coach-list-360');
+  await T2.context.close();
 
   // a student cannot open the coach page
   const D = await phone(360);

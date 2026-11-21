@@ -57,6 +57,20 @@ async function stripe(env, fetchImpl, path, { method = 'GET', form } = {}) {
   return j;
 }
 
+/**
+ * Checks the configured Stripe price before anyone is sent to pay: active, one-time (never a
+ * subscription), USD, and exactly the amount the pass page shows (24900 cents for $249).
+ * Returns '' when it matches, or why not. A wrong or recurring price ID never reaches a student.
+ */
+export async function passPriceProblem(env, fetchImpl, expectedCents) {
+  let p;
+  try { p = await stripe(env, fetchImpl, `/prices/${encodeURIComponent(env.ACE_LABS_PASS_PRICE_ID)}`); } catch { return 'price_lookup_failed'; }
+  if (!p || p.object !== 'price' || !p.active) return 'price_inactive';
+  if (p.type !== 'one_time' || p.recurring) return 'price_recurring';
+  if (String(p.currency || '').toLowerCase() !== 'usd' || p.unit_amount !== expectedCents) return 'price_mismatch';
+  return '';
+}
+
 /** One Checkout Session for one account. One-time payment, no subscription, no auto-renew. */
 export async function createCheckout(env, fetchImpl, { accountId, email, site, days }) {
   const form = {

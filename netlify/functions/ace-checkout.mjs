@@ -1,5 +1,6 @@
 // POST /.netlify/functions/ace-checkout   (X-Ace-Session header)          -> { ok, url }
-//   Starts Stripe Checkout for the Ace Labs pass, for the signed-in email account.
+//   Starts Stripe Checkout for the Ace Labs pass ($249 once, 90 days, no auto-renew), for the
+//   signed-in email account. Refuses (503) when the Stripe price is not that exact one-time price.
 // POST /.netlify/functions/ace-checkout?confirm=1   Body: { session_id }  -> a fresh session
 //   Where Stripe sends the buyer back (/account/?paid=cs_...). Confirms that Checkout Session with
 //   Stripe, checks it is this account's, records the pass (same record the webhook writes, once)
@@ -7,8 +8,8 @@
 //
 // Test mode only unless ACE_LABS_STRIPE_ALLOW_LIVE=yes. See netlify/lib/ace-stripe.mjs.
 import { json, accountsEnabled, sessionFromRequest } from '../lib/ace-token.mjs';
-import { defaultKv, accountById, resolveAccess, mintAccountSession, sessionBody, grantPass, passDays, siteUrl } from '../lib/ace-accounts.mjs';
-import { stripeProblem, createCheckout, retrieveCheckout, isPaidPass } from '../lib/ace-stripe.mjs';
+import { defaultKv, accountById, resolveAccess, mintAccountSession, sessionBody, grantPass, passDays, passPriceCents, siteUrl } from '../lib/ace-accounts.mjs';
+import { stripeProblem, passPriceProblem, createCheckout, retrieveCheckout, isPaidPass } from '../lib/ace-stripe.mjs';
 import { sameOrigin } from './ace-magic-request.mjs';
 import { accountView } from './ace-account.mjs';
 
@@ -41,6 +42,8 @@ export async function handleCheckout(req, { env = process.env, kv, lookups, fetc
 
   const access = await resolveAccess(acct, env, { now, lookups });
   if (['coach', 'coaching'].includes(access.plan) || (access.plan === 'comp' && !access.until)) return json(409, { ok: false, error: 'already_included', plan: access.plan });
+  const priceProblem = await passPriceProblem(env, fetchImpl, passPriceCents(env));
+  if (priceProblem) return json(503, { ok: false, error: priceProblem });
   const out = await createCheckout(env, fetchImpl, { accountId: acct.id, email: acct.email, site: siteUrl(env, req), days: passDays(env) });
   return json(200, { ok: true, url: out.url });
 }
