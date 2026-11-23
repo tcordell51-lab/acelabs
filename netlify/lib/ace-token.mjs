@@ -108,6 +108,15 @@ export function signInEnabled(env) {
 }
 
 /**
+ * The second flag: email accounts and the paid pass. OFF unless ACE_LABS_ACCOUNTS is exactly
+ * on / true / 1, and it only does anything while ACE_LABS_SIGN_IN (the gate) is on as well.
+ */
+export function accountsEnabled(env) {
+  const v = String((env && env.ACE_LABS_ACCOUNTS) || '').trim().toLowerCase();
+  return signInEnabled(env) && (v === 'on' || v === 'true' || v === '1');
+}
+
+/**
  * The verified Ace Labs session for a request, or null. Reads the X-Ace-Session header
  * first (function calls from page scripts), then the ace_session cookie (page and bank
  * requests, which cannot carry a header).

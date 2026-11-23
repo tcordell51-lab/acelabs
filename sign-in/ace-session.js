@@ -16,6 +16,10 @@
         /.netlify/functions/ace-progress (Airtable). On load the server copy is pulled
         and merged into the cache, so Repair and Progress show the server copy.
      4. Sign out. AceSession.signOut() clears the session and sets the cache aside.
+     5. Email accounts and the pass (only while ACE_LABS_ACCOUNTS is on). A sign-in link from
+        email lands on /sign-in/#m=<token>; the page posts it to ace-magic-verify and gets the same
+        kind of session as the portal sign-in. AceSession.account() refreshes it (a pass paid a
+        minute ago takes effect), checkout() starts Stripe Checkout, confirm() finishes it.
 
    Keys (family ace.v1.): session, owner, dirty, park.<studentId>.<key> */
 (function () {
@@ -194,11 +198,50 @@
       .then(function (r) { return r.json().catch(function () { return {}; }); })
       .then(function (res) {
         if (!res.ok || !res.token) return { ok: false, error: res.error || 'failed' };
-        setJson('session', { token: res.token, exp: res.exp, sub: res.sub, role: res.role, view: res.view || null });
-        var swapped = res.role === 'student' ? claimCache(res.sub) : false;
-        emit({ type: 'signed-in', sub: res.sub, role: res.role });
-        return { ok: true, swapped: swapped, role: res.role };
+        return keep(res);
       }, function () { return { ok: false, error: 'network' }; });
+  }
+  function keep(res) {
+    setJson('session', { token: res.token, exp: res.exp, sub: res.sub, role: res.role, view: res.view || null, src: res.src || 'portal', plan: res.plan || '', until: res.until || 0 });
+    var swapped = res.role === 'student' ? claimCache(res.sub) : false;
+    emit({ type: 'signed-in', sub: res.sub, role: res.role });
+    return { ok: true, swapped: swapped, role: res.role, next: res.next, plan: res.plan };
+  }
+
+  /* ---- email accounts and the pass ---- */
+  function takeMagicToken() {
+    var m = /(?:^#|&)m=([A-Za-z0-9_\-]+)/.exec(location.hash || '');
+    if (!m) return '';
+    try { history.replaceState(null, '', location.pathname + location.search); } catch (e) { location.hash = ''; }
+    return m[1];
+  }
+  function post(name, body, query) {
+    var s = current(), headers = { 'Content-Type': 'application/json' };
+    if (s) headers['X-Ace-Session'] = s.token;
+    return fetch(FN + name + (query || ''), { method: 'POST', headers: headers, credentials: 'same-origin', body: JSON.stringify(body || {}) })
+      .then(function (r) { return r.json().catch(function () { return {}; }).then(function (j) { j.status = r.status; return j; }); }, function () { return { ok: false, error: 'network' }; });
+  }
+  function requestLink(email, next) { return post('ace-magic-request', { email: email, next: safeNext(next) }); }
+  function verifyLink(token) {
+    return post('ace-magic-verify', { token: token }).then(function (res) { return res.ok && res.token ? keep(res) : { ok: false, error: res.error || 'failed' }; });
+  }
+  function account() {
+    return call('ace-account').then(function (res) {
+      if (res.ok && res.token) keep(res);
+      if (res.status === 401) delRaw('session');
+      return res;
+    }, function () { return { ok: false, error: 'network' }; });
+  }
+  function checkout() { return post('ace-checkout', {}); }
+  function confirm(sessionId) {
+    return post('ace-checkout', { session_id: sessionId }, '?confirm=1').then(function (res) { if (res.ok && res.token) keep(res); return res; });
+  }
+  var FULL = ['pass', 'comp', 'coaching', 'coach', 'crash'];
+  /* Does this session open everything right now? A portal sign-in always does. */
+  function full(s) {
+    s = s || current(); if (!s) return false;
+    if (s.src !== 'email') return true;
+    return FULL.indexOf(s.plan) >= 0 && (!s.until || s.until * 1000 > Date.now());
   }
   function signOut() {
     var s = current(), owner = getRaw('owner') || '';
@@ -222,25 +265,40 @@
 
   /* ---- a quiet account line at the foot of the page ---- */
   function footer(s) {
-    if (framed() || document.getElementById('ace-account') || /^\/sign-in(\/|$)/.test(location.pathname)) return;
+    if (framed() || document.getElementById('ace-account') || /^\/(sign-in|account|pass)(\/|$)/.test(location.pathname)) return;
     var bar = document.createElement('div'); bar.id = 'ace-account';
-    bar.style.cssText = 'font:500 13px/1.4 "DM Sans",system-ui,sans-serif;color:#5b6b61;text-align:center;padding:14px 12px 22px';
-    var a = document.createElement('a'); a.style.cssText = 'color:#1f4d3a;text-decoration:underline';
-    if (s) { bar.appendChild(document.createTextNode('Signed in with your portal account. ')); a.href = '/sign-in/?out=1'; a.textContent = 'Sign out'; }
-    else { a.href = '/sign-in/?next=' + encodeURIComponent(location.pathname + location.search); a.textContent = 'Sign in with your portal account'; }
+    bar.style.cssText = 'font:500 16px/1.5 "DM Sans",system-ui,sans-serif;color:#5b6b61;text-align:center;padding:14px 12px 22px';
+    var a = document.createElement('a'); a.style.cssText = 'color:#1f4d3a;text-decoration:underline;display:inline-block;min-height:44px;line-height:44px;padding:0 6px';
+    if (s && s.src === 'email') { bar.appendChild(document.createTextNode('Signed in. ')); a.href = '/account/'; a.textContent = 'Your account'; }
+    else if (s) { bar.appendChild(document.createTextNode('Signed in with your portal account. ')); a.href = '/sign-in/?out=1'; a.textContent = 'Sign out'; }
+    else { a.href = '/sign-in/?next=' + encodeURIComponent(location.pathname + location.search); a.textContent = 'Sign in'; }
     bar.appendChild(a);
     (document.body || document.documentElement).appendChild(bar);
+  }
+
+  /* ---- on a sample page, say so once, at the top ---- */
+  var SAMPLE_PAGES = /^\/(gc|bio|oc|qr\/drill)(\/|\/index\.html)?$/;
+  function sampleBanner(s) {
+    if (!s || s.src !== 'email' || full(s) || !SAMPLE_PAGES.test(location.pathname) || document.getElementById('ace-sample')) return;
+    var bar = document.createElement('div'); bar.id = 'ace-sample'; bar.setAttribute('role', 'note');
+    bar.style.cssText = 'background:#1f4d3a;color:#fff;font:500 16px/1.45 "DM Sans",system-ui,sans-serif;padding:10px 16px;text-align:center';
+    bar.appendChild(document.createTextNode('Free account: a sample of 10 questions in this section. '));
+    var a = document.createElement('a'); a.href = '/pass/?next=' + encodeURIComponent(location.pathname + location.search); a.textContent = 'See the pass';
+    a.style.cssText = 'color:#F2DFA0;font-weight:700;text-decoration:underline;display:inline-block;min-height:44px;line-height:44px;padding:0 6px';
+    bar.appendChild(a);
+    var b = document.body || document.documentElement; b.insertBefore(bar, b.firstChild);
   }
 
   var api = window.AceSession = {
     version: 1, current: current, status: status, exchange: exchange, signOut: signOut, pull: pull, flush: flushDirty,
     takeFragmentToken: takeFragmentToken, safeNext: safeNext, portalSignInUrl: portalSignInUrl, framed: framed,
+    takeMagicToken: takeMagicToken, requestLink: requestLink, verifyLink: verifyLink, account: account, checkout: checkout, confirm: confirm, full: full,
     onChange: function (fn) { listeners.push(fn); },
     _merge: mergeInto, _claim: claimCache
   };
 
   function boot() {
-    if (/^\/sign-in(\/|$)/.test(location.pathname)) return;   // the sign-in page drives the steps itself
+    if (/^\/(sign-in|account|pass)(\/|$)/.test(location.pathname)) return;   // these pages drive the steps themselves
     var token = takeFragmentToken();
     var start = token ? exchange(token) : Promise.resolve({ ok: !!current(), swapped: false });
     start.then(function (r) {
@@ -250,6 +308,7 @@
       if (isStudent(s) && claimCache(s.sub)) { location.reload(); return; }
       if (isStudent(s)) { attachSync(); pull().then(function () { flushDirty(); }); }
       footer(s);
+      sampleBanner(s);
     });
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot); else boot();

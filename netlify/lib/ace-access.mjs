@@ -22,14 +22,42 @@ export const FREE_PAGES = Object.freeze([
   '/diagnostic',
   // where the free diagnostic ends: its question-by-question review (reads this browser's record only)
   '/review',
+  // accounts and the pass (2026-11-20). Each page shows a neutral note while ACE_LABS_ACCOUNTS is off.
+  '/pass', '/account',
 ]);
 
+/**
+ * Extra pages a FREE ACCOUNT opens (signed in by email, no pass), only while ACE_LABS_ACCOUNTS
+ * is on. The four section hubs run on the small sample banks in SAMPLE_FORMS, and Repair and
+ * Progress run the whole miss loop on whatever the student has answered. Exact page keys, not
+ * prefixes, so /gc/vsepr and the other labs under a hub stay locked.
+ */
+export const FREE_ACCOUNT_PAGES = Object.freeze(['/gc', '/bio', '/oc', '/qr/drill', '/repair', '/progress']);
+
+/**
+ * Banks a free account (and a signed-out visitor who reaches them) gets as a small sample.
+ * Built by scripts/build-free-samples.mjs. Holders of the pass get the full file.
+ */
+export const SAMPLE_FORMS = Object.freeze({
+  '/data/bio.json': '/data/free/sample-bio.json',
+  '/data/gchem.json': '/data/free/sample-gchem.json',
+  '/data/ochem.json': '/data/free/sample-ochem.json',
+  '/data/qr-climb.json': '/data/free/sample-qr-climb.json',
+  '/data/qr-dat.json': '/data/free/sample-qr-dat.json',
+});
+
+/** Pages under this prefix are for coaches only (role master or coach), pass or not. */
+export const COACH_PREFIX = '/coach/';
+
 /** Scripts and data a free page needs. Prefix match. */
-export const FREE_FILE_PREFIXES = Object.freeze(['/shared/', '/sign-in/']);
+// The free labs' own folders are free too (the Galvanic lab loads galvanic-walk.js next to it).
+export const FREE_FILE_PREFIXES = Object.freeze(['/shared/', '/sign-in/', '/gc/galvanic/', '/games/chirality/', '/bio/see/', '/qr/worked/']);
 
 /** Free single files. */
 // /data/topics.json is topic ids and names only (no questions): Labs and the review read it.
-export const FREE_FILES = Object.freeze(['/robots.txt', '/favicon.ico', '/data/free/diagnostic-bank.json', '/data/topics.json', '/gc/galvanic/galvanic-walk.js']);
+// The sample banks are ten questions a section; they are free files so the rewrite can always reach them.
+export const FREE_FILES = Object.freeze(['/robots.txt', '/favicon.ico', '/data/free/diagnostic-bank.json', '/data/topics.json', '/gc/galvanic/galvanic-walk.js',
+  '/data/free/sample-bio.json', '/data/free/sample-gchem.json', '/data/free/sample-ochem.json', '/data/free/sample-qr-climb.json', '/data/free/sample-qr-dat.json']);
 
 /** Question banks that live under a free prefix but are locked. */
 export const LOCKED_FILES = Object.freeze([
@@ -99,10 +127,21 @@ export function classify(pathname) {
   return 'locked';
 }
 
-/** Does this session open this locked path? */
-export function entitled(session, pathname) {
-  if (!session) return false;
+/**
+ * The entitlements a session carries right now. A pass or a comp ends at session.until
+ * (seconds); after that the same session is a free account until it is refreshed.
+ */
+export function effectiveEnt(session, now = Math.floor(Date.now() / 1000)) {
+  if (!session) return [];
   const ent = Array.isArray(session.ent) ? session.ent : [];
+  if (typeof session.until === 'number' && session.until > 0 && now >= session.until) return session.src === 'email' ? ['free-account'] : [];
+  return ent;
+}
+
+/** Does this session open this locked path? */
+export function entitled(session, pathname, now) {
+  if (!session) return false;
+  const ent = effectiveEnt(session, now);
   if (ent.includes('all')) return true;
   const p = normalize(pathname).toLowerCase();
   return ent.some((scope) => (SCOPES[scope] || []).some((pre) => p.startsWith(pre)));

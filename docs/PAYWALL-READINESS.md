@@ -3,6 +3,12 @@
 Date: 2026-11-16. Written for Thomas. Nothing here is live, and no Stripe key, product, Payment
 Link or function was created. `docs/` is blocked from being served.
 
+**Update 2026-11-21: superseded.** The accounts and pass build (branch `feat/accounts-pass`,
+behind `ACE_LABS_ACCOUNTS`, off by default) replaced this plan. Thomas's final decisions: the
+pass is **$249, one payment, 90 days, no auto-renew** (not $349). Included free: coaching
+students with Students Status Active, Inactive or DAT complete, and crash course buyers for 90
+days from purchase. Still open: refund rule, free sample size, which coach email gets notices.
+
 ## The pattern that already exists (PAT Lab)
 
 `ace-pat-lab` has a working, test-mode-only paywall. Ace Labs can reuse it as is:
