@@ -4,8 +4,12 @@
 // diagnostic stay open to bring in leads; everything else needs a sign-in.
 //
 // The rule is default deny: a page, script or data file that is not named free here is
-// locked. Pictures, fonts, styles, audio and video never reach the gate (see the
-// excludedPath list in netlify/edge-functions/ace-gate.js).
+// locked. Styles, fonts and drawn pictures (png, gif, webp, avif, svg, ico) never reach the
+// gate (see the excludedPath list in netlify/edge-functions/ace-gate.js).
+//
+// Audio, video, captions and photos (mp3, m4a, wav, ogg, mp4, webm, vtt, jpg, jpeg) are gated
+// (2026-11-23: the course narration MP3s were reachable by link). They are locked unless named
+// one by one in FREE_FILES; a free folder prefix does NOT open them.
 
 /** Free pages. Paths are normalized: no trailing slash, no .html, no /index. */
 export const FREE_PAGES = Object.freeze([
@@ -57,7 +61,11 @@ export const FREE_FILE_PREFIXES = Object.freeze(['/shared/', '/sign-in/', '/gc/g
 // /data/topics.json is topic ids and names only (no questions): Labs and the review read it.
 // The sample banks are ten questions a section; they are free files so the rewrite can always reach them.
 export const FREE_FILES = Object.freeze(['/robots.txt', '/favicon.ico', '/data/free/diagnostic-bank.json', '/data/topics.json', '/gc/galvanic/galvanic-walk.js',
-  '/data/free/sample-bio.json', '/data/free/sample-gchem.json', '/data/free/sample-ochem.json', '/data/free/sample-qr-climb.json', '/data/free/sample-qr-dat.json']);
+  '/data/free/sample-bio.json', '/data/free/sample-gchem.json', '/data/free/sample-ochem.json', '/data/free/sample-qr-climb.json', '/data/free/sample-qr-dat.json',
+  // the photo plates the free pages show: /bio/see (eleven), /gc/galvanic, and the home and Labs hubs (brain, galvanic)
+  '/shared/art/plates/alveoli.jpg', '/shared/art/plates/brain.jpg', '/shared/art/plates/chloroplast.jpg', '/shared/art/plates/digestive.jpg',
+  '/shared/art/plates/eye.jpg', '/shared/art/plates/flower.jpg', '/shared/art/plates/galvanic.jpg', '/shared/art/plates/leaf.jpg',
+  '/shared/art/plates/lungs.jpg', '/shared/art/plates/mitochondrion.jpg', '/shared/art/plates/skin.jpg', '/shared/art/plates/villus.jpg']);
 
 /** Question banks that live under a free prefix but are locked. */
 export const LOCKED_FILES = Object.freeze([
@@ -85,7 +93,10 @@ export const SCOPES = Object.freeze({
   // example, not issued yet:  'crash-qr': ['/qr/', '/tools/qr/', '/data/qr-climb.json'],
 });
 
-const MEDIA = /\.(css|png|jpe?g|gif|webp|avif|svg|ico|woff2?|ttf|otf|mp3|m4a|wav|ogg|mp4|webm|vtt)$/i;
+/** Never gated: styles, fonts, drawn pictures. Keep in step with excludedPath in the edge function. */
+export const MEDIA = /\.(css|png|gif|webp|avif|svg|ico|woff2?|ttf|otf)$/i;
+/** Gated media: locked unless the exact file is in FREE_FILES. */
+export const GATED_MEDIA = /\.(mp3|m4a|wav|ogg|mp4|webm|vtt|jpe?g)$/i;
 
 export function normalize(pathname) {
   let p = String(pathname || '/');
@@ -119,6 +130,7 @@ export function classify(pathname) {
   const p = normalize(pathname);
   const lower = p.toLowerCase();
   if (MEDIA.test(lower)) return 'media';
+  if (GATED_MEDIA.test(lower)) return FREE_FILES.includes(lower) ? 'free' : 'locked';
   if (LOCKED_FILES.includes(lower)) return 'locked';
   if (Object.prototype.hasOwnProperty.call(FREE_FORMS, lower)) return 'locked';
   if (FREE_FILES.includes(lower)) return 'free';

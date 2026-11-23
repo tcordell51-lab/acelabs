@@ -95,13 +95,13 @@ export async function gated(request, context, env, deps) {
 
 export const config = {
   path: '/*',
-  // Pictures, fonts, styles, audio and video are never gated, and the functions check
-  // their own callers.
+  // Styles, fonts and drawn pictures are never gated, and the functions check their own
+  // callers. Audio, video, captions and photos (mp3, m4a, wav, ogg, mp4, webm, vtt, jpg, jpeg)
+  // DO come through the gate: locked unless named in FREE_FILES (netlify/lib/ace-access.mjs).
   excludedPath: [
     '/.netlify/*',
-    '/*.css', '/*.png', '/*.jpg', '/*.jpeg', '/*.gif', '/*.webp', '/*.avif', '/*.svg', '/*.ico',
+    '/*.css', '/*.png', '/*.gif', '/*.webp', '/*.avif', '/*.svg', '/*.ico',
     '/*.woff', '/*.woff2', '/*.ttf', '/*.otf',
-    '/*.mp3', '/*.m4a', '/*.wav', '/*.ogg', '/*.mp4', '/*.webm', '/*.vtt',
   ],
   // Fail closed: if the gate cannot run, nothing is served unchecked. Safe with the flag off
   // because the module has no top-level imports (see the note at the top).

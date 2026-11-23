@@ -131,7 +131,7 @@ const server = http.createServer(async (req, res) => {
     let out;
     if (fn && H[fn]) out = await H[fn](request, { env: env(), kv, mailer, lookups, fetchImpl: fn === 'ace-checkout' ? stripeFetch : store.fetchImpl, jtiStore: null });
     else if (fn) out = new Response('{}', { status: 404 });
-    else if (/\.(css|png|jpe?g|gif|webp|svg|ico|woff2?|ttf|otf|mp3|m4a|wav|ogg|mp4|webm|vtt)$/i.test(p)) out = staticResponse(p);
+    else if (/\.(css|png|gif|webp|avif|svg|ico|woff2?|ttf|otf)$/i.test(p)) out = staticResponse(p);   // the edge excludedPath: photos, audio and video go through the gate
     else {
       const context = { next: async () => staticResponse(p), rewrite: async (to) => staticResponse(new URL(to, base).pathname) };
       out = (await handle(request, context, env())) || staticResponse(p);
@@ -224,6 +224,27 @@ try {
     await context.close();
   }
   ok('sign-in, check-your-email and signed-out pass screens fit both phone widths');
+
+  // 1b. a free lab, signed out, at 390: its photo plates come through the gate; narration does not
+  {
+    const { context, page } = await phone(390);
+    await page.goto(`${base}/bio/see/`, { waitUntil: 'load' });
+    await page.waitForFunction(() => [...document.images].filter((i) => /\/art\/plates\/.+\.jpg/.test(i.src)).length > 0);
+    await page.evaluate(() => Promise.all([...document.images].filter((i) => /\/art\/plates\//.test(i.src)).map((i) => (i.loading === 'lazy' && i.scrollIntoView(), i.decode().catch(() => null)))));
+    const r = await page.evaluate(() => ({ overflow: document.documentElement.scrollWidth - window.innerWidth,
+      broken: [...document.images].filter((i) => /\/art\/plates\/.+\.jpg/.test(i.src) && i.complete && i.naturalWidth === 0).map((i) => i.src),
+      loaded: [...document.images].filter((i) => /\/art\/plates\/.+\.jpg/.test(i.src) && i.naturalWidth > 0).length }));
+    assert.ok(r.overflow <= 1, `/bio/see/ scrolls sideways by ${r.overflow}px at 390px`);
+    assert.deepEqual(r.broken, [], 'free plates blocked by the gate');
+    assert.ok(r.loaded >= 1, 'no plate loaded');
+    await page.evaluate(() => window.scrollTo(0, 0));
+    await shot(page, '00-free-lab-bio-see-390');
+    const audio = await page.evaluate(async () => (await fetch('/tools/gchem/audio/n1-s1.mp3')).status);
+    const photo = await page.evaluate(async () => (await fetch('/gc/guacamole/img/board.jpg')).status);
+    assert.equal(audio, 401, 'narration MP3 signed out'); assert.equal(photo, 401, 'locked lab photo signed out');
+    await context.close();
+    ok('free lab /bio/see/ at 390: no sideways scroll, plates load through the gate; narration MP3 and locked photos answer 401', r.loaded + ' plates');
+  }
 
   // 2. a new student signs in by link and gets a free account
   const A = await phone(390);

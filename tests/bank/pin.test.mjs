@@ -32,15 +32,45 @@ const SEED_SHA_PINNED = '2a60be0bd38ce99afd8a90bbba63b168d1321e42992d74e8bf88099
 const FORMS_SHA_PINNED = '1ba15d651d4e59e82bd0863328888f81f62eb8cbc099c86a756d109ecc66f1c7';
 const undoSwaps = (x) => { let j = JSON.stringify(x); for (const s of APPROVED_SWAPS) j = j.split(JSON.stringify(s.in)).join(JSON.stringify(s.out)); return JSON.parse(j); };
 
+// Approved removals (Thomas, 2026-11-23): out-of-scope and defective items leave the pinned set
+// (gc-0916 off Full-Length Test 5, 15 out-of-scope QR items off the forms, gc-0916 and qr-geo-0007
+// off the seed). pin.json "removed" records each id and its old place; put them back and the set
+// is exactly the pinned set above.
+const EXCLUSIONS = read('scripts/bank/scope-exclusions.json');
+const SEED_SHA_NOW = 'c74b6afa160d24149e78b2e41bc6915e50fdbaa55279eae31d99c0b92370436c';
+const FORMS_SHA_NOW = 'a1ab269e85d7f629ff74ad28cfc5fa74efb8ea993141bfa3dff6d8ef44495b98';
+const isExcl = (id) => Object.entries(EXCLUSIONS).some(([k, g]) => k !== 'note' && g && (Object.prototype.hasOwnProperty.call(g, id) || Object.prototype.hasOwnProperty.call(g, id.slice(id.indexOf(':') + 1))));
+function undoRemovals(pin) {
+  const p = JSON.parse(JSON.stringify(pin));
+  const items = ((pin.removed || {}).items || []).slice().sort((a, b) => a.index - b.index);
+  for (const r of items) {
+    const [where, sec] = r.from.split('.');
+    const list = where === 'seed' ? p.seed[sec] : p.forms.find((f) => f.id === where).sections[sec];
+    list.splice(r.index, 0, r.id);
+  }
+  return p;
+}
+
 test('pin.json is the 27a5aaf review set with only the approved swaps', () => {
   const pin = loadPin();
   assert.ok(pin, 'scripts/bank/pin.json is missing');
-  for (const s of SECS) assert.equal(pin.seed[s].length, 50, s + ' seed is not 50');
-  assert.equal(new Set(Object.values(pin.seed).flat()).size, 250);
   assert.equal(pin.forms.length, 6);
   assert.deepEqual((pin.swaps || []).map((s) => ({ out: s.out, in: s.in })), APPROVED_SWAPS);
-  assert.equal(sha(pin.seed), SEED_SHA_PINNED, 'the pinned seed moved');
-  assert.equal(sha(formsOf(pin.forms)), FORMS_SHA_PINNED, 'the pinned forms moved');
+  assert.equal(sha(pin.seed), SEED_SHA_NOW, 'the pinned seed moved');
+  assert.equal(sha(formsOf(pin.forms)), FORMS_SHA_NOW, 'the pinned forms moved');
+  // every removal is an excluded item, and nothing excluded is left in the set
+  const removed = pin.removed.items;
+  assert.equal(removed.length, 17);
+  for (const r of removed) assert.ok(isExcl(r.id), r.id + ' was removed but is not on the exclusion list');
+  for (const id of [...Object.values(pin.seed).flat(), ...pin.forms.flatMap((f) => Object.values(f.sections).flat())]) assert.ok(!id || !isExcl(id), id + ' is excluded but still pinned');
+  assert.ok(removed.some((r) => r.id === 'gc:gc-0916' && r.from === 'ACE_1.gc'), 'gc-0916 left Full-Length Test 5');
+  // put the removals back: the set before 2026-11-23, byte for byte
+  const restored = undoRemovals(pin);
+  for (const s of SECS) assert.equal(restored.seed[s].length, 50, s + ' seed is not 50');
+  assert.equal(new Set(Object.values(restored.seed).flat()).size, 250);
+  assert.equal(sha(restored.seed), SEED_SHA_PINNED);
+  assert.equal(sha(formsOf(restored.forms)), FORMS_SHA_PINNED);
+  pin.seed = restored.seed; pin.forms = restored.forms;
   // undo the swaps and the set is byte-for-byte the one committed at 27a5aaf
   assert.equal(sha(undoSwaps(pin.seed)), SEED_SHA_27A5AAF);
   assert.equal(sha(undoSwaps(formsOf(pin.forms))), FORMS_SHA_27A5AAF);
@@ -118,16 +148,16 @@ test('with all five bank PR heads checked out, the build keeps the 250 seed ids 
     const r = build({ banks: h.dir, regenerate: false, pin });
     assert.equal(r.pinned, true);
     assert.deepEqual(seedOf(r.queue.sections), pin.seed);
-    assert.equal(sha(seedOf(r.queue.sections)), SEED_SHA_PINNED);
+    assert.equal(sha(seedOf(r.queue.sections)), SEED_SHA_NOW);
     assert.deepEqual(formsOf(r.forms), formsOf(pin.forms));
-    assert.equal(sha(formsOf(r.forms)), FORMS_SHA_PINNED);
+    assert.equal(sha(formsOf(r.forms)), FORMS_SHA_NOW);
     // the per-item subtopic the bank PRs added is read (canon in Bio and QR, subtopic in OChem)
     assert.ok(r.declared.used >= 150, 'stated subtopics read: ' + r.declared.used);
     assert.deepEqual(r.declared.unknown, []);
     // content still flows through: the items carry fresh data and hashes from the PR heads
     const ids = new Set(Object.values(pin.seed).flat());
     const fresh = Object.values(r.out).flat().filter((i) => ids.has(i.id));
-    assert.equal(fresh.length, 250);
+    assert.equal(fresh.length, 248);
     assert.ok(fresh.every((i) => /^[0-9a-f]{16}$/.test(i.hash)));
     // for the record: what an unpinned rebuild would have done to the seed
     const regen = build({ banks: h.dir, regenerate: true, pin });

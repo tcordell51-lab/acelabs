@@ -99,3 +99,39 @@ test('every free page exists, and loads no locked script or data', () => {
     }
   }
 });
+
+// 2026-11-23: course narration, video, captions and photos come through the gate.
+const LOCKED_MEDIA = ['/tools/gchem/audio/n1-s1.mp3', '/tools/organic/audio/n1-s1.mp3', '/tools/gchem/audio/cues.json', '/tricks/videos/clip.mp4',
+  '/tricks/videos/clip.vtt', '/tricks/videos/clip.webm', '/gc/guacamole/img/board.jpg', '/shared/art/clip.mp3', '/gc/galvanic/voice.mp3', '/x/photo.JPEG'];
+
+test('signed out: narration audio, video, captions and photos are locked (401), even under a free folder', async () => {
+  for (const p of LOCKED_MEDIA) { assert.equal(classify(p), 'locked', p); const d = await go(req(p)); assert.equal(d.action, 'deny', p); assert.equal(d.status, 401, p); }
+});
+
+test('signed in with the pass: the same media is served, marked private', async () => {
+  for (const p of LOCKED_MEDIA) { const d = await go(await signedIn(p)); assert.equal(d.action, 'pass', p); assert.equal(d.private, true, p); }
+});
+
+test('the photo plates the free pages show stay free; styles, fonts and drawn pictures never reach the gate', async () => {
+  for (const p of ['/shared/art/plates/brain.jpg', '/shared/art/plates/galvanic.jpg', '/shared/art/plates/villus.jpg']) { assert.equal(classify(p), 'free', p); assert.deepEqual(await go(req(p)), { action: 'pass' }); }
+  for (const p of ['/shared/art/plates/heart.webp', '/x/a.png', '/x/a.svg', '/x/a.css', '/x/a.woff2']) assert.equal(classify(p), 'media', p);
+});
+
+test('every photo, audio or video file a free page loads is named in FREE_FILES', () => {
+  for (const key of FREE_PAGES) {
+    const file = [key === '/' ? 'index.html' : key.slice(1) + '.html', key.slice(1) + '/index.html'].map((f) => path.join(ROOT, f)).find((f) => fs.existsSync(f));
+    if (!file) continue;
+    const html = fs.readFileSync(file, 'utf8');
+    for (const m of html.matchAll(/["'(]([^"'()\s]+\.(?:mp3|m4a|wav|ogg|mp4|webm|vtt|jpe?g))["')]/gi)) {
+      if (/^(https?:)?\/\//.test(m[1])) continue;
+      const abs = new URL(m[1], 'https://x' + (key === '/' ? '/' : file.endsWith('index.html') ? key + '/' : key)).pathname;
+      assert.equal(classify(abs), 'free', `${key} loads locked media ${abs}`);
+    }
+  }
+});
+
+test('the edge function lets every gated media type through to the gate', async () => {
+  const { config } = await import('../../netlify/edge-functions/ace-gate.js');
+  for (const ext of ['mp3', 'm4a', 'wav', 'ogg', 'mp4', 'webm', 'vtt', 'jpg', 'jpeg']) assert.ok(!config.excludedPath.includes('/*.' + ext), ext);
+  for (const ext of ['css', 'png', 'svg', 'woff2']) assert.ok(config.excludedPath.includes('/*.' + ext), ext);
+});

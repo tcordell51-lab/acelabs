@@ -23,6 +23,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { sessionFromRequest, signInEnabled } from './ace-token.mjs';
+import { exclusionSet, isExcluded } from './ace-exclusions.mjs';
 
 export const STORE = 'ace-bank-review';
 export const BANKS = { bio: 'bio', gchem: 'gchem', ochem: 'ochem', qr: 'qr', rc: 'rc' };
@@ -52,6 +53,16 @@ export function loadPassages({ dir } = {}) {
 }
 export function loadJson(rel) { const f = findFile(rel); return f ? JSON.parse(fs.readFileSync(f, 'utf8')) : null; }
 export function bankOfId(id) { return { 'bio:': 'bio', 'gc:': 'gchem', 'oc:': 'ochem', 'qr:': 'qr', 'rc:': 'rc' }[String(id).slice(0, String(id).indexOf(':') + 1)] || null; }
+/* ---- exclusions (scripts/bank/scope-exclusions.json, carried in the bundle) ----
+   Out of DAT scope or defective: never served, approved or not. Fail closed: with the list
+   missing, every caller below throws and the function answers 500, so nothing goes out unfiltered. */
+let excludedCache = null;
+export function excludedIds({ exclusions } = {}) {
+  if (exclusions) return exclusionSet(exclusions);
+  if (!excludedCache) excludedCache = exclusionSet(loadJson('scripts/bank/scope-exclusions.json'));
+  return excludedCache;
+}
+export function deliverable(id, opts) { return !isExcluded(id, excludedIds(opts)); }
 export function itemById(id, opts) { const b = bankOfId(id); if (!b) return null; return loadBank(b, opts).find((x) => x.id === id) || null; }
 
 /* ---- decisions (Blobs) ---- */
@@ -128,7 +139,7 @@ export function formItems(form, opts) {
   const ids = [];
   for (const sec of ['bio', 'gc', 'ochem', 'qr']) if (form.sections[sec]) ids.push(...form.sections[sec]);
   if (form.rc && form.rc.passages) { const rc = loadBank('rc', opts); for (const pid of form.rc.passages) ids.push(...rc.filter((q) => q.passageId === pid).map((q) => q.id)); }
-  return ids;
+  return ids.filter((id) => deliverable(id, opts));
 }
 export function formStatus(form, decisions, opts) {
   const ids = formItems(form, opts);
@@ -141,11 +152,11 @@ const RC_TYPE_NAMES = { detail: 'Detail', inference: 'Inference', mainidea: 'Mai
 export function formContent(form, opts) {
   const sub = { bio: 'Biology', gc: 'Gen Chem', ochem: 'OChem', qr: 'QR' };
   const mock = { id: form.id, name: form.name, src: 'ace-bank', sections: {}, pat: form.pat, rc: null };
-  for (const sec of ['bio', 'gc', 'ochem', 'qr']) mock.sections[sec] = (form.sections[sec] || []).map((id) => formItem(itemById(id, opts), sub[sec]));
+  for (const sec of ['bio', 'gc', 'ochem', 'qr']) mock.sections[sec] = (form.sections[sec] || []).filter((id) => deliverable(id, opts)).map((id) => formItem(itemById(id, opts), sub[sec]));
   if (form.rc && form.rc.passages) {
     const rc = loadBank('rc', opts), P = loadPassages(opts);
     mock.rc = { types: RC_TYPE_NAMES, passages: form.rc.passages.map((pid) => ({ id: pid, title: P[pid].title, paragraphs: P[pid].paragraphs.map((p) => [p]),
-      questions: rc.filter((q) => q.passageId === pid).map((q) => ({ id: q.id, type: q.topic, stem: q.stem, choices: q.choices, key: q.answer, why: q.why, traps: q.traps })) })) };
+      questions: rc.filter((q) => q.passageId === pid && deliverable(q.id, opts)).map((q) => ({ id: q.id, type: q.topic, stem: q.stem, choices: q.choices, key: q.answer, why: q.why, traps: q.traps })) })) };
   } else if (form.rc && form.rc.section) mock.rc = { section: form.rc.section };
   return mock;
 }

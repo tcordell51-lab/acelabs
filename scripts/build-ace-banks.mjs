@@ -164,8 +164,12 @@ function validate(bank) {
 
 const check = process.argv.includes('--check');
 let stale = 0;
+// Out of DAT scope or defective (scripts/bank/scope-exclusions.json): left out of every served bank.
+const { exclusionSet, isExcluded } = await import('../netlify/lib/ace-exclusions.mjs');
+const EXCLUDED = exclusionSet(JSON.parse(read('scripts/bank/scope-exclusions.json')));
 const BANKS = [gchem(), qrClimb(), bio(), ochem(), qrDat()];
 for (const bank of BANKS) {
+  bank.items = bank.items.filter((it) => { if (!isExcluded(it.id, EXCLUDED)) return true; bank.skipped.push(it.id); return false; });
   bank.items.forEach(withSkill);
   validate(bank);
   const file = path.join(ROOT, 'data', bank.name + '.json');

@@ -11,9 +11,10 @@
   external_node_modules = ["@netlify/blobs"]
 
 # The private-bank functions read the locally built bank-private/ folder (git-ignored; built by
-# scripts/bank/build-private.mjs before a deploy) and the committed forms and review order.
+# scripts/bank/build-private.mjs before a deploy), the committed forms and review order, and the
+# exclusion list (out-of-scope and defective items are never served).
 [functions."ace-bank-*"]
-  included_files = ["bank-private/**", "scripts/bank/forms.json", "scripts/bank/review-queue.json"]
+  included_files = ["bank-private/**", "scripts/bank/forms.json", "scripts/bank/review-queue.json", "scripts/bank/scope-exclusions.json"]
 
 [[headers]]
   for = "/*"

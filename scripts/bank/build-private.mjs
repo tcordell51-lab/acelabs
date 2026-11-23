@@ -37,6 +37,7 @@ import crypto from 'node:crypto';
 import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
 import { composeForms, pinnedForms } from './compose-ace-forms.mjs';
+import { exclusionSet, isExcluded } from '../../netlify/lib/ace-exclusions.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 const Skills = createRequire(import.meta.url)(path.join(ROOT, 'shared/ace-skills.js'));
@@ -53,6 +54,10 @@ const OUT_TAGS = path.join(ROOT, 'scripts/bank/out/ace-bank-tags.json');
 const OUT_FORMS = path.join(ROOT, 'scripts/bank/forms.json');
 const OUT_QUEUE = path.join(ROOT, 'scripts/bank/review-queue.json');
 export const PIN_FILE = path.join(ROOT, 'scripts/bank/pin.json');
+// Out of DAT scope or defective (scripts/bank/scope-exclusions.json): kept in bank-private, but never on
+// a form, in the seed or in the review queue, and the functions refuse to serve them.
+export const EXCLUDED = exclusionSet(JSON.parse(fs.readFileSync(path.join(ROOT, 'scripts/bank/scope-exclusions.json'), 'utf8')));
+const keep = (id) => !isExcluded(id, EXCLUDED);
 export function loadPin(file = PIN_FILE) { return fs.existsSync(file) ? JSON.parse(fs.readFileSync(file, 'utf8')) : null; }
 export const declaredTags = { used: 0, unknown: [] };
 const L = 'ABCDE';
@@ -173,9 +178,9 @@ export function reviewQueue(out, forms, passages, pinnedSeed = null) {
       if (sec === 'rc') { for (const id of extra) { if (seed.length >= 50) break; seed.push(id); } }
       else for (let round = 0; seed.length < 50 && round < 50; round++) for (const s of subs) { if (seed.length >= 50) break; if (bySub[s][round]) seed.push(bySub[s][round]); }
     }
-    const rest = formIds.filter((id) => !seed.includes(id));
-    const bank = items.filter((i) => !seed.includes(i.id) && !rest.includes(i.id) && (sec === 'rc' || (i.choices && i.choices.length === 5))).map((i) => i.id);
-    res.sections[sec] = { seed, forms: rest, bank, formA: formA.length };
+    const rest = formIds.filter((id) => !seed.includes(id) && keep(id));
+    const bank = items.filter((i) => !seed.includes(i.id) && !rest.includes(i.id) && keep(i.id) && (sec === 'rc' || (i.choices && i.choices.length === 5))).map((i) => i.id);
+    res.sections[sec] = { seed: seed.filter(keep), forms: rest, bank, formA: formA.filter(keep).length };
   }
   return res;
 }
