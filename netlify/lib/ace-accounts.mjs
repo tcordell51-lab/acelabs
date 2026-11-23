@@ -20,9 +20,10 @@
 // for a portal sign-in. Coaches read it there.
 //
 // Who gets the pass without paying (the "comp" rule, all automatic at sign-in):
-//   coach      email listed in ACE_LABS_COACH_EMAILS                         -> role master
+//   coach      email listed in ACE_LABS_COACH_EMAILS (default thomas@acethedat.com) -> role master
 //   coaching   Students row with this Email and Status in ACE_LABS_COMP_STATUSES (default
-//              Active, Inactive, DAT complete: current, paused and finished coaching students)
+//              Active, Inactive, DAT complete: current, paused and finished coaching students;
+//              a blank Status opens nothing until Thomas sets one, decided 2026-11-23)
 //              -> the session uses that student's Portal ID, so it joins their portal progress
 //   crash      Leads row with this Email, Enrolled, Source crash-course-*    -> ACE_LABS_CRASH_DAYS
 //              (default 90) from the row's Created At (the purchase), then free
@@ -48,6 +49,7 @@ export const PASS_PRICE_LABEL = '$249';                           // ACE_LABS_PA
 export const PASS_DAYS = 90;                                       // ACE_LABS_PASS_DAYS
 export const CRASH_DAYS = 90;                                      // ACE_LABS_CRASH_DAYS
 export const COMP_STATUSES = 'Active, Inactive, DAT complete';     // ACE_LABS_COMP_STATUSES (comma separated)
+export const COACH_EMAIL = 'thomas@acethedat.com';                 // ACE_LABS_COACH_EMAILS when unset (2026-11-23)
 const PRICE_LABEL = /^\$\d{1,4}(\.\d{2})?$/;
 
 export function passDays(env) { return Math.max(1, Math.min(400, Math.round(Number(env && env.ACE_LABS_PASS_DAYS) || PASS_DAYS))); }
@@ -151,6 +153,8 @@ export async function revokeByPaymentIntent(kv, pi) {
 
 /* ------------------------------------------------------------------ who gets what */
 
+/** Coach sign-in addresses: ACE_LABS_COACH_EMAILS, or Thomas's address when it is unset. */
+export function coachEmails(env) { return list((env && env.ACE_LABS_COACH_EMAILS) || COACH_EMAIL); }
 const list = (v) => String(v || '').split(/[,\s]+/).map((x) => x.trim().toLowerCase()).filter(Boolean);
 const escFormula = (s) => String(s).replace(/\\/g, '\\\\').replace(/'/g, "\\'");
 
@@ -173,7 +177,7 @@ export function airtableLookups(env, fetchImpl = fetch) {
       const statuses = compStatuses(env);
       const e = escFormula(normEmail(email));
       const found = await rows('Students', `LOWER({Email})='${e}'`, ['Portal ID', 'Status', 'Email']);
-      const hit = found.find((f) => normEmail(f.Email) === normEmail(email) && statuses.includes(String(f.Status || 'Active').toLowerCase()) && STUDENT_ID.test(String(f['Portal ID'] || '')));
+      const hit = found.find((f) => normEmail(f.Email) === normEmail(email) && statuses.includes(String(f.Status || '').trim().toLowerCase()) && STUDENT_ID.test(String(f['Portal ID'] || '')));
       return hit ? { portalId: String(hit['Portal ID']) } : null;
     },
     async crash(email) {
@@ -191,7 +195,7 @@ export function airtableLookups(env, fetchImpl = fetch) {
  */
 export async function resolveAccess(acct, env, { now = Date.now(), lookups } = {}) {
   const email = normEmail(acct.email);
-  if (list(env.ACE_LABS_COACH_EMAILS).includes(email)) return { plan: 'coach', role: 'master', ent: ['all'], until: 0, sub: acct.id, portalId: null };
+  if (coachEmails(env).includes(email)) return { plan: 'coach', role: 'master', ent: ['all'], until: 0, sub: acct.id, portalId: null };
   const L = lookups || airtableLookups(env);
   const student = await L.student(email).catch(() => null);
   if (student) return { plan: 'coaching', role: 'student', ent: ['all'], until: 0, sub: student.portalId, portalId: student.portalId };

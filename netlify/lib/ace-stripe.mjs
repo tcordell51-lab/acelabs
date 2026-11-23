@@ -1,15 +1,18 @@
 // Stripe for the Ace Labs pass. No SDK: two REST calls and the webhook signature check.
 //
-// TEST MODE ONLY until Thomas decides otherwise: a live secret key (sk_live_...) is refused
-// unless ACE_LABS_STRIPE_ALLOW_LIVE=yes, the same lock PAT Lab uses.
+// TEST MODE ONLY until Thomas decides otherwise: a live key (sk_live_... or restricted rk_live_...)
+// is refused unless ACE_LABS_STRIPE_ALLOW_LIVE=yes, the same lock PAT Lab uses. A restricted key
+// (rk_test_...) needs only: Checkout Sessions write, Prices read.
 //
-// Env: STRIPE_SECRET_KEY        sk_test_... (Thomas pastes it in Netlify; never in chat or code)
+// Env: STRIPE_SECRET_KEY        rk_test_... or sk_test_... (Thomas pastes it in Netlify; never in chat or code)
 //      ACE_LABS_PASS_PRICE_ID   price_... of the "Ace Labs pass" one-time price
 //      STRIPE_WEBHOOK_SECRET    whsec_... of the Ace Labs webhook endpoint
 //      ACE_LABS_STRIPE_ALLOW_LIVE  "yes" only when Thomas switches to live mode
 import crypto from 'node:crypto';
 
 export const PRODUCT_TAG = 'acelabs-pass';
+/** Thomas's refund rule (2026-11-23), shown on the pass page, at Checkout and on the confirmation. */
+export const REFUND_RULE = 'Full refund if you ask within 48 hours of purchase (email thomas@acethedat.com). A refund ends the pass.';
 const API = 'https://api.stripe.com/v1';
 
 /**
@@ -41,7 +44,8 @@ export function signStripePayload(raw, secret, t = Math.floor(Date.now() / 1000)
 export function stripeProblem(env) {
   const key = String(env.STRIPE_SECRET_KEY || '');
   if (!key) return 'stripe_not_configured';
-  if (!key.startsWith('sk_test_') && env.ACE_LABS_STRIPE_ALLOW_LIVE !== 'yes') return 'live_mode_locked';
+  if (!/^(sk|rk)_(test|live)_/.test(key)) return 'stripe_not_configured';
+  if (!/^(sk|rk)_test_/.test(key) && env.ACE_LABS_STRIPE_ALLOW_LIVE !== 'yes') return 'live_mode_locked';
   if (!/^price_[A-Za-z0-9]+$/.test(String(env.ACE_LABS_PASS_PRICE_ID || ''))) return 'price_not_configured';
   return '';
 }
@@ -86,6 +90,7 @@ export async function createCheckout(env, fetchImpl, { accountId, email, site, d
     'payment_intent_data[metadata][acelabs_account]': accountId,
     success_url: `${site}/account/?paid={CHECKOUT_SESSION_ID}`,
     cancel_url: `${site}/pass/?canceled=1`,
+    'custom_text[submit][message]': `${days} days of full access. One payment; it does not renew. ${REFUND_RULE}`,
   };
   if (env.ACE_LABS_ALLOW_PROMO_CODES === 'yes') form.allow_promotion_codes = 'true';
   const s = await stripe(env, fetchImpl, '/checkout/sessions', { method: 'POST', form });

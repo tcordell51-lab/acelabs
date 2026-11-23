@@ -4,8 +4,8 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { decide } from '../../netlify/lib/ace-gate-core.mjs';
 import { SESSION_COOKIE } from '../../netlify/lib/ace-token.mjs';
-import { memoryKv, findOrCreate, accountByEmail, accountById, resolveAccess, grantPass, passUntil, issueMagic, consumeMagic, saveAccount, airtableLookups, DAY_MS, compStatuses, passPriceLabel, passPriceCents, crashDays, passDays } from '../../netlify/lib/ace-accounts.mjs';
-import { signStripePayload, verifyStripeSignature } from '../../netlify/lib/ace-stripe.mjs';
+import { memoryKv, findOrCreate, accountByEmail, accountById, resolveAccess, grantPass, passUntil, issueMagic, consumeMagic, saveAccount, airtableLookups, DAY_MS, compStatuses, coachEmails, passPriceLabel, passPriceCents, crashDays, passDays } from '../../netlify/lib/ace-accounts.mjs';
+import { signStripePayload, verifyStripeSignature, stripeProblem, REFUND_RULE } from '../../netlify/lib/ace-stripe.mjs';
 import { signInEmail, brandProblems } from '../../netlify/lib/ace-mail.mjs';
 import { handleMagicRequest } from '../../netlify/functions/ace-magic-request.mjs';
 import { handleMagicVerify } from '../../netlify/functions/ace-magic-verify.mjs';
@@ -151,13 +151,17 @@ test('access: a failing Airtable lookup never grants anything', async () => {
   assert.equal(await L2.student('a@b.co'), null, 'a row for another address is ignored');
 });
 
-test('comp: Active, Inactive and DAT complete coaching students get everything; Removed and others do not', async () => {
+test('comp: Active, Inactive and DAT complete coaching students get everything; Removed, blank and others do not', async () => {
   assert.deepEqual(compStatuses({}), ['active', 'inactive', 'dat complete']);
   assert.deepEqual(compStatuses({ ACE_LABS_COMP_STATUSES: 'Active' }), ['active']);
   const lookupFor = (Status, env = {}) => airtableLookups({ AIRTABLE_PAT: 'x', ...env }, async () => new Response(JSON.stringify({ records: [{ fields: { Email: 'kid@x.com', Status, 'Portal ID': 'S35' } }] }), { status: 200 }));
   for (const st of ['Active', 'Inactive', 'DAT complete', 'dat complete']) assert.deepEqual(await lookupFor(st).student('kid@x.com'), { portalId: 'S35' }, st);
   for (const st of ['Removed', 'Todo', 'In progress', 'Done', 'DAT', 'complete']) assert.equal(await lookupFor(st).student('kid@x.com'), null, st);
   assert.equal(await lookupFor('Inactive', { ACE_LABS_COMP_STATUSES: 'Active' }).student('kid@x.com'), null, 'the env override still narrows it');
+  // Thomas, 2026-11-23: a blank Status means no free access (it used to count as Active)
+  for (const st of [undefined, null, '', '  ']) assert.equal(await lookupFor(st).student('kid@x.com'), null, 'blank Status: ' + JSON.stringify(st));
+  const kvb = memoryKv(); const blank = await findOrCreate(kvb, 'kid@x.com', MS);
+  assert.equal((await resolveAccess(blank, ACC, { now: MS, lookups: lookupFor('') })).plan, 'free', 'a blank Status row gets the free account');
   const kv = memoryKv(); const a = await findOrCreate(kv, 'kid@x.com', MS);
   const r = await resolveAccess(a, ACC, { now: MS, lookups: lookupFor('DAT complete') });
   assert.equal(r.plan, 'coaching'); assert.equal(r.until, 0); assert.deepEqual(r.ent, ['all']);
@@ -210,6 +214,11 @@ test('checkout: needs a session; a one-time payment for this account; refuses li
   const { a, headers } = await emailSession(kv);
   assert.equal((await call(headers, ACC)).status, 503, 'no Stripe key: closed');
   assert.equal((await call(headers, { ...ACC, ...STRIPE, STRIPE_SECRET_KEY: 'sk_live_x' })).status, 503, 'live key locked');
+  assert.equal((await call(headers, { ...ACC, ...STRIPE, STRIPE_SECRET_KEY: 'rk_live_x' })).status, 503, 'restricted live key locked too');
+  assert.equal(stripeProblem({ ...STRIPE, STRIPE_SECRET_KEY: 'rk_test_x' }), '', 'a restricted test key is accepted');
+  assert.equal(stripeProblem({ ...STRIPE, STRIPE_SECRET_KEY: 'rk_live_x' }), 'live_mode_locked');
+  assert.equal(stripeProblem({ ...STRIPE, STRIPE_SECRET_KEY: 'rk_live_x', ACE_LABS_STRIPE_ALLOW_LIVE: 'yes' }), '');
+  assert.equal(stripeProblem({ ...STRIPE, STRIPE_SECRET_KEY: 'pk_test_x' }), 'stripe_not_configured', 'a publishable key is refused');
   assert.equal((await call({ 'x-ace-session': await sessionToken() })).status, 409, 'portal students have it already');
   const r = await call(headers);
   assert.equal(r.status, 200); assert.match((await r.json()).url, /^https:\/\/checkout\.stripe\.com\//);
@@ -218,6 +227,9 @@ test('checkout: needs a session; a one-time payment for this account; refuses li
   assert.equal(form.get('mode'), 'payment'); assert.equal(form.get('client_reference_id'), a.id); assert.equal(form.get('metadata[product]'), 'acelabs-pass');
   assert.equal(form.get('line_items[0][price]'), 'price_TEST123'); assert.equal(form.get('customer_email'), 'buyer@x.com');
   assert.match(form.get('success_url'), /^https:\/\/acelabs\.netlify\.app\/account\/\?paid=\{CHECKOUT_SESSION_ID\}$/);
+  assert.ok(form.get('custom_text[submit][message]').includes(REFUND_RULE), 'the refund rule shows at Checkout');
+  assert.match(REFUND_RULE, /within 48 hours of purchase/);
+  assert.match(form.get('custom_text[submit][message]'), /does not renew/);
 });
 
 test('checkout: refuses unless the Stripe price is exactly $249, one-time, USD and active', async () => {
@@ -361,4 +373,13 @@ test('account ids never collide with portal ids and pass the student id rule', a
   assert.equal(ids.size, 200);
   await saveAccount(kv, { ...(await accountByEmail(kv, 'u1@x.com')), lastPlan: 'pass' });
   assert.equal((await accountByEmail(kv, 'u1@x.com')).lastPlan, 'pass');
+});
+
+test('coach notices and the coach page default to thomas@acethedat.com when ACE_LABS_COACH_EMAILS is unset', async () => {
+  assert.deepEqual(coachEmails({}), ['thomas@acethedat.com']);
+  assert.deepEqual(coachEmails({ ACE_LABS_COACH_EMAILS: 'A@x.com, b@y.com' }), ['a@x.com', 'b@y.com'], 'the env list replaces the default');
+  const kv = memoryKv(); const t = await findOrCreate(kv, 'Thomas@AceTheDAT.com', MS);
+  const { ACE_LABS_COACH_EMAILS, ...noCoachEnv } = ACC;
+  assert.equal((await resolveAccess(t, noCoachEnv, { now: MS, lookups: noLookups })).plan, 'coach');
+  assert.equal((await resolveAccess(t, ACC, { now: MS, lookups: noLookups })).plan, 'free', 'with the env set, only listed addresses are coaches');
 });
