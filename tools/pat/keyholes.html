@@ -7,6 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="pat-explain.css">
 <style>
   :root{
     --forest:#1E3A2B; --forest-2:#2A5240; --brass:#B08D3F; --brass-lt:#D9BE7E;
@@ -1117,6 +1118,12 @@ function showAnswer(secs) {
   h += `</div><p style="color:var(--muted);font-size:12.5px">All three views above are valid apertures
         for this solid, any rotation or mirror of them would also pass. Every option you did not pick
         was verified to match none of them.</p>`;
+  /* worked explanation + See it chip (engine/pat-explain.js). Pure: reads the finished item only, so the seed still reproduces it. */
+  if (window.PAT && PAT.explain && PAT.explain.drillHTML) {
+    try {
+      h += PAT.explain.drillHTML('keyholes', { view: AXIS_NAME[correctOpt.axis], options: S.shown.map(o => ({ correct: !!o.correct, trap: o.trap || '' })), traps: TRAPS, answer: S.shown.indexOf(correctOpt) }, S.chosen >= 0 ? S.chosen : null);
+    } catch (e) { /* the verdict above still stands on its own */ }
+  }
   v.innerHTML = h;
   v.classList.add('on');
 }
@@ -1174,6 +1181,9 @@ document.addEventListener('keydown', e => {
 
 newItem();
 </script>
+<script src="engine/pat-core.js"></script>
+<script src="engine/pat-explain.js"></script>
+<script src="/shared/ace-visuals.js?v=5"></script>
 <script src="/shared/ace-skills.js?v=2"></script>
 <script src="/shared/ace-record.js?v=6"></script>
 <script src="pat-ledger.js"></script>

@@ -9,7 +9,7 @@ const url = (q) => { const m = V.match(q); return m ? m.url : null; };
 
 test('sample misses open the matching visual', () => {
   const cases = [
-    [{ section: 'ochem', topic: 'Alkene addition reactions' }, '/tools/ochem/#alkenes'],
+    [{ section: 'ochem', topic: 'Alkene addition reactions' }, '/see/?b=alkene-map'],
     [{ section: 'ochem', topic: 'SN1/SN2/E1/E2' }, '/see/?b=sn-e-decide'],
     [{ section: 'ochem', topic: 'Aromaticity & EAS' }, '/tools/ochem/#aromatic'],
     [{ section: 'ochem', concept: 'EAS on benzene' }, '/tools/ochem/?game=wheel&wheel=benzene'],
@@ -20,22 +20,22 @@ test('sample misses open the matching visual', () => {
     [{ section: 'ochem', topic: 'IR & H-NMR spectroscopy' }, '/tools/ochem/#spec-trainer'],
     [{ section: 'ochem', topic: 'Mechanisms' }, '/tools/ochem/#mech-library'],
     [{ section: 'ochem', concept: 'Diels-Alder product' }, '/tools/ochem/#diels-alder'],
-    [{ section: 'Organic Chemistry', topic: 'Acidity & pKa' }, '/tools/ochem/#acid-base-cardio'],
-    [{ section: 'gchem', topic: 'vsepr', topicName: 'VSEPR and Geometry' }, '/gc/vsepr/'],
-    [{ section: 'gchem', topic: 'lewis', topicName: 'Lewis Structures' }, '/tools/gc/lewis-sandbox.html'],
-    [{ section: 'gchem', topic: 'periodic', topicName: 'Periodic Trends' }, '/tools/gc/trends.html'],
-    [{ section: 'gchem', topic: 'galvanic', topicName: 'Electrochem: Galvanic Cells' }, '/gc/galvanic/'],
+    [{ section: 'Organic Chemistry', topic: 'Acidity & pKa' }, '/see/?b=pka-ladder'],
+    [{ section: 'gchem', topic: 'vsepr', topicName: 'VSEPR and Geometry' }, '/see/?b=bonding'],
+    [{ section: 'gchem', topic: 'lewis', topicName: 'Lewis Structures' }, '/see/?b=bonding'],
+    [{ section: 'gchem', topic: 'periodic', topicName: 'Periodic Trends' }, '/see/?b=periodic-trends'],
+    [{ section: 'gchem', topic: 'galvanic', topicName: 'Electrochem: Galvanic Cells' }, '/see/?b=redox'],
     [{ section: 'gchem', topic: 'phase-diag', topicName: 'Phase Diagrams' }, '/tools/gc/recognition-lab.html'],
     [{ section: 'bio', topic: 'body-systems', topicName: 'Body systems' }, '/tools/bio/bio-physiology.html'],
-    [{ section: 'bio', topic: 'membranes', topicName: 'Membranes and transport' }, '/tools/bio/bio-cell.html#node-membrane'],
-    [{ section: 'bio', topic: 'Mendelian genetics' }, '/tools/bio/bio-genetics.html#node-mendelian'],
+    [{ section: 'bio', topic: 'membranes', topicName: 'Membranes and transport' }, '/see/?b=cell-membrane'],
+    [{ section: 'bio', topic: 'Mendelian genetics' }, '/see/?b=genetics'],
     [{ section: 'bio', concept: 'Osmosis and tonicity' }, '/tools/bio/bio-osmosis.html'],
-    [{ section: 'qr', topic: 'probability', topicName: 'Probability' }, '/tools/qr/proposals/agent-04-prob-tree/probability-sandbox.html'],
-    [{ section: 'qr', topic: 'Statistics (mean/median/SD)' }, '/tools/qr/proposals/agent-05-stats/stats-lab.html'],
-    [{ section: 'qr', skill: 'geo-2d', concept: '2D Geometry: Circles, Squares' }, '/tools/qr/proposals/agent-06-geometry/geo-2d.html'],
-    [{ section: 'pat', skill: 'holepunch', concept: 'Hole punching' }, '/tools/pat/holepunch.html'],
-    [{ section: 'pat', skill: 'tfe', concept: 'Top front end' }, '/tools/pat/tfe.html'],
-    [{ section: 'rc', topic: 'detail', concept: 'Detail questions' }, '/rc/map/'],
+    [{ section: 'qr', topic: 'probability', topicName: 'Probability' }, '/see/?b=probability'],
+    [{ section: 'qr', topic: 'Statistics (mean/median/SD)' }, '/see/?b=statistics'],
+    [{ section: 'qr', skill: 'geo-2d', concept: '2D Geometry: Circles, Squares' }, '/see/?b=geometry'],
+    [{ section: 'pat', skill: 'holepunch', concept: 'Hole punching' }, '/see/?b=pat-holepunch'],
+    [{ section: 'pat', skill: 'tfe', concept: 'Top front end' }, '/see/?b=pat-tfe'],
+    [{ section: 'rc', topic: 'detail', concept: 'Detail questions' }, '/see/?b=rc-question-types'],
     // whiteboards (2026-11-24): these five used to return nothing
     [{ section: 'gchem', topic: 'mole-conv', topicName: 'Mole Conversions' }, '/see/?b=mole-bridge'],
     [{ section: 'gchem', topic: 'ph-basics', topicName: 'Acid-Base: pH/pOH/Ka/Kb' }, '/see/?b=acid-base'],
@@ -48,10 +48,9 @@ test('sample misses open the matching visual', () => {
 
 test('no match means no button, never a wrong one', () => {
   for (const q of [
-    { section: 'gchem', topic: 'sig-figs', topicName: 'Sig Figs and Measurement' },
-    { section: 'bio', topic: 'lab-techniques', topicName: 'Lab techniques' },
+    { section: 'gchem', concept: 'General Chemistry mixed' },
     { section: 'bio', concept: 'Biology mixed' },
-    { section: 'rc', topic: 'tone', concept: 'Tone questions' },
+    { section: 'rc', topic: 'vocab', concept: 'Vocabulary in context' },
     { section: '', topic: 'VSEPR' },
     { section: 'ochem', topic: 'general', concept: 'Organic Chemistry mixed' },
     null

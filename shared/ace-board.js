@@ -16,15 +16,23 @@
 
    Board shape: { id, section, title, sub, svg, predict: { q, choices, answer, why },
                   steps: [caption, ...]  (caption k belongs to <g data-step="k+1">),
-                  tryIt: [{ q, choices, answer, why } x3], path: { title, steps: [...] } (optional,
-                  feeds the Pathway Builder at /see/pathway/), more: [{ label, href }] (optional) }
+                  tryIt: [{ q, choices, answer, why } x3], more: [{ label, href }] (optional),
+                  and the game feeds, all optional:
+                    path: { title, steps: [...] }                      Pathway Builder, /see/pathway/
+                    flick: { title, up, down, cards: [{ q, up, why }] } Trend Flick, /see/flick/
+                    tug: { title, sets: [{ rxn, cards: [{ change, dir, why }] }] }  Q vs K Tug, /see/tug/
+                    play: 'flick:<board id>' | 'tug:<board id>' | 'path:<board id>'  borrow another board's game }
+   AceBoard.play(board)           -> { game, label, href } for the board's one-tap "Play a round" link, or null
    The registry of which question opens which board lives in shared/ace-visuals.js.
    Loads in node too (tests/visuals/): no DOM is touched until mount or open. */
 (function (root) {
   'use strict';
   if (root && root.AceBoard) return;
-  var V = '1';
-  var FILES = ['gc', 'bio', 'oc', 'qr'];
+  var V = '2';
+  var FILES = ['gc', 'bio', 'oc', 'qr', 'gc2', 'bio2', 'oc2', 'qr2', 'pat', 'rc'];
+  /* Board text is drawn in board units (720 wide). On a 390px phone the board runs edge to edge, so
+     26 units is 14px: nothing smaller is ever drawn (tests/visuals/coverage.test.js holds the line). */
+  var MIN_TEXT = 26;
   var BOARDS = {}, ORDER = [];
   var SECTION = { gchem: 'Gen Chem', bio: 'Biology', ochem: 'Organic Chemistry', qr: 'Quantitative Reasoning', pat: 'Perceptual Ability', rc: 'Reading' };
   var LETTERS = ['A', 'B', 'C', 'D', 'E'];
@@ -60,11 +68,11 @@
       (o.fill ? ' fill-opacity="' + (o.op == null ? 0.16 : o.op) + '"' : '') + (o.dash ? ' stroke-dasharray="' + (o.dash === true ? '3 11' : o.dash) + '"' : '') + (extra || '') + '/>';
   }
   var kit = {
-    W: 720, H: 560, col: COL, fmt: fmt,
+    W: 720, H: 560, MIN_TEXT: MIN_TEXT, col: COL, fmt: fmt,
     /* text: a = 'm' middle (default), 's' start, 'e' end; size in board units (720 wide) */
     t: function (x, y, s, o) {
       o = o || {};
-      return '<text xml:space="preserve" class="bd-t' + (o.plain ? ' bd-plain' : '') + '" x="' + x + '" y="' + y + '" font-size="' + (o.size || 30) + '" fill="' + c(o) + '" text-anchor="' + ({ s: 'start', e: 'end' }[o.a] || 'middle') + '"' +
+      return '<text xml:space="preserve" class="bd-t' + (o.plain ? ' bd-plain' : '') + '" x="' + x + '" y="' + y + '" font-size="' + Math.max(MIN_TEXT, o.size || 30) + '" fill="' + c(o) + '" text-anchor="' + ({ s: 'start', e: 'end' }[o.a] || 'middle') + '"' +
         (o.rot ? ' transform="rotate(' + o.rot + ' ' + x + ' ' + y + ')"' : '') + '>' + fmt(s) + '</text>';
     },
     /* a wobbly polyline through points [[x,y], ...] */
@@ -118,6 +126,10 @@
       return shape(d, o);
     },
     path: function (d, o) { return shape(d, o); },
+    /* ruler-straight pieces for figures that must be exact (PAT views, grids): a segment, a closed polygon, a rectangle */
+    seg: function (x1, y1, x2, y2, o) { return shape('M' + r1(x1) + ' ' + r1(y1) + 'L' + r1(x2) + ' ' + r1(y2), o); },
+    poly: function (pts, o) { return shape('M' + pts.map(function (p) { return r1(p[0]) + ' ' + r1(p[1]); }).join('L') + 'Z', o); },
+    rect: function (x, y, w, h, o) { return shape('M' + r1(x) + ' ' + r1(y) + 'h' + r1(w) + 'v' + r1(h) + 'h' + r1(-w) + 'Z', o); },
     dot: function (cx, cy, r, o) { return '<circle class="bd-f" cx="' + cx + '" cy="' + cy + '" r="' + (r || 7) + '" fill="' + c(o) + '"/>'; },
     /* a swipe of highlighter behind a label */
     hi: function (x, y, w, h, o) {
@@ -126,6 +138,10 @@
     step: function (n) { return '<g data-step="' + n + '">' + Array.prototype.slice.call(arguments, 1).join('') + '</g>'; },
     svg: function () {
       return '<svg class="bd-svg" viewBox="0 0 720 560" role="img" xmlns="http://www.w3.org/2000/svg">' + Array.prototype.slice.call(arguments).join('') + '</svg>';
+    },
+    /* a small figure for a question (q.fig): 640 units wide, h tall, same marker kit */
+    fig: function (h) {
+      return '<svg class="bd-svg bd-figsvg" viewBox="0 0 640 ' + h + '" role="img" aria-label="Figure for this question" xmlns="http://www.w3.org/2000/svg">' + Array.prototype.slice.call(arguments, 1).join('') + '</svg>';
     }
   };
 
@@ -135,7 +151,17 @@
   function list() { return ORDER.map(get); }
   function url(id, from) { return '/see/?b=' + encodeURIComponent(id) + (from ? '&from=' + encodeURIComponent(from) : ''); }
 
-  var api = { version: 1, add: add, get: get, list: list, url: url, kit: kit, SECTION: SECTION, files: FILES };
+  /* The game a board ends on. Its own feed first (tug, flick, then pathway), else a borrowed one. */
+  var GAMES = { tug: ['Q vs K Tug', '/see/tug/?d='], flick: ['Trend Flick', '/see/flick/?d='], path: ['Pathway Builder', '/see/pathway/?p='] };
+  function play(b) {
+    if (!b) return null;
+    var g = b.tug ? 'tug' : b.flick ? 'flick' : b.path ? 'path' : null, id = b.id;
+    if (!g && b.play) { var p = String(b.play).split(':'); g = p[0]; id = p[1]; var src = get(id); if (!GAMES[g] || !src || !src[g]) return null; }
+    if (!g) return null;
+    return { game: g, id: id, label: 'Play a round: ' + GAMES[g][0], href: GAMES[g][1] + encodeURIComponent(id) };
+  }
+
+  var api = { version: 2, add: add, get: get, list: list, url: url, kit: kit, SECTION: SECTION, files: FILES, play: play, GAMES: GAMES };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   if (!root) return;
   root.AceBoard = api;
@@ -213,6 +239,7 @@
       return box;
     }
     function html(s) { return fmt(s).replace(/<tspan dy="(-?)[\d.]+em" font-size="68%">([^<]*)<\/tspan>/g, function (m, neg, t) { return neg ? '<sup>' + t + '</sup>' : '<sub>' + t + '</sub>'; }).replace(/<\/?tspan[^>]*>/g, ''); }
+    function figure(q) { if (!q.fig) return; var f = el('div', 'bd-fig'); f.innerHTML = q.fig; panel.appendChild(f); }
     function para(cls, s) { var p = el('p', cls); p.innerHTML = html(s); return p; }
     function primary(label, fn) { var x = el('button', 'bd-btn', label); x.type = 'button'; x.addEventListener('click', fn); return x; }
     function quiet(label, fn) { var x = el('button', 'bd-btn bd-btn--quiet', label); x.type = 'button'; x.addEventListener('click', fn); return x; }
@@ -221,6 +248,7 @@
       setBeat(1); showStep(0); panel.textContent = '';
       panel.appendChild(el('p', 'bd-label', 'Predict'));
       panel.appendChild(para('bd-q', b.predict.q));
+      figure(b.predict);
       var fb = el('div', 'bd-fb'); fb.hidden = true;
       panel.appendChild(choices(b.predict, function (ok) {
         fb.appendChild(para('bd-verdict', ok ? 'Yes.' : 'Not quite.')); fb.firstChild.setAttribute('data-ok', String(ok));
@@ -245,6 +273,7 @@
       var q = b.tryIt[k];
       panel.appendChild(el('p', 'bd-label', 'Try it · ' + (k + 1) + ' of ' + b.tryIt.length));
       panel.appendChild(para('bd-q', q.q));
+      figure(q);
       var fb = el('div', 'bd-fb'); fb.hidden = true;
       panel.appendChild(choices(q, function (ok) {
         if (ok) score++;
@@ -269,7 +298,9 @@
       row.appendChild(quiet('Replay', function () { predict(); }));
       panel.appendChild(row);
       var links = el('div', 'bd-links');
-      if (b.path) { var a = el('a', 'bd-link', 'Play Pathway Builder'); a.href = '/see/pathway/?p=' + encodeURIComponent(b.id); links.appendChild(a); }
+      var pl = play(b);
+      if (pl) { var a = el('a', 'bd-link bd-link--play', pl.label); a.href = pl.href; a.setAttribute('data-play', pl.game); links.appendChild(a); }
+      if (b.path && pl && pl.game !== 'path') { var a3 = el('a', 'bd-link', 'Pathway Builder'); a3.href = '/see/pathway/?p=' + encodeURIComponent(b.id); links.appendChild(a3); }
       (b.more || []).forEach(function (m) { var a2 = el('a', 'bd-link', m.label); a2.href = m.href; links.appendChild(a2); });
       if (!o.sheet) { var g = el('a', 'bd-link', 'All whiteboards'); g.href = '/see/'; links.appendChild(g); }
       panel.appendChild(links); back.focus();

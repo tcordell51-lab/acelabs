@@ -20,7 +20,7 @@
       arrow(206, 362, 322, 160, { c: 'ink', w: 4, bend: 34 }),
       circ(500, 240, 66, { c: 'rose', w: 5 }), path('M556 196 L566 232 L534 222', { c: 'rose', w: 5 }),
       arrow(430, 150, 462, 184, { c: 'ink', w: 4 }),
-      t(130, 546, 'cytosol', { size: 24, c: 'mute' }), t(486, 550, 'mitochondrion', { size: 24, c: 'mute' }),
+      t(130, 542, 'cytosol', { size: 26, c: 'mute' }), t(486, 542, 'mitochondrion', { size: 26, c: 'mute' }),
       step(1, t(120, 156, 'glucose', { size: 26, c: 'blue' }), t(120, 374, '2 pyruvate', { size: 26, c: 'blue' }), t(136, 222, 'glycolysis', { size: 25, c: 'blue', a: 's' }), t(136, 252, '2 ATP', { size: 25, c: 'goldInk', a: 's' }), t(136, 280, '2 NADH', { size: 25, c: 'goldInk', a: 's' })),
       step(2, t(376, 104, '2 acetyl-CoA', { size: 26, c: 'ink' }), t(376, 134, '2 NADH, 2 CO_{2}', { size: 23, c: 'goldInk' })),
       step(3, t(500, 250, 'Krebs', { size: 30, c: 'rose' }), t(584, 214, '6 NADH', { size: 23, c: 'goldInk', a: 's' }), t(584, 246, '2 FADH_{2}', { size: 23, c: 'goldInk', a: 's' }), t(584, 278, '2 ATP', { size: 23, c: 'goldInk', a: 's' })),

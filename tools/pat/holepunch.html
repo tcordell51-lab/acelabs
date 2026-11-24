@@ -8,6 +8,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="pat-cream.css">
+<link rel="stylesheet" href="pat-explain.css">
 <style>
   /* module-specific layout only — palette + chrome come from pat-cream.css */
   h1.title{font-size:30px;margin:0 0 8px}
@@ -345,6 +346,14 @@ function miniGrid(pts,cls,lab){
   pts.forEach(function(p){ o+='<circle cx="'+(4+p[0]*s2)+'" cy="'+(4+p[1]*s2)+'" r="6.5" fill="'+BRASS+'"/>'; });
   return o+'</svg></div>';
 }
+/* worked explanation + See it chip after every answer (engine/pat-explain.js, PAT.explain.drill). Pure: it reads the finished item and draws no random numbers, so seeds still reproduce. */
+function showPex(host,kind,data,chosen){
+  if(!window.PAT||!PAT.explain||!PAT.explain.drillHTML||!host)return;
+  var b=document.getElementById('pexBox'); if(!b){b=document.createElement('div');b.id='pexBox';b.setAttribute('aria-live','polite');}
+  host.appendChild(b);
+  try{b.innerHTML=PAT.explain.drillHTML(kind,data,chosen);}catch(e){b.innerHTML='';}
+}
+function clearPex(){var b=document.getElementById('pexBox'); if(b)b.innerHTML='';}
 var answered=false;
 function renderAnswers(){
   var wrap=document.getElementById('answers'), F=P.folds.length;
@@ -368,6 +377,8 @@ function renderAnswers(){
       if(window.PatLedger)PatLedger.record('holepunch',ok);
       if(!ok)el.classList.add('wrong');
       recordAttempt(ok);
+      var keyIx=0; opts.forEach(function(o,ix){if(o.ok)keyIx=ix});
+      showPex(wrap,'holepunch',{folds:P.folds,punches:P.punches,sets:P.sets,options:opts.map(function(o){return o.s}),answer:keyIx},Array.prototype.indexOf.call(wrap.querySelectorAll('.choice'),el));
     });
   });
 }
@@ -426,6 +437,9 @@ if(q.get('step')) step=Math.min(totalSteps(),Math.max(0,parseInt(q.get('step'),1
 renderTotals(); startTimer(); render();
 })();
 </script>
+<script src="engine/pat-core.js"></script>
+<script src="engine/pat-explain.js"></script>
+<script src="/shared/ace-visuals.js?v=5"></script>
 <script src="/shared/ace-skills.js?v=2"></script>
 <script src="/shared/ace-record.js?v=6"></script>
 <script src="pat-ledger.js"></script>
