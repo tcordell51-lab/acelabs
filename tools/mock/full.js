@@ -701,10 +701,15 @@
       '<p class="big-line">You answered <b>' + rec.totalCorrect + ' of ' + rec.totalQs + '</b> across all four sections. Every miss is in Repair now. Next: go through the test question by question and tag why you missed each one.</p><p><a class="btn gold" href="/review/" id="rvTop" hidden>Review question by question</a></p></div>' +
       '<div class="sec-grid">' + card('sons', 'Natural Sciences', 'var(--bio)') + card('pat', 'Perceptual Ability', 'var(--pat)') + card('rc', 'Reading', 'var(--rc)') + card('qr', 'Quantitative', 'var(--qr)') + '</div>' +
       '<p class="note" style="margin-top:10px">Optional break used: ' + minsec(rec.breakSec || 0) + '. Raw scores only; Ace Labs does not convert practice scores to the scaled score.</p>' +
+      '<div id="nextSteps"></div>' +
       '<h2>By subject</h2><div class="card" style="padding:8px 14px"><table class="tbl"><thead><tr><th>Subject</th><th class="r">Correct</th><th class="r">Accuracy</th><th class="r hide-sm"></th></tr></thead><tbody>' + subjRows + '</tbody></table></div>' +
       (topicRows ? '<h2>Where the next points are</h2><div class="card" style="padding:8px 14px"><table class="tbl"><thead><tr><th>Topic</th><th class="r">Correct</th><th class="r hide-sm"></th><th class="r">Drill it</th></tr></thead><tbody>' + topicRows + '</tbody></table></div>' : '') +
       '<h2>Question by question</h2><p class="note" style="margin-top:-4px">Every miss shows the answer, the reasoning, and the lesson that teaches it.</p>' + missHTML +
       '<div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:24px"><a class="btn gold" href="/review/" id="rvLink" hidden>Review question by question, then Repair</a><a class="btn" href="#" id="toList2">Back to full-length tests</a><a class="btn" href="/">Back to Today</a></div></div>';
+    if (window.AceNextSteps) {
+      window.AceNextSteps.render($('nextSteps'), { src: 'full-length', title: m ? m.name : 'Full-length test', pct: rec.totalQs ? rec.totalCorrect / rec.totalQs : null, areas: nextAreas(st),
+        retest: { href: '/tools/minitests/', label: 'Check the fixes on The Climb', detail: 'One 40-question rung under the clock. Save the next full-length for next week.', cta: 'Open The Climb' } });
+    }
     var back = function (e) { e.preventDefault(); renderLanding(); window.scrollTo(0, 0); };
     $('toList').addEventListener('click', back); $('toList2').addEventListener('click', back);
     Array.prototype.forEach.call($('report').querySelectorAll('details[data-sec]'), function (d) {
@@ -716,6 +721,52 @@
       });
     });
     window.scrollTo(0, 0);
+  }
+  /* The "what to do next" areas (shared/ace-next-steps.js): one per subtopic for the sciences and QR,
+     one per subtest for PAT, one per question type for Reading. Each carries its misses' time, blanks
+     and (PAT) trap types, plus the Retold night and the engine that fix it. */
+  var NX_SEC = { 'Biology': 'bio', 'Gen Chem': 'gchem', 'OChem': 'ochem', 'QR': 'qr', 'PAT': 'pat', 'RC': 'rc' };
+  var PACE = { sons: 54, rc: 72, qr: 67 };   // test-day seconds per question: 90 min / 100, 60 min / 50, 45 min / 40
+  var PAT_PACE = { keyholes: 45, tfe: 45, angles: 20, holepunch: 22, cubes: 25, patternfold: 50 };   // Ace pacing (tools/pat/test.html)
+  var PAT_NIGHT = { keyholes: 2, tfe: 3, angles: 4, holepunch: 5, patternfold: 6, cubes: 7 };
+  var RC_NIGHT = { detail: 4, vocab: 4, except: 4, mainidea: 5, 'function': 5, inference: 6, application: 6, tone: 7 };
+  function nightName(sec, n, fallback) { var t = window.AceRoute && window.AceRoute.nightTitle ? window.AceRoute.nightTitle(sec, n) : ''; return 'Night ' + n + ': ' + (t || fallback); }
+  function nextAreas(st) {
+    var map = {}, out = [];
+    SECTION_KEYS.forEach(function (sk) {
+      items(sk).forEach(function (x, i) {
+        var a = st.answers[sk][i], ok = a === keyOf(x), sec = NX_SEC[x.sub], key, label, pace = PACE[sk], type = null;
+        if (x.kind === 'mc') { key = x.sub + '|' + x.it.topic; label = x.it.topic; }
+        else if (x.kind === 'pat') { type = x.it.type; key = 'PAT|' + type; label = (PAT.SECTIONS.filter(function (s) { return s.type === type; })[0] || {}).name || type; pace = PAT_PACE[type]; }
+        else { type = x.q.type; key = 'RC|' + type; label = ((RC && RC.types && RC.types[type]) || type) + ' questions'; }
+        var r = map[key] || (map[key] = { section: sec, label: label, correct: 0, total: 0, blank: 0, missSec: [], paceSec: pace, trapN: {}, nightN: {}, sub: x.sub, type: type });
+        r.total++;
+        if (ok) { r.correct++; return; }
+        if (a == null) r.blank++;
+        r.missSec.push((st.spent && st.spent[sk] && st.spent[sk][i]) || 0);
+        if (x.kind === 'pat' && a != null) { var tr = x.it.options && x.it.options[a] && x.it.options[a].trap; if (tr) r.trapN[tr] = (r.trapN[tr] || 0) + 1; }
+        if (x.kind === 'mc' && x.it.nights && x.it.nights[0]) r.nightN[x.it.nights[0]] = (r.nightN[x.it.nights[0]] || 0) + 1;
+      });
+    });
+    Object.keys(map).forEach(function (k) {
+      var r = map[k], st2 = STUDY[r.sub];
+      if (r.sub === 'PAT') {
+        var names = (PAT.test && PAT.test.TRAP_NAMES && PAT.test.TRAP_NAMES[r.type]) || {};
+        r.traps = Object.keys(r.trapN).map(function (t) { return { label: names[t] || t, count: r.trapN[t] }; }).sort(function (a, b) { return b.count - a.count; });
+        r.learn = { href: st2.learn + '?night=' + PAT_NIGHT[r.type], label: nightName('pat', PAT_NIGHT[r.type], r.label) };
+        r.drill = { href: '/tools/pat/' + PAT_PAGE[r.type], label: r.label + ' trainer' };
+      } else if (r.sub === 'RC') {
+        var n = RC_NIGHT[r.type] || 3;
+        r.learn = { href: st2.learn + '?night=' + n, label: nightName('rc', n, r.label) };
+        r.drill = { href: st2.review, label: 'Timed passages in the ' + st2.engine };
+      } else {
+        var best = Object.keys(r.nightN).sort(function (a, b) { return r.nightN[b] - r.nightN[a]; })[0];
+        r.learn = best ? { href: st2.learn + '?night=' + best, label: nightName(r.section, +best, r.label) } : { href: st2.learn, label: subjName(r.sub) + ', Retold' };
+        r.drill = { href: st2.review, label: r.label + ' in the ' + st2.engine };
+      }
+      out.push(r);
+    });
+    return out;
   }
   function subjName(k) { return { 'Biology': 'Biology', 'Gen Chem': 'General Chemistry', 'OChem': 'Organic Chemistry', 'PAT': 'Perceptual Ability', 'RC': 'Reading Comprehension', 'QR': 'Quantitative Reasoning' }[k] || k; }
   function missHTML1(ms) {

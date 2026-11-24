@@ -8,16 +8,20 @@
 // exhibit, mark, review screen), PAT (figures render), the optional break, RC (passage beside
 // the question), QR (calculator arithmetic), then the report: raw scores and time per
 // section, no prediction fields, a history record in the shared mock-history shape, and a
-// resume of an interrupted test. Fails on any page exception or console error.
+// resume of an interrupted test, and the "what to do next" block (three weakest areas with
+// why and fix links, the week's steps, the schedule link, the coach card). The page is served
+// over http by tests/e2e/server.mjs so root paths (/shared/...) load as they do on Netlify.
+// Fails on any page exception or console error.
 
 import { spawn } from 'node:child_process';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { start as serve } from '../tests/e2e/server.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const PAGE = 'file://' + path.join(ROOT, 'tools/mock/full.html');
+let PAGE = 'file://' + path.join(ROOT, 'tools/mock/full.html');   // replaced by the http URL below
 const CHROME = process.env.CHROME || '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
 const ai = process.argv.indexOf('--out');
 const OUT = ai > 0 ? path.resolve(process.argv[ai + 1]) : path.join(os.tmpdir(), 'acelabs-fullmock-shots');
@@ -29,7 +33,7 @@ const ok = (cond, msg) => { console.log((cond ? '  ok   ' : '  FAIL ') + msg); i
 
 async function withChrome(fn) {
   const profile = fs.mkdtempSync(path.join(os.tmpdir(), 'fm-cdp-'));
-  const chrome = spawn(CHROME, ['--headless=new', '--disable-gpu', '--hide-scrollbars', '--allow-file-access-from-files', '--remote-debugging-port=0', '--user-data-dir=' + profile, 'about:blank'], { stdio: 'ignore' });
+  const chrome = spawn(CHROME, ['--headless=new', '--disable-gpu', '--hide-scrollbars', '--allow-file-access-from-files', '--remote-debugging-port=0', '--user-data-dir=' + profile].concat(process.getuid && process.getuid() === 0 ? ['--no-sandbox'] : [], ['about:blank']), { stdio: 'ignore' });
   try {
     let port = 0, wsUrl;
     for (let i = 0; i < 300 && !wsUrl; i++) {
@@ -81,12 +85,12 @@ async function withChrome(fn) {
   }
 }
 
-async function run(width, height) {
+async function run(width, height, testInDays) {
   console.log(`\n== ${width}x${height}`);
   await withChrome(async ({ send, ev, shot, nav, errors }) => {
     await send('Emulation.setDeviceMetricsOverride', { width, height, deviceScaleFactor: width < 600 ? 2 : 1, mobile: width < 600 });
     await nav();
-    await ev('localStorage.clear()');
+    await ev('localStorage.clear()' + (testInDays != null ? `; localStorage.setItem('acelabs_test_date', new Date(Date.now() + ${testInDays} * 864e5).toISOString().slice(0, 10))` : ''));
     await nav();
     const land = await ev(`({w: innerWidth, cards: document.querySelectorAll('.tcard').length, mocks: ACE_FULL_MOCKS.mocks.length, sw: document.documentElement.scrollWidth})`);
     ok(land.w === width, `viewport is truly ${width}px`);
@@ -184,7 +188,21 @@ async function run(width, height) {
 
     const rep = await ev(`({h: document.querySelector('.report h1') && document.querySelector('.report h1').textContent, cards: document.querySelectorAll('.sec-card').length, sw: document.documentElement.scrollWidth, txt: document.getElementById('report').textContent})`);
     ok(!!rep.h && rep.cards === 4, 'report opens with four section cards when the QR clock runs out');
-    ok(!/scaled score is|predicted|percentile/i.test(rep.txt.replace(/does not convert practice scores to the scaled score/, '')), 'report carries no predicted or scaled score');
+    // the coach card carries Tommy's own credential (510 AA, 99th percentile); the student's report carries none
+    const repTxt = await ev(`(function(){var c=document.getElementById('report').cloneNode(true); Array.prototype.forEach.call(c.querySelectorAll('.anx-coach'), function(n){ n.remove(); }); return c.textContent;})()`);
+    ok(!/scaled score is|predicted|percentile/i.test(repTxt.replace(/does not convert practice scores to the scaled score/, '')), 'report carries no predicted or scaled score');
+    await sleep(300);   // the schedule link settles after its HEAD check
+    const nx = await ev(`(function(){var b=document.querySelector('#report .anx'); if(!b) return null; var areas=[].map.call(b.querySelectorAll('.anx-area'), function(a){ return { why: (a.querySelector('.anx-why')||{}).textContent||'', links: [].map.call(a.querySelectorAll('.anx-link'), function(l){ return l.getAttribute('href'); }) }; });
+      return { areas: areas, steps: b.querySelectorAll('.anx-step').length, plan: (b.querySelector('[data-anx-plan]')||{}).getAttribute && b.querySelector('[data-anx-plan]').getAttribute('href'),
+        coach: [].map.call(b.querySelectorAll('.anx-coach a'), function(a){ return a.getAttribute('href'); }), strong: !!b.querySelector('.anx-coach:not(.anx-coach--light)'), coachTxt: (b.querySelector('.anx-coach')||{}).textContent||'', small: [].filter.call(b.querySelectorAll('a'), function(a){ var r=a.getBoundingClientRect(); return r.height && r.height < 44; }).length }; })()`);
+    ok(nx && nx.areas.length === 3, `what-to-do-next lists the three weakest areas (${nx && nx.areas.length})`);
+    ok(nx && nx.areas.every((a) => a.why.length > 40 && a.links.length === 2), 'each weak area says why and links a lesson and a drill');
+    ok(nx && nx.steps >= 3 && nx.steps <= 5, `this week has 3 to 5 steps (${nx && nx.steps})`);
+    ok(nx && (nx.plan === '/plan/' || nx.plan === '/onboarding.html'), `schedule link goes to the planner or onboarding (${nx && nx.plan})`);
+    ok(nx && nx.coach.some((h) => h === 'https://acethedat.com/contact.html'), 'coach card links the contact page');
+    ok(nx && /510 AA, 99th percentile/.test(nx.coachTxt) && !/\$\d/.test(nx.coachTxt), 'coach card uses the real credential and no price');
+    ok(nx && nx.strong === (testInDays != null), `coach card is ${testInDays != null ? 'prominent with the test ' + testInDays + ' days out' : 'a quiet line with no close test date'}`);
+    ok(nx && nx.small === 0, `every link in the block is at least 44 px tall (${nx && nx.small} short)`);
     ok(rep.sw <= width, `report has no horizontal scroll (${rep.sw})`);
     const hist = await ev(`JSON.parse(localStorage.getItem('al:mockHistory'))`);
     const r = hist && hist[hist.length - 1];
@@ -205,7 +223,11 @@ async function run(width, height) {
   });
 }
 
-await run(1280, 800);
-await run(390, 844);
+const srv = await serve(0);
+PAGE = srv.url + '/tools/mock/full.html';
+try {
+  await run(1280, 800);
+  await run(390, 844, 12);
+} finally { srv.server.close(); }
 console.log(failures ? `\nFAIL: ${failures} check(s)` : '\nPASS');
 process.exit(failures ? 1 : 0);

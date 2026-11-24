@@ -101,6 +101,12 @@ try {
     if (i < pool.length - 1) await page.click('#btnNext');
   }
   await page.click('#btnSubmit');
+  // the results screen comes first: raw counts, the three weakest areas with their fixes, this week's plan
+  await page.waitForSelector('#diagReview:not([hidden])', { timeout: 15000 });
+  assert.equal(await page.$$eval('#diagNext .anx-area', (x) => x.length), 3, 'the diagnostic names three weak areas');
+  ok('the diagnostic results show the three weakest areas and this week\'s plan');
+  await shot('diagnostic-results');
+  await page.click('#diagReview');
   await page.waitForURL(/\/review\/\?run=/, { timeout: 15000 });
   await page.waitForSelector('.rv-q');
   const totalMiss = missIdx.length;
