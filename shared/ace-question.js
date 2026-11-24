@@ -169,14 +169,15 @@
       if (trap) fb.appendChild(block('The trap in ' + LETTERS[picked], trap));
       if (item.trick) fb.appendChild(block('Trick', item.trick));
       if (!ok && opts.onReason) fb.appendChild(whyRow(item, change, opts.onReason));
-      // After a miss: See it, the matching visual (shared/ace-visuals.js). Opening it after the
-      // answer is free: the answer is already saved as unassisted.
-      if (!ok && opts.seeIt !== false && window.AceVisuals) {
-        var v = window.AceVisuals.match({ section: item.section, topic: item.topic, topicName: item.topicName, concept: item.skillName, stem: item.stem });
-        if (v) {
-          var see = el('a', 'aui-q__see', 'See it: ' + v.label); see.href = window.AceVisuals.withFrom(v.url, opts.seeFrom || 'set'); see.setAttribute('data-see', v.id);
-          see.addEventListener('click', function () { if (window.AceRecord) window.AceRecord.event('see-after-miss', { id: item.id, visual: v.id }); });
-          fb.appendChild(see);
+      // After any answer, right or wrong: See it, the matching visual (shared/ace-visuals.js). A
+      // whiteboard opens in a sheet over the question. Opening it after the answer is free: the
+      // answer is already saved as unassisted.
+      if (opts.seeIt !== false && window.AceVisuals && window.AceVisuals.chip) {
+        var see = window.AceVisuals.chip({ section: item.section, topic: item.topic, topicName: item.topicName, concept: item.skillName, stem: item.stem }, opts.seeFrom || 'set');
+        if (see) {
+          see.setAttribute('data-see', see.getAttribute('data-see-id'));
+          see.addEventListener('click', function () { if (window.AceRecord) window.AceRecord.event(ok ? 'see-after-right' : 'see-after-miss', { id: item.id, visual: see.getAttribute('data-see-id') }); });
+          var seeRow = el('div', 'aui-q__seerow'); seeRow.appendChild(see); fb.appendChild(seeRow);
         }
       }
       var row = el('div', 'aui-q__actions');

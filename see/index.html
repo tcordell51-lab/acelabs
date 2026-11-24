@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>See it: every whiteboard and visual · Ace Labs</title>
+<meta name="description" content="Every Ace Labs whiteboard and interactive visual in one place, grouped by DAT section. Predict, watch it drawn, then try three questions.">
+<link rel="icon" type="image/svg+xml" href="/shared/ace-dat-mark.svg">
+<link rel="stylesheet" href="/shared/ace-ui.css?v=8">
+<link rel="stylesheet" href="/shared/ace-board.css?v=1">
+<style>
+  .see-jump { display: flex; flex-wrap: wrap; gap: var(--aui-2); }
+  .see-jump a { display: inline-flex; align-items: center; min-height: var(--aui-tap); padding: 0 16px; border-radius: var(--aui-r-pill); border: 1.5px solid var(--aui-line-2); background: var(--aui-paper); color: var(--aui-ink); font-weight: 700; font-size: var(--aui-t-sm); text-decoration: none; }
+  .see-jump a:hover { border-color: var(--aui-forest); }
+  .see-sec { scroll-margin-top: 72px; }
+  .see-sec > header { display: flex; align-items: baseline; gap: var(--aui-3); flex-wrap: wrap; margin-bottom: var(--aui-3); }
+  .see-sec > header span { font-size: var(--aui-t-sm); color: var(--aui-ink-3); }
+  .see-grid { display: grid; gap: var(--aui-4); grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); }
+  .see-tile { display: flex; flex-direction: column; background: var(--aui-paper); border: 1px solid var(--aui-line); border-radius: var(--aui-r); overflow: hidden; color: inherit; text-decoration: none; box-shadow: var(--aui-shadow); transition: transform .2s var(--aui-ease), border-color .2s; }
+  .aui a.see-tile { color: inherit; }
+  .see-tile:hover { transform: translateY(-2px); border-color: var(--aui-line-2); }
+  .see-tile__art { display: block; aspect-ratio: 720 / 560; background: #FDFCF8; border-bottom: 1px solid var(--aui-line); overflow: hidden; }
+  .see-tile__art svg, .see-tile__art img { display: block; width: 100%; height: 100%; object-fit: cover; }
+  .see-tile__art .bd-svg [data-step] { display: inline; }
+  .see-tile__body { display: grid; gap: 2px; padding: var(--aui-3) var(--aui-4) var(--aui-4); }
+  .see-tile__body b { font-size: var(--aui-t-lg); line-height: 1.25; }
+  .see-tile__body span { font-size: 15px; color: var(--aui-ink-2); }
+  .see-tile__tag { align-self: flex-start; }
+  .see-done { color: var(--aui-good); font-weight: 700; font-size: var(--aui-t-sm); }
+  .see-more { display: grid; gap: var(--aui-3); grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); margin-top: var(--aui-4); }
+  .see-row { display: grid; grid-template-columns: 76px minmax(0, 1fr); gap: var(--aui-3); align-items: center; min-height: 76px; background: var(--aui-paper); border: 1px solid var(--aui-line); border-radius: var(--aui-r); padding: var(--aui-2); text-decoration: none; }
+  .aui a.see-row { color: inherit; }
+  .see-row:hover { border-color: var(--aui-line-2); }
+  .see-row__art { width: 76px; height: 60px; border-radius: 10px; overflow: hidden; background: var(--aui-paper-2); display: grid; place-items: center; }
+  .see-row__art img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .see-row__art svg { width: 44px; height: 44px; }
+  .see-row b { display: block; font-size: var(--aui-t-md); line-height: 1.25; }
+  .see-row span { display: block; font-size: 15px; color: var(--aui-ink-2); line-height: 1.35; }
+  .see-game { display: grid; gap: var(--aui-3); align-items: center; background: var(--aui-forest); color: var(--aui-cream); border-radius: var(--aui-r-lg); padding: var(--aui-5); }
+  .see-game h2 { color: var(--aui-cream); } .see-game p { margin: 0; color: #dfe7df; max-width: 60ch; }
+  @media (min-width: 720px) { .see-game { grid-template-columns: minmax(0, 1fr) auto; } }
+  .see-back { display: inline-flex; align-items: center; gap: 6px; min-height: var(--aui-tap); font-weight: 700; text-decoration: none; }
+  .see-next { display: flex; flex-wrap: wrap; gap: var(--aui-3); margin-top: var(--aui-5); }
+  body[data-mode="board"] #gallery, body[data-mode="gallery"] #one { display: none; }
+</style>
+</head>
+<body class="aui" data-mode="gallery">
+<main class="aui-wrap" id="main">
+  <div id="gallery" class="aui-stack">
+    <header class="aui-stack">
+      <p class="aui-kicker">Labs · See it</p>
+      <h1 class="aui-h1">Whiteboards</h1>
+      <p class="aui-lede">One picture per idea. Predict, watch it drawn, then try three questions.</p>
+      <nav class="see-jump" id="see-jump" aria-label="Sections"></nav>
+    </header>
+    <section class="see-game">
+      <div class="aui-stack">
+        <h2 class="aui-h2">Pathway Builder</h2>
+        <p>Drag the steps of a pathway into order: respiration, the central dogma, the nephron, S<sub>N</sub>1 against S<sub>N</sub>2 and more.</p>
+      </div>
+      <a class="aui-btn aui-btn--gold" href="/see/pathway/">Play</a>
+    </section>
+    <div id="see-sections" class="aui-stack"></div>
+  </div>
+  <div id="one">
+    <p><a class="see-back" id="see-back" href="/see/">&larr; All whiteboards</a></p>
+    <div id="board"></div>
+    <div class="see-next" id="see-next"></div>
+  </div>
+</main>
+<script src="/shared/ace-visuals.js?v=4"></script>
+<script src="/shared/ace-record.js?v=6"></script>
+<script src="/shared/ace-board.js?v=1"></script>
+<script src="/shared/boards/gc.js?v=1"></script>
+<script src="/shared/boards/bio.js?v=1"></script>
+<script src="/shared/boards/oc.js?v=1"></script>
+<script src="/shared/boards/qr.js?v=1"></script>
+<script src="/shared/ace-ui.js?v=5" defer></script>
+<script>
+(function () {
+  'use strict';
+  var V = window.AceVisuals, B = window.AceBoard;
+  var qs = new URLSearchParams(location.search), id = qs.get('b'), from = qs.get('from') || '';
+  function el(tag, cls, text) { var n = document.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; }
+  var BACK = { review: ['/review/', 'Back to Review'], repair: ['/repair/', 'Back to Repair'], set: [null, 'Back to my question'], test: [null, 'Back to my test'], labs: ['/labs/', 'Back to Labs'] };
+
+  /* ---------- one board, full page ---------- */
+  if (id && B.get(id)) {
+    document.body.setAttribute('data-mode', 'board');
+    var b = B.get(id);
+    document.title = b.title + ' · Whiteboard · Ace Labs';
+    var back = document.getElementById('see-back');
+    if (BACK[from]) { back.textContent = '← ' + BACK[from][1]; if (BACK[from][0]) back.href = BACK[from][0]; else back.addEventListener('click', function (e) { if (history.length > 1) { e.preventDefault(); history.back(); } }); }
+    B.mount(document.getElementById('board'), id, { from: from, heading: 'h1', backLabel: BACK[from] ? BACK[from][1] : 'All whiteboards',
+      onBack: function () { if (BACK[from] && BACK[from][0]) location.href = BACK[from][0]; else if (BACK[from] && history.length > 1) history.back(); else location.href = '/see/'; } });
+    var all = B.list(), k = all.indexOf(b), nx = all[(k + 1) % all.length], next = document.getElementById('see-next');
+    var a = el('a', 'aui-btn aui-btn--quiet', 'Next board: ' + nx.title); a.href = B.url(nx.id); next.appendChild(a);
+    return;
+  }
+
+  /* ---------- the gallery ---------- */
+  var ART = {
+    'bio-plates': '/shared/art/plates/cell.webp', 'bio-physiology': '/shared/art/plates/heart.webp', 'bio-cell': '/shared/art/plates/mitochondrion.jpg',
+    'gc-galvanic': '/shared/art/plates/galvanic.jpg', 'gc-guacamole': '/gc/guacamole/img/wb-phone.jpg',
+    'oc-wheels': '/shared/art/wheel/aromatic.webp', 'oc-maps': '/shared/art/wheel/carbonyl.webp', 'oc-mech': '/shared/art/wheel/halides.webp', 'oc-roots': '/shared/art/wheel/hydrocarbons.webp',
+    'bio-immune': '/shared/art/plates/villus.jpg', 'bio-osmosis': '/shared/art/plates/alveoli.jpg', 'bio-diversity': '/shared/art/plates/flower.jpg', 'bio-micrographs': '/shared/art/plates/chloroplast.jpg'
+  };
+  var EYE = '<svg viewBox="0 0 24 24" fill="none" stroke="#1B3A2D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>';
+  var SEC = [['bio', 'Biology'], ['gchem', 'General Chemistry'], ['ochem', 'Organic Chemistry'], ['pat', 'Perceptual Ability'], ['rc', 'Reading Comprehension'], ['qr', 'Quantitative Reasoning']];
+  var seen = {}; try { seen = JSON.parse(localStorage.getItem('acelabs.boards') || '{}') || {}; } catch (e) { seen = {}; }
+  var host = document.getElementById('see-sections'), jump = document.getElementById('see-jump');
+  SEC.forEach(function (s) {
+    var boards = B.list().filter(function (x) { return x.section === s[0]; });
+    var tools = V.tools.filter(function (t) { return t.section === s[0] && !t.board; });
+    if (!boards.length && !tools.length) return;
+    var j = el('a', null, s[1]); j.href = '#' + s[0]; jump.appendChild(j);
+    var sec = el('section', 'see-sec'); sec.id = s[0];
+    var h = el('header'); h.appendChild(el('h2', 'aui-h2', s[1]));
+    h.appendChild(el('span', null, (boards.length ? boards.length + ' whiteboard' + (boards.length === 1 ? '' : 's') + ', ' : '') + tools.length + ' lab' + (tools.length === 1 ? '' : 's')));
+    sec.appendChild(h);
+    if (boards.length) {
+      var grid = el('div', 'see-grid');
+      boards.forEach(function (x) {
+        var t = el('a', 'see-tile'); t.href = B.url(x.id); t.setAttribute('data-board', x.id);
+        var art = el('span', 'see-tile__art'); art.innerHTML = x.svg; art.setAttribute('aria-hidden', 'true'); t.appendChild(art);
+        var body = el('span', 'see-tile__body'); body.appendChild(el('b', null, x.title)); body.appendChild(el('span', null, x.sub));
+        if (seen[x.id]) body.appendChild(el('span', 'see-done', 'Done: ' + seen[x.id].score + ' of 3'));
+        t.appendChild(body); grid.appendChild(t);
+      });
+      sec.appendChild(grid);
+    }
+    if (tools.length) {
+      var more = el('div', 'see-more');
+      tools.forEach(function (x) {
+        var r = el('a', 'see-row'); r.href = V.withFrom(x.path, 'see'); r.setAttribute('data-tool', x.id);
+        var art = el('span', 'see-row__art'); art.setAttribute('aria-hidden', 'true');
+        if (ART[x.id]) { var im = el('img'); im.src = ART[x.id]; im.alt = ''; im.loading = 'lazy'; im.width = 76; im.height = 60; art.appendChild(im); } else art.innerHTML = EYE;
+        r.appendChild(art);
+        var tx = el('span'); tx.appendChild(el('b', null, x.title)); tx.appendChild(el('span', null, x.does)); r.appendChild(tx);
+        more.appendChild(r);
+      });
+      sec.appendChild(more);
+    }
+    host.appendChild(sec);
+  });
+})();
+</script>
+<script>
+/* /see/ sits under Labs. The shell maps places by address, so light the Labs door here. */
+window.addEventListener('load', function () {
+  Array.prototype.forEach.call(document.querySelectorAll('#ace-bar a[href^="/labs/"], #ace-tabs a[href^="/labs/"]'), function (a) { a.setAttribute('aria-current', 'page'); });
+});
+</script>
+<script src="/shared/ace-tabs.js?v=4" defer></script>
+</body>
+</html>

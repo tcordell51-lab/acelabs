@@ -10,7 +10,7 @@ const url = (q) => { const m = V.match(q); return m ? m.url : null; };
 test('sample misses open the matching visual', () => {
   const cases = [
     [{ section: 'ochem', topic: 'Alkene addition reactions' }, '/tools/ochem/#alkenes'],
-    [{ section: 'ochem', topic: 'SN1/SN2/E1/E2' }, '/tools/ochem/#subelim'],
+    [{ section: 'ochem', topic: 'SN1/SN2/E1/E2' }, '/see/?b=sn-e-decide'],
     [{ section: 'ochem', topic: 'Aromaticity & EAS' }, '/tools/ochem/#aromatic'],
     [{ section: 'ochem', concept: 'EAS on benzene' }, '/tools/ochem/?game=wheel&wheel=benzene'],
     [{ section: 'ochem', concept: 'Ketone reductions' }, '/tools/ochem/?game=wheel&wheel=ketone'],
@@ -35,18 +35,21 @@ test('sample misses open the matching visual', () => {
     [{ section: 'qr', skill: 'geo-2d', concept: '2D Geometry: Circles, Squares' }, '/tools/qr/proposals/agent-06-geometry/geo-2d.html'],
     [{ section: 'pat', skill: 'holepunch', concept: 'Hole punching' }, '/tools/pat/holepunch.html'],
     [{ section: 'pat', skill: 'tfe', concept: 'Top front end' }, '/tools/pat/tfe.html'],
-    [{ section: 'rc', topic: 'detail', concept: 'Detail questions' }, '/rc/map/']
+    [{ section: 'rc', topic: 'detail', concept: 'Detail questions' }, '/rc/map/'],
+    // whiteboards (2026-11-24): these five used to return nothing
+    [{ section: 'gchem', topic: 'mole-conv', topicName: 'Mole Conversions' }, '/see/?b=mole-bridge'],
+    [{ section: 'gchem', topic: 'ph-basics', topicName: 'Acid-Base: pH/pOH/Ka/Kb' }, '/see/?b=acid-base'],
+    [{ section: 'gchem', topic: 'nernst', topicName: 'Electrochem: Nernst Eqn' }, '/see/?b=redox'],
+    [{ section: 'qr', topic: 'trigonometry', topicName: 'Trigonometry' }, '/see/?b=trig-triangle'],
+    [{ section: 'qr', topic: 'Exponents & roots' }, '/see/?b=powers-roots']
   ];
   for (const [q, want] of cases) assert.strictEqual(url(q), want, JSON.stringify(q));
 });
 
 test('no match means no button, never a wrong one', () => {
   for (const q of [
-    { section: 'gchem', topic: 'mole-conv', topicName: 'Mole Conversions' },
-    { section: 'gchem', topic: 'ph-basics', topicName: 'Acid-Base: pH/pOH/Ka/Kb' },
-    { section: 'qr', topic: 'trigonometry', topicName: 'Trigonometry' },
-    { section: 'gchem', topic: 'nernst', topicName: 'Electrochem: Nernst Eqn' },
-    { section: 'qr', topic: 'Exponents & roots' },
+    { section: 'gchem', topic: 'sig-figs', topicName: 'Sig Figs and Measurement' },
+    { section: 'bio', topic: 'lab-techniques', topicName: 'Lab techniques' },
     { section: 'bio', concept: 'Biology mixed' },
     { section: 'rc', topic: 'tone', concept: 'Tone questions' },
     { section: '', topic: 'VSEPR' },

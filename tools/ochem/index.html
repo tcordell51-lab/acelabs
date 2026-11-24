@@ -21108,7 +21108,8 @@ html[data-theme="dark"] .dt-case-select{background:var(--white);color:var(--ink)
   function deepLinked(){
     var h=(location.hash||'').replace('#','');
     if(h && h!=='top' && h!=='intro') return true;
-    return /[?&](game|wheel|spoke|hub|view|q|card)=/.test(location.search);
+    // ?from= (review, repair, set, test, see): sent here from a See it link, so the same rule holds.
+    return /[?&](game|wheel|spoke|hub|view|q|card|from)=/.test(location.search);
   }
   if(!seen && !fromNight && !deepLinked()){
     setTimeout(()=>{

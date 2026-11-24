@@ -782,6 +782,8 @@
     return out;
   }
   function subjName(k) { return { 'Biology': 'Biology', 'Gen Chem': 'General Chemistry', 'OChem': 'Organic Chemistry', 'PAT': 'Perceptual Ability', 'RC': 'Reading Comprehension', 'QR': 'Quantitative Reasoning' }[k] || k; }
+  /* See it: the matching visual for this question (shared/ace-visuals.js), as a chip. '' when none. */
+  function seeChip(q) { return window.AceVisuals && window.AceVisuals.chipHTML ? window.AceVisuals.chipHTML(q, 'test') : ''; }
   function missHTML1(ms) {
     var x = ms.x, st = STUDY[x.sub], you = ms.ans == null ? 'left open' : L[ms.ans];
     var h = '<div class="miss" style="--c:' + st.c + '"><div class="h">' + SEC[ms.sec].short + ', question ' + (ms.i + 1) + '</div>';
@@ -793,6 +795,7 @@
       h += '<div class="a">Your answer: <b>' + (ms.ans == null ? 'left open' : L[ms.ans] + '. ' + show(ms.ans)) + '</b><br>Correct: <b>' + L[it.correct] + '. ' + show(it.correct) + '</b></div>';
       h += '<div class="why">' + esc(it.why) + (ms.ans != null && it.traps && it.traps[ms.ans] ? '<br><br><b>About your pick:</b> ' + esc(it.traps[ms.ans]) : '') + '</div>';
       var night = it.nights && it.nights[0];
+      h += seeChip({ section: x.sub, topic: it.stop || it.topic, topicName: it.topic, stem: it.q });
       h += '<div class="links"><a href="' + st.learn + (night ? '?night=' + night : '') + '">' + (night ? 'Retold night ' + night + ': ' : 'Retold: ') + esc(it.topic) + '</a><a href="' + st.review + '">' + st.engine + '</a></div>';
     } else if (x.kind === 'pat') {
       var p = x.it, P = PAT[p.type], ex = PAT.explain ? PAT.explain(p, ms.ans) : null;
@@ -801,11 +804,12 @@
       h += '<div class="a">Your answer: <b>' + you + '</b>. Correct: <b>' + L[p.answer] + '</b>.</div><div class="pat-area" style="display:flex;gap:10px;flex-wrap:wrap;margin-top:8px">' +
         (ms.ans != null ? '<div style="max-width:160px"><div class="note">Your pick</div>' + P.renderOption(p, ms.ans) + '</div>' : '') + '<div style="max-width:160px"><div class="note">Correct</div>' + P.renderOption(p, p.answer) + '</div></div>';
       if (ex) h += PAT.explain.html(ex, { chosen: ms.ans, note: p.type === 'cubes' ? 'Highlighted in the figure: the cubes with exactly ' + p.meta.k + ' painted side' + (p.meta.k === 1 ? '' : 's') + '.' : null });
+      h += seeChip({ section: 'pat', topic: p.type, skill: p.type });
       h += '<div class="links"><a href="/tools/pat/' + PAT_PAGE[p.type] + '">Practice ' + esc((PAT.SECTIONS.filter(function (s) { return s.type === p.type; })[0] || {}).name || 'this subtest') + '</a><a href="' + st.learn + '">PAT, Retold</a></div>';
     } else {
       var q = x.q, pr = (q.proof || [])[0];
       h += '<div class="q">' + esc(q.stem) + '</div><div class="a">Your answer: <b>' + (ms.ans == null ? 'left open' : L[ms.ans] + '. ' + esc(q.choices[ms.ans])) + '</b><br>Correct: <b>' + L[q.key] + '. ' + esc(q.choices[q.key]) + '</b></div>' +
-        '<div class="why">' + (pr ? '<b>Proof line, paragraph ' + pr.paragraph + ':</b> "' + esc(pr.quote) + '"<br><br>' : '') + esc(q.why) + '</div>' +
+        '<div class="why">' + (pr ? '<b>Proof line, paragraph ' + pr.paragraph + ':</b> "' + esc(pr.quote) + '"<br><br>' : '') + esc(q.why) + '</div>' + seeChip({ section: 'rc', topic: q.type, topicName: (RC && RC.types && RC.types[q.type]) || q.type }) +
         '<div class="links"><a href="/tools/rc/">Practice this passage in the RC player</a><a href="' + st.learn + '">Reading, Retold</a></div>';
     }
     return h + '</div>';

@@ -19,14 +19,13 @@
   var ICON_X = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fffdf7" stroke-width="3" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg>';
   var ICON_OK = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0d2018" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5 9-10"></path></svg>';
 
-  var EYE = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"></path><circle cx="12" cy="12" r="3"></circle></svg>';
   /* The "See it" link for a miss: the best-matching visual (shared/ace-visuals.js), or null.
      Opening the picture counts like opening the lesson: no win that day (onOpen says so). */
   function seeIt(e, onOpen) {
-    var v = window.AceVisuals ? window.AceVisuals.match({ section: e.section, topic: e.topic, topicName: e.topicName, concept: e.skillName, stem: e.itemData && e.itemData.stem }) : null;
-    if (!v) return null;
-    var a = el('a', 'see-it'); a.innerHTML = EYE; a.appendChild(document.createTextNode('See it'));
-    a.href = window.AceVisuals.withFrom(v.url, 'repair'); a.title = v.label; a.setAttribute('data-see', v.id);
+    var a = window.AceVisuals && window.AceVisuals.chip ? window.AceVisuals.chip({ section: e.section, topic: e.topic, topicName: e.topicName, concept: e.skillName, stem: e.itemData && e.itemData.stem }, 'repair') : null;
+    if (!a) return null;
+    var sp = a.querySelector('span'); a.title = sp.textContent.replace(/^See it: /, ''); sp.textContent = 'See it';   // short in the queue; the title names it
+    a.setAttribute('data-see', a.getAttribute('data-see-id')); a.style.marginTop = '0';
     if (onOpen) a.addEventListener('click', onOpen);
     return a;
   }
