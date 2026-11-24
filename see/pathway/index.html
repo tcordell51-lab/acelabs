@@ -7,7 +7,7 @@
 <meta name="description" content="Put the steps of a DAT pathway in order: cellular respiration, the central dogma, the nephron, SN1 and more. Drag the cards or tap the arrows.">
 <link rel="icon" type="image/svg+xml" href="/shared/ace-dat-mark.svg">
 <link rel="stylesheet" href="/shared/ace-ui.css?v=8">
-<link rel="stylesheet" href="/shared/ace-board.css?v=1">
+<link rel="stylesheet" href="/shared/ace-board.css?v=2">
 <style>
   .pw-back { display: inline-flex; align-items: center; gap: 6px; min-height: var(--aui-tap); font-weight: 700; text-decoration: none; }
   .pw-grid { display: grid; gap: var(--aui-3); grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr)); }
@@ -64,18 +64,24 @@
   </div>
 </main>
 <script src="/shared/ace-record.js?v=6"></script>
-<script src="/shared/ace-board.js?v=1"></script>
-<script src="/shared/boards/gc.js?v=1"></script>
-<script src="/shared/boards/bio.js?v=1"></script>
-<script src="/shared/boards/oc.js?v=1"></script>
-<script src="/shared/boards/qr.js?v=1"></script>
+<script src="/shared/ace-board.js?v=2"></script>
+<script src="/shared/boards/gc.js?v=2"></script>
+<script src="/shared/boards/bio.js?v=2"></script>
+<script src="/shared/boards/oc.js?v=2"></script>
+<script src="/shared/boards/qr.js?v=2"></script>
+<script src="/shared/boards/gc2.js?v=2"></script>
+<script src="/shared/boards/bio2.js?v=2"></script>
+<script src="/shared/boards/oc2.js?v=2"></script>
+<script src="/shared/boards/qr2.js?v=2"></script>
+<script src="/shared/boards/pat.js?v=2"></script>
+<script src="/shared/boards/rc.js?v=2"></script>
 <script src="/shared/ace-ui.js?v=5" defer></script>
 <script>
 (function () {
   'use strict';
   var B = window.AceBoard, KEY = 'acelabs.pathways';
-  var COLOR = { bio: '#2f7d4f', gchem: '#2f5f9e', ochem: '#6b4fa0', qr: '#a3405c' };
-  var ORDER = ['bio', 'gchem', 'ochem', 'qr'];
+  var COLOR = { bio: '#2f7d4f', gchem: '#2f5f9e', ochem: '#6b4fa0', qr: '#a3405c', pat: '#b5762a', rc: '#1B3A2D' };
+  var ORDER = ['bio', 'gchem', 'ochem', 'pat', 'rc', 'qr'];
   function el(tag, cls, text) { var n = document.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; }
   function load() { try { return JSON.parse(localStorage.getItem(KEY) || '{}') || {}; } catch (e) { return {}; } }
   function save(v) { try { localStorage.setItem(KEY, JSON.stringify(v)); } catch (e) { /* private mode: the game still plays */ } }

@@ -7,7 +7,7 @@
 <meta name="description" content="Every Ace Labs whiteboard and interactive visual in one place, grouped by DAT section. Predict, watch it drawn, then try three questions.">
 <link rel="icon" type="image/svg+xml" href="/shared/ace-dat-mark.svg">
 <link rel="stylesheet" href="/shared/ace-ui.css?v=8">
-<link rel="stylesheet" href="/shared/ace-board.css?v=1">
+<link rel="stylesheet" href="/shared/ace-board.css?v=2">
 <style>
   .see-jump { display: flex; flex-wrap: wrap; gap: var(--aui-2); }
   .see-jump a { display: inline-flex; align-items: center; min-height: var(--aui-tap); padding: 0 16px; border-radius: var(--aui-r-pill); border: 1.5px solid var(--aui-line-2); background: var(--aui-paper); color: var(--aui-ink); font-weight: 700; font-size: var(--aui-t-sm); text-decoration: none; }
@@ -36,9 +36,17 @@
   .see-row__art svg { width: 44px; height: 44px; }
   .see-row b { display: block; font-size: var(--aui-t-md); line-height: 1.25; }
   .see-row span { display: block; font-size: 15px; color: var(--aui-ink-2); line-height: 1.35; }
-  .see-game { display: grid; gap: var(--aui-3); align-items: center; background: var(--aui-forest); color: var(--aui-cream); border-radius: var(--aui-r-lg); padding: var(--aui-5); }
-  .see-game h2 { color: var(--aui-cream); } .see-game p { margin: 0; color: #dfe7df; max-width: 60ch; }
-  @media (min-width: 720px) { .see-game { grid-template-columns: minmax(0, 1fr) auto; } }
+  .see-play { background: var(--aui-forest); color: var(--aui-cream); border-radius: var(--aui-r-lg); padding: var(--aui-5); display: grid; gap: var(--aui-3); }
+  .see-play h2 { color: var(--aui-cream); margin: 0; }
+  .see-play__row { display: grid; gap: var(--aui-3); grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr)); }
+  .see-play__card { display: grid; grid-template-columns: 96px minmax(0, 1fr); grid-template-rows: auto auto; column-gap: var(--aui-3); align-items: center; min-height: 96px; padding: var(--aui-3); border-radius: var(--aui-r); border: 1.5px solid rgba(245, 240, 232, .28); background: rgba(245, 240, 232, .07); text-decoration: none; transition: transform .2s var(--aui-ease), border-color .2s; }
+  .aui a.see-play__card { color: var(--aui-cream); }
+  .see-play__card:hover { transform: translateY(-2px); border-color: #C9A84C; }
+  .see-play__card:focus-visible { outline: 3px solid #C9A84C; outline-offset: 2px; }
+  .see-play__card svg { grid-row: 1 / 3; width: 96px; height: 68px; }
+  .see-play__card b { font-size: var(--aui-t-lg); line-height: 1.2; align-self: end; color: #C9A84C; }
+  .see-play__card span { font-size: 15px; line-height: 1.35; color: #dfe7df; align-self: start; }
+  @media (min-width: 900px) { .see-play__card { grid-template-columns: 1fr; grid-template-rows: auto auto auto; row-gap: 6px; justify-items: start; } .see-play__card svg { grid-row: auto; width: 132px; height: 92px; } }
   .see-back { display: inline-flex; align-items: center; gap: 6px; min-height: var(--aui-tap); font-weight: 700; text-decoration: none; }
   .see-next { display: flex; flex-wrap: wrap; gap: var(--aui-3); margin-top: var(--aui-5); }
   body[data-mode="board"] #gallery, body[data-mode="gallery"] #one { display: none; }
@@ -53,12 +61,22 @@
       <p class="aui-lede">One picture per idea. Predict, watch it drawn, then try three questions.</p>
       <nav class="see-jump" id="see-jump" aria-label="Sections"></nav>
     </header>
-    <section class="see-game">
-      <div class="aui-stack">
-        <h2 class="aui-h2">Pathway Builder</h2>
-        <p>Drag the steps of a pathway into order: respiration, the central dogma, the nephron, S<sub>N</sub>1 against S<sub>N</sub>2 and more.</p>
+    <section class="see-play" aria-labelledby="see-play-h">
+      <h2 class="aui-h2" id="see-play-h">Play</h2>
+      <div class="see-play__row">
+        <a class="see-play__card" href="/see/flick/" data-game="flick">
+          <svg viewBox="0 0 120 84" aria-hidden="true"><rect x="34" y="20" width="52" height="44" rx="9" fill="#FDFCF8" stroke="#F5F0E8" stroke-width="3"/><path d="M60 52V32M51 40l9-9 9 9" fill="none" stroke="#1B3A2D" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M16 30v24M8 38l8-8 8 8" fill="none" stroke="#C9A84C" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M104 30v24M96 46l8 8 8-8" fill="none" stroke="#C9A84C" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <b>Trend Flick</b><span>Up or down? Flick the card. Ten rounds, keep your streak.</span>
+        </a>
+        <a class="see-play__card" href="/see/tug/" data-game="tug">
+          <svg viewBox="0 0 120 84" aria-hidden="true"><rect x="4" y="26" width="30" height="32" rx="7" fill="none" stroke="#F5F0E8" stroke-width="3"/><rect x="86" y="26" width="30" height="32" rx="7" fill="none" stroke="#F5F0E8" stroke-width="3"/><path d="M34 42h52" stroke="#F5F0E8" stroke-width="4" stroke-dasharray="2 8" stroke-linecap="round"/><circle cx="70" cy="42" r="12" fill="#C9A84C" stroke="#1B3A2D" stroke-width="3"/><text x="70" y="47" text-anchor="middle" font-family="DM Sans, system-ui, sans-serif" font-weight="700" font-size="14" fill="#1B3A2D">Q</text></svg>
+          <b>Q vs K Tug</b><span>A change hits the equilibrium. Which way does it pull?</span>
+        </a>
+        <a class="see-play__card" href="/see/pathway/" data-game="pathway">
+          <svg viewBox="0 0 120 84" aria-hidden="true"><rect x="18" y="8" width="84" height="18" rx="6" fill="#FDFCF8"/><rect x="18" y="33" width="84" height="18" rx="6" fill="#C9A84C"/><rect x="18" y="58" width="84" height="18" rx="6" fill="#FDFCF8"/><circle cx="29" cy="17" r="5" fill="#1B3A2D"/><circle cx="29" cy="42" r="5" fill="#1B3A2D"/><circle cx="29" cy="67" r="5" fill="#1B3A2D"/></svg>
+          <b>Pathway Builder</b><span>Drag the steps of a pathway into order, then see it drawn.</span>
+        </a>
       </div>
-      <a class="aui-btn aui-btn--gold" href="/see/pathway/">Play</a>
     </section>
     <div id="see-sections" class="aui-stack"></div>
   </div>
@@ -68,13 +86,19 @@
     <div class="see-next" id="see-next"></div>
   </div>
 </main>
-<script src="/shared/ace-visuals.js?v=4"></script>
+<script src="/shared/ace-visuals.js?v=5"></script>
 <script src="/shared/ace-record.js?v=6"></script>
-<script src="/shared/ace-board.js?v=1"></script>
-<script src="/shared/boards/gc.js?v=1"></script>
-<script src="/shared/boards/bio.js?v=1"></script>
-<script src="/shared/boards/oc.js?v=1"></script>
-<script src="/shared/boards/qr.js?v=1"></script>
+<script src="/shared/ace-board.js?v=2"></script>
+<script src="/shared/boards/gc.js?v=2"></script>
+<script src="/shared/boards/bio.js?v=2"></script>
+<script src="/shared/boards/oc.js?v=2"></script>
+<script src="/shared/boards/qr.js?v=2"></script>
+<script src="/shared/boards/gc2.js?v=2"></script>
+<script src="/shared/boards/bio2.js?v=2"></script>
+<script src="/shared/boards/oc2.js?v=2"></script>
+<script src="/shared/boards/qr2.js?v=2"></script>
+<script src="/shared/boards/pat.js?v=2"></script>
+<script src="/shared/boards/rc.js?v=2"></script>
 <script src="/shared/ace-ui.js?v=5" defer></script>
 <script>
 (function () {

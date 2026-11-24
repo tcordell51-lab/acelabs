@@ -105,12 +105,61 @@
       { q: 'A catalyst is added to a system at equilibrium. What happens?', choices: ['It shifts toward products', 'K gets larger', 'No shift: both rates speed up equally'], answer: 2, why: 'A catalyst lowers the barrier both ways. Equilibrium is reached faster, in the same place.' },
       { q: 'For a dissolved salt, the ion product Q is larger than K_{sp}. What happens?', choices: ['A precipitate forms', 'More solid dissolves', 'Nothing changes'], answer: 0, why: 'Q > K_{sp} means too many ions in solution. The reaction runs back toward the solid.' }
     ],
+    tug: {
+      title: 'Which way does it shift?',
+      sets: [
+        { rxn: 'N_{2} + 3H_{2} ⇌ 2NH_{3} + heat', cards: [
+          { change: 'Add more N_{2}', dir: 'right', why: 'More reactant makes Q smaller than K, so the reaction runs forward.' },
+          { change: 'Remove NH_{3} as it forms', dir: 'right', why: 'Less product makes Q smaller than K. The system makes more product.' },
+          { change: 'Add NH_{3}', dir: 'left', why: 'More product makes Q larger than K, so the reaction runs backward.' },
+          { change: 'Raise the temperature', dir: 'left', why: 'Heat is a product here. Adding heat pushes back toward reactants, and K itself gets smaller.' },
+          { change: 'Lower the temperature', dir: 'right', why: 'Removing heat, a product, pulls the reaction forward. K gets larger.' },
+          { change: 'Squeeze the container (raise the pressure)', dir: 'right', why: 'Four moles of gas become two. Higher pressure favors the side with fewer gas moles.' },
+          { change: 'Expand the container (lower the pressure)', dir: 'left', why: 'Lower pressure favors the side with more gas moles: the reactants.' },
+          { change: 'Add a catalyst', dir: 'none', why: 'A catalyst speeds up both directions equally. Q and K do not change.' },
+          { change: 'Add helium at constant volume', dir: 'none', why: 'An inert gas does not change any partial pressure in the reaction, so Q is unchanged.' }
+        ] },
+        { rxn: 'N_{2}O_{4} + heat ⇌ 2NO_{2}', cards: [
+          { change: 'Heat the flask', dir: 'right', why: 'Heat is a reactant here. Adding it pushes toward products, and K gets larger.' },
+          { change: 'Compress the gas', dir: 'left', why: 'One mole of gas becomes two going forward. Higher pressure favors the side with fewer moles.' },
+          { change: 'Add NO_{2}', dir: 'left', why: 'More product makes Q larger than K.' },
+          { change: 'Cool the flask', dir: 'left', why: 'Removing heat, a reactant, pulls the reaction backward.' }
+        ] },
+        { rxn: 'AgCl(s) ⇌ Ag^{+} + Cl^{−}', cards: [
+          { change: 'Dissolve some NaCl in the solution', dir: 'left', why: 'Common ion: extra Cl^{−} makes Q larger than K_{sp}, so AgCl precipitates.' },
+          { change: 'Add more solid AgCl', dir: 'none', why: 'A pure solid is not in the Q expression. More of it changes nothing.' },
+          { change: 'Remove Ag^{+} from the solution', dir: 'right', why: 'Less product makes Q smaller than K_{sp}, so more solid dissolves.' }
+        ] },
+        { rxn: 'HA + H_{2}O ⇌ H_{3}O^{+} + A^{−}', cards: [
+          { change: 'Add a strong acid', dir: 'left', why: 'Extra H_{3}O^{+} makes Q larger than K_{a}.' },
+          { change: 'Add NaOH', dir: 'right', why: 'Hydroxide removes H_{3}O^{+}. Q drops below K_{a} and more HA ionizes.' },
+          { change: 'Add the salt NaA', dir: 'left', why: 'Common ion: extra A^{−} makes Q larger than K_{a}. This is how a buffer is made.' }
+        ] }
+      ]
+    },
     path: { title: 'Solve an ICE table', steps: ['Write the balanced equation', 'I: fill in the initial concentrations', 'C: change by −x and +x times each coefficient', 'E: add the I and C rows', 'Plug the E row into the K expression', 'Solve for x'] }
   });
 
   /* ---------- 4. The energy ledger ---------- */
   B.add({
     id: 'energy-ledger', section: 'gchem', title: 'The energy ledger',
+    flick: {
+      title: 'Signs in thermochemistry', up: 'Positive', down: 'Negative',
+      cards: [
+        { q: 'ΔH for an exothermic reaction', up: false, why: 'Heat leaves the system, so ΔH is negative.' },
+        { q: 'ΔH for melting ice', up: true, why: 'Melting absorbs heat: endothermic.' },
+        { q: 'ΔS when a liquid boils', up: true, why: 'A gas is far more disordered than a liquid.' },
+        { q: 'ΔS when a gas condenses', up: false, why: 'Gas to liquid loses disorder.' },
+        { q: 'ΔG for a spontaneous process', up: false, why: 'Spontaneous means ΔG is below zero.' },
+        { q: 'ΔG for a nonspontaneous process', up: true, why: 'It needs energy put in, so ΔG is above zero.' },
+        { q: 'ΔH for burning methane', up: false, why: 'Combustion releases heat.' },
+        { q: 'ΔS when 2 mol of gas become 1 mol of gas', up: false, why: 'Fewer gas moles, less disorder.' },
+        { q: 'ΔH for breaking a bond', up: true, why: 'Breaking bonds always costs energy.' },
+        { q: 'ΔH for forming a bond', up: false, why: 'Forming bonds always releases energy.' },
+        { q: 'q, when the system absorbs heat', up: true, why: 'Heat flowing in is counted as positive.' },
+        { q: 'ΔS when a solid salt dissolves into ions', up: true, why: 'Ions spread out through the water for most salts.' }
+      ]
+    },
     sub: 'Enthalpy on the left, the Gibbs quadrant on the right.',
     svg: K.svg(
       arrow(44, 480, 44, 120, { w: 4 }), t(44, 100, 'H', { size: 32 }),
@@ -169,7 +218,24 @@
       { q: 'A gas fills 2.0 L at 300 K. It is heated to 600 K at constant pressure. New volume?', choices: ['1.0 L', '4.0 L', '2.0 L'], answer: 1, why: 'Charles: V/T is constant. Doubling the kelvin temperature doubles the volume: 4.0 L.' },
       { q: 'A tank holds 0.25 mol He and 0.75 mol Ne at 2.0 atm total. What is the partial pressure of He?', choices: ['0.50 atm', '1.5 atm', '0.25 atm'], answer: 0, why: 'Mole fraction of He is 0.25 ÷ 1.00 = 0.25. 0.25 × 2.0 atm = 0.50 atm.' },
       { q: 'H_{2} and O_{2} are at the same temperature. Which molecules move faster on average?', choices: ['O_{2}', 'They move at the same speed', 'H_{2}'], answer: 2, why: 'Same T means the same average kinetic energy. The lighter H_{2} must move faster to match it.' }
-    ]
+    ],
+    flick: {
+      title: 'Gas laws', up: 'Goes up', down: 'Goes down',
+      cards: [
+        { q: 'Pressure, when the volume is halved at constant temperature', up: true, why: 'Boyle: P and V are inversely related.' },
+        { q: 'Volume, when a gas is heated at constant pressure', up: true, why: 'Charles: V is proportional to kelvin temperature.' },
+        { q: 'Pressure, when a sealed rigid tank is cooled', up: false, why: 'At constant volume, P is proportional to kelvin temperature.' },
+        { q: 'Pressure, when more gas is pumped into a rigid tank', up: true, why: 'More moles in the same volume: more collisions.' },
+        { q: 'Volume of a weather balloon, as it rises to lower outside pressure', up: true, why: 'Lower outside pressure lets the gas expand.' },
+        { q: 'Average speed of the molecules, when the temperature rises', up: true, why: 'Temperature measures average kinetic energy.' },
+        { q: 'Density of a gas, when it is heated at constant pressure', up: false, why: 'Same mass in a larger volume.' },
+        { q: 'Rate of effusion, when the gas has a larger molar mass', up: false, why: 'Graham: heavier molecules move slower.' },
+        { q: 'Partial pressure of O_{2}, when its mole fraction falls', up: false, why: 'Dalton: partial pressure is mole fraction times total pressure.' },
+        { q: 'Deviation from ideal behavior, when the pressure gets very high', up: true, why: 'Crowded molecules have real volume and real attractions.' },
+        { q: 'Deviation from ideal behavior, when the temperature gets very high', up: false, why: 'Fast molecules barely feel attractions. Hot and low pressure is most ideal.' },
+        { q: 'Pressure in a rigid tank, when the kelvin temperature doubles', up: true, why: 'Constant volume and moles: P doubles with T.' }
+      ]
+    }
   });
 
   /* ---------- 6. Kinetics ---------- */
@@ -198,6 +264,23 @@
       { q: 'For rate = k[A][B]^{2}, what is the overall order?', choices: ['3', '2', '1'], answer: 0, why: 'Add the exponents: 1 + 2 = 3.' },
       { q: 'The half-life of a first-order reaction:', choices: ['Gets longer as the reactant runs out', 'Depends on the starting concentration', 'Stays constant'], answer: 2, why: 'First order: t_{1/2} = 0.693/k. It does not depend on concentration.' }
     ],
+    flick: {
+      title: 'Reaction rate', up: 'Faster', down: 'Slower',
+      cards: [
+        { q: 'Raise the temperature', up: true, why: 'More molecules have enough energy to clear the activation barrier.' },
+        { q: 'Add a catalyst', up: true, why: 'A catalyst opens a path with a lower activation energy.' },
+        { q: 'Dilute the reactants', up: false, why: 'Lower concentration means fewer collisions per second.' },
+        { q: 'Grind a solid reactant into a fine powder', up: true, why: 'More surface area means more collisions.' },
+        { q: 'Cool the mixture in an ice bath', up: false, why: 'Fewer molecules can clear the barrier.' },
+        { q: 'Switch to a pathway with a higher activation energy', up: false, why: 'A taller barrier means a smaller rate constant.' },
+        { q: 'Double the concentration of a first-order reactant', up: true, why: 'Rate = k[A], so the rate doubles.' },
+        { q: 'Remove the catalyst', up: false, why: 'The reaction goes back to the higher-barrier path.' },
+        { q: 'Raise the pressure of a gas-phase reactant', up: true, why: 'Higher pressure is higher concentration for a gas.' },
+        { q: 'Add an inhibitor', up: false, why: 'An inhibitor blocks the fast pathway.' },
+        { q: 'The rate constant k gets larger', up: true, why: 'Rate is k times the concentration terms.' },
+        { q: 'A reactant is used up as the reaction proceeds (first order)', up: false, why: 'Rate = k[A], and [A] is falling.' }
+      ]
+    },
     more: [{ label: 'Recognition lab: read the graphs fast', href: '/tools/gc/recognition-lab.html' }]
   });
 

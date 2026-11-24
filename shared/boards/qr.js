@@ -10,6 +10,23 @@
   /* ---------- Fractions, decimals, percent ---------- */
   B.add({
     id: 'number-line', section: 'qr', title: 'Fractions, decimals, percent: one number line',
+    flick: {
+      title: 'Bigger or smaller?', up: 'Gets bigger', down: 'Gets smaller',
+      cards: [
+        { q: 'A positive number, multiplied by 1/2', up: false, why: 'Half of a positive number is smaller.' },
+        { q: 'A positive number, divided by 1/2', up: true, why: 'Dividing by 1/2 doubles it.' },
+        { q: '0.5, squared', up: false, why: '0.5 × 0.5 = 0.25. Fractions shrink when squared.' },
+        { q: '0.25, square rooted', up: true, why: 'The root of 0.25 is 0.5.' },
+        { q: '4, squared', up: true, why: '4 × 4 = 16.' },
+        { q: 'A negative number, plus 3', up: true, why: 'Adding moves right on the number line.' },
+        { q: '-2, multiplied by 3', up: false, why: '-6 sits left of -2.' },
+        { q: '-6, divided by 2', up: true, why: '-3 sits right of -6.' },
+        { q: 'A positive fraction, when its denominator grows', up: false, why: 'More pieces means each piece is smaller.' },
+        { q: 'A positive fraction, when its numerator grows', up: true, why: 'More pieces of the same size.' },
+        { q: '-0.5, squared', up: true, why: '0.25 is greater than -0.5.' },
+        { q: '10, replaced by its reciprocal', up: false, why: '1/10 = 0.1.' }
+      ]
+    },
     sub: 'The benchmark conversions worth knowing cold.',
     svg: K.svg(
       line([[40, 280], [690, 280]], { w: 5.5 }), tick(0, 22, { w: 5 }), tick(1, 22, { w: 5 }),
@@ -78,6 +95,23 @@
   var ST = [[95, 420], [205, 370], [315, 320], [425, 270], [535, 220], [645, 170]], VAL = ['1/4', '1/2', '1', '2', '4', '8'], EXP = ['2^{-2}', '2^{-1}', '2^{0}', '2^{1}', '2^{2}', '2^{3}'];
   B.add({
     id: 'powers-roots', section: 'qr', title: 'Powers, roots and quadratics',
+    flick: {
+      title: 'Above or below 1?', up: 'Greater than 1', down: 'Less than 1',
+      cards: [
+        { q: '2^{-1}', up: false, why: 'A negative exponent flips it: 1/2.' },
+        { q: '(1/2)^{-2}', up: true, why: 'Flip, then square: 2^{2} = 4.' },
+        { q: '9^{1/2}', up: true, why: 'The square root of 9 is 3.' },
+        { q: '(1/4)^{1/2}', up: false, why: 'The square root of 1/4 is 1/2.' },
+        { q: '10^{-3}', up: false, why: 'That is 0.001.' },
+        { q: '(2/3)^{2}', up: false, why: '4/9. A fraction below 1 shrinks when squared.' },
+        { q: '(3/2)^{2}', up: true, why: '9/4 = 2.25.' },
+        { q: '8^{-1/3}', up: false, why: 'Cube root is 2, then flip: 1/2.' },
+        { q: '(0.1)^{-1}', up: true, why: 'The reciprocal of 0.1 is 10.' },
+        { q: 'The square root of 0.81', up: false, why: 'It is 0.9. Roots pull numbers toward 1, not past it.' },
+        { q: '2^{1/2}', up: true, why: 'About 1.41.' },
+        { q: '(1/9)^{-1/2}', up: true, why: 'Flip to 9, then root: 3.' }
+      ]
+    },
     sub: 'The exponent rules as one staircase, then one factoring move.',
     svg: K.svg(
       line([[40, 444], [40, 420], [150, 420], [150, 370], [260, 370], [260, 320], [370, 320], [370, 270], [480, 270], [480, 220], [590, 220], [590, 170], [700, 170]], { w: 5.5 }),
@@ -106,6 +140,23 @@
   /* ---------- Trigonometry ---------- */
   B.add({
     id: 'trig-triangle', section: 'qr', title: 'Trigonometry, just enough',
+    flick: {
+      title: 'Positive or negative?', up: 'Positive', down: 'Negative',
+      cards: [
+        { q: 'sin 150°', up: true, why: 'Quadrant II: sine (the y value) is positive.' },
+        { q: 'cos 150°', up: false, why: 'Quadrant II: cosine (the x value) is negative.' },
+        { q: 'tan 150°', up: false, why: 'Positive over negative gives negative.' },
+        { q: 'sin 210°', up: false, why: 'Quadrant III: y is negative.' },
+        { q: 'tan 225°', up: true, why: 'Quadrant III: negative over negative is positive.' },
+        { q: 'cos 300°', up: true, why: 'Quadrant IV: x is positive.' },
+        { q: 'sin 330°', up: false, why: 'Quadrant IV: y is negative.' },
+        { q: 'tan 300°', up: false, why: 'Negative over positive gives negative.' },
+        { q: 'cos 120°', up: false, why: 'Quadrant II: x is negative.' },
+        { q: 'cos 45°', up: true, why: 'Quadrant I: everything is positive.' },
+        { q: 'sin 100°', up: true, why: 'Just past 90°, still above the x axis.' },
+        { q: 'cos 180°', up: false, why: 'It is exactly -1.' }
+      ]
+    },
     sub: 'One right triangle, three ratios, two special triangles.',
     svg: K.svg(
       line([[160, 440], [560, 440], [560, 140], [160, 440]], { w: 5.5, fill: 'gold', op: 0.1 }),

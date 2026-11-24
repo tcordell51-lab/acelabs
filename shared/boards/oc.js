@@ -45,6 +45,24 @@
   var HEX = [[360, 206], [440, 252], [440, 344], [360, 390], [280, 344], [280, 252]];
   B.add({
     id: 'eas-directors', section: 'ochem', title: 'EAS directors: where the next group lands',
+    flick: {
+      title: 'Activate or deactivate the ring?', up: 'Activates', down: 'Deactivates',
+      cards: [
+        { q: 'An OH group on the ring', up: true, why: 'Its lone pair donates into the ring. Ortho, para director.' },
+        { q: 'An NH_{2} group on the ring', up: true, why: 'Strong lone pair donor. Ortho, para director.' },
+        { q: 'An OCH_{3} group on the ring', up: true, why: 'Oxygen lone pair donates by resonance. Ortho, para.' },
+        { q: 'A CH_{3} group on the ring', up: true, why: 'Alkyl groups donate weakly. Ortho, para.' },
+        { q: 'An NO_{2} group on the ring', up: false, why: 'Strong electron withdrawal. Meta director.' },
+        { q: 'A CN group on the ring', up: false, why: 'Pulls electrons out by resonance. Meta director.' },
+        { q: 'A COOH group on the ring', up: false, why: 'The carbonyl withdraws electrons. Meta director.' },
+        { q: 'A CHO group on the ring', up: false, why: 'The carbonyl withdraws electrons. Meta director.' },
+        { q: 'An SO_{3}H group on the ring', up: false, why: 'Strongly withdrawing. Meta director.' },
+        { q: 'A Cl atom on the ring', up: false, why: 'Halogens deactivate, yet still direct ortho, para.' },
+        { q: 'A Br atom on the ring', up: false, why: 'Halogens deactivate, yet still direct ortho, para.' },
+        { q: 'A CF_{3} group on the ring', up: false, why: 'Strong inductive withdrawal. Meta director.' },
+        { q: 'An NHCOCH_{3} group on the ring', up: true, why: 'The nitrogen lone pair still donates. Ortho, para.' }
+      ]
+    },
     sub: 'Donors send it ortho and para. Withdrawers send it meta.',
     svg: K.svg(
       line(HEX.concat([HEX[0]]), { w: 5.5 }), circ(360, 298, 52, { w: 4 }),
