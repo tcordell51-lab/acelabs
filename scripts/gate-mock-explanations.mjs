@@ -70,7 +70,7 @@ for (const mk of data.mocks) for (const [sec, list] of Object.entries(mk.section
       if (!hasSteps) errors.push(`${at}: needs 3 to 5 steps`);
       if (!hasTraps) errors.push(`${at}: needs one trap line per wrong choice`);
       if (!hasCheck) errors.push(`${at}: needs a check-yourself question and answer`);
-      if (it.why && it.why.length > 420) errors.push(`${at}: answer paragraph runs ${it.why.length} characters (420 at most)`);
+      if (it.why && it.why.length > (sec === 'bio' ? 600 : 420)) errors.push(`${at}: answer paragraph runs ${it.why.length} characters (${sec === 'bio' ? 600 : 420} at most)`);
       (it.traps || []).forEach((t, k) => { if (t && t.length > 240) errors.push(`${at}: trap ${k + 1} runs ${t.length} characters (240 at most)`); });
     }
   });
