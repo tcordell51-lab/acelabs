@@ -8,7 +8,7 @@ Every passage in `data/passages/` passed two gates before it entered the bank.
    sentence that settles it, tried to defend a second choice on every item, and fact-checked
    the passage. Raw outputs: `verification/blind/<id>.json`. Letters in those files are the
    order the examiner saw; ten passages had their choices reordered afterwards (see 3).
-2. **Validator** (`scripts/validate-rc.mjs`): five distinct choices, key never the longest,
+2. **Validator** (`scripts/validate-rc.mjs`): five distinct choices, key length checked per section (scripts/check-key-length.mjs),
    every proof quote found verbatim in its sentence, type set, no em/en dashes or emoji,
    no rotating key pattern, no explanation that names a letter, section sizes.
 

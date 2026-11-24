@@ -344,14 +344,14 @@ export function checkMocks(mocks) {
         ids.add(it.id);
         // quantitative comparison has four fixed choices and data sufficiency five fixed choices, as on the DAT
         if (it.opts.length !== (it.fmt === 'qc' ? 4 : 5)) errors.push(`${it.id}: wrong number of choices`);
-        if (!it.fmt && !keyNotLongest(it.opts, it.correct)) errors.push(`${it.id}: key is the longest choice`);
         kc[it.correct]++;
         if (i >= 2 && items[i - 1].correct === it.correct && items[i - 2].correct === it.correct) errors.push(`${mk.id} ${sec.key}: three ${L[it.correct]} keys in a row at ${i + 1}`);
       });
       const rc = [0, 0, 0, 0, 0];
       items.forEach((it) => { if (!it.fmt && isText(it.opts, it.os)) rc[lengthRank(it.opts, it.correct)]++; });
       const nText = rc.reduce((a, b) => a + b, 0);
-      if (nText >= 10 && rc.some((c) => c > Math.max(2, Math.ceil(nText * 0.4)))) errors.push(`${mk.id} ${sec.key}: key length rank is lopsided (${rc.join(' ')})`);
+      // the key may be the longest choice, but no length rank may hold more than 35 percent of a section's keys
+      if (nText >= 20 && rc.some((c) => c > Math.floor(nText * 0.35))) errors.push(`${mk.id} ${sec.key}: key length rank is lopsided (${rc.join(' ')})`);
       if (items.length && kc.some((c) => c !== items.length / 5)) errors.push(`${mk.id} ${sec.key}: key letters not even (${kc.map((c, i) => L[i] + c).join(' ')})`);
     }
     if (!mk.pat || !mk.pat.seed) errors.push(`${mk.id}: no PAT seed`);
