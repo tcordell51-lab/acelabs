@@ -53,6 +53,13 @@
     var t = document.createElement('script'); t.src = '/shared/ace-tabs.js?v=5'; t.defer = true; document.head.appendChild(t);
   }
 
+  /* XP and the daily streak (shared/ace-mastery.js) show in the bar on every page. */
+  function mastery() {
+    if (window.AceMastery) { if (window.AceMastery.pill) window.AceMastery.pill(); return; }
+    if (document.querySelector('script[src*="/shared/ace-mastery.js"]')) return;
+    var t = document.createElement('script'); t.src = '/shared/ace-mastery.js?v=1'; t.async = true; document.head.appendChild(t);
+  }
+
   function mount() {
     if (api.mounted || !document.body) return;
     font(); tabs();
@@ -76,6 +83,7 @@
     btn.addEventListener('click', function () { setOpen(bar.getAttribute('data-open') !== 'true'); });
     document.addEventListener('keydown', function (e) { if (e.key === 'Escape') setOpen(false); });
     api.mounted = true;
+    mastery();
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', mount); else mount();
 })();

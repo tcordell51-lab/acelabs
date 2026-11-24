@@ -23,9 +23,9 @@
   var ORDER = ['bio', 'gchem', 'ochem', 'pat', 'rc', 'qr'];
   var PREFIX = { gchem: 'gc:', bio: 'bio:', ochem: 'oc:', qr: 'qr:', pat: 'pat:', rc: 'rc:' };
   var REASONS = [['know', "Didn't know it"], ['trap', 'Fell for a trap'], ['misread', 'Misread it'], ['time', 'Ran short on time'], ['changed', 'Changed my answer']];
-  var LINE = { know: 'A short lesson comes first, then a new version tomorrow.', trap: 'A new version comes back in 2 days, with the same trap waiting.',
-    misread: 'A new version comes back in 2 days. Say the ask in your own words before the choices.', time: 'A new version comes back tomorrow, untimed the first time.',
-    changed: 'A new version comes back in 2 days. Every switch is logged on Progress.' };
+  var LINE = { know: 'A short lesson comes first, then a new version tomorrow.', trap: 'A new version comes back tomorrow, with the same trap waiting.',
+    misread: 'A new version comes back tomorrow. Say the ask in your own words before the choices.', time: 'A new version comes back tomorrow, untimed the first time.',
+    changed: 'A new version comes back tomorrow. Every switch is logged on Progress.' };
   var LETTERS = 'ABCDE';
   var topicsP = null;
   function topics() {

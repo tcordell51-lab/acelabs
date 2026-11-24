@@ -345,8 +345,15 @@ if(SUB==='ochem'){
   sd.onerror=bankFail;
   document.head.appendChild(sd);
 } else {
-  fetch(SUBJECTS[SUB].bank).then(function(r){ if(!r.ok) throw 0; return r.json(); })
-    .then(function(b){ begin(normalizeJson(b)); })
+  // Topic keys outside the 2026 DAT outline (data/topics.json "excluded", built from
+  // scripts/bank/scope-topics.json) never reach a round, and their old stats stop showing.
+  var getJson=function(u){ return fetch(u).then(function(r){ if(!r.ok) throw 0; return r.json(); }); };
+  Promise.all([getJson(SUBJECTS[SUB].bank),getJson('/data/topics.json')])
+    .then(function(r){
+      var out=((r[1]&&r[1].excluded)||{})[SUB]||[];
+      out.forEach(function(t){ delete state.topicStats[t]; });
+      begin(normalizeJson(r[0]).filter(function(it){ return out.indexOf(it.topic)<0; }));
+    })
     .catch(function(){ document.getElementById('stage').innerHTML='<div class="card"><p class="stem">Could not load this bank - refresh to retry.</p></div>'; });
 }
 })();

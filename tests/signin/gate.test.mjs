@@ -27,7 +27,7 @@ test('signed out: the free pages are served', async () => {
   for (const p of ['/', '/index.html', '/learn/', '/labs/', '/tests/', '/gc/galvanic/', '/games/chirality/', '/bio/see/', '/qr/worked/', '/diagnostic.html', '/sign-in/?next=%2Frepair%2F']) {
     const d = await go(req(p)); assert.equal(d.action, 'pass', p); assert.equal(d.html, true, p);
   }
-  assert.deepEqual(await go(req('/shared/ace-record.js?v=6')), { action: 'pass' });
+  assert.deepEqual(await go(req('/shared/ace-record.js?v=7')), { action: 'pass' });
 });
 
 test('signed out: locked bank data answers 401', async () => {

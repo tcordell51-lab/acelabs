@@ -10,7 +10,7 @@
 <body class="aui">
 <main class="aui-wrap aui-stack" id="main">
 
-  <div id="pick" class="aui-stack">
+  <div id="hub" class="aui-stack">
     <header class="aui-stack">
       <p class="aui-kicker">Quantitative Reasoning</p>
       <h1 class="aui-h1">QR drill</h1>
@@ -21,9 +21,18 @@
         <a class="aui-btn aui-btn--quiet" href="/tools/qr/">Skill lessons</a>
       </div>
     </header>
+    <section class="aui-card aui-card--flat" aria-label="Your QR numbers">
+      <div class="aui-stats">
+        <div class="aui-stat"><b id="s-answers">0</b><span>answers</span></div>
+        <div class="aui-stat"><b id="s-right">0</b><span>right</span></div>
+        <div class="aui-stat"><b id="s-due">0</b><span>open in Repair</span></div>
+        <div class="aui-stat"><b id="s-miss">0</b><span>due back today</span></div>
+      </div>
+    </section>
     <section class="aui-stack" aria-labelledby="t-title">
       <h2 class="aui-h2" id="t-title">Pick a topic</h2>
-      <div class="aui-grid" id="topics"></div>
+      <p class="aui-small">Practice a topic, or take its quick check: 5 questions, and 4 right masters it. Every miss goes into Repair.</p>
+      <div class="aui-card aui-card--flat"><ul class="aui-list" id="topics"></ul></div>
     </section>
   </div>
 
@@ -37,52 +46,17 @@
 
 </main>
 <script src="/shared/ace-skills.js?v=2"></script>
-<script src="/shared/ace-record.js?v=6"></script>
-<script src="/shared/ace-visuals.js?v=5"></script>
-<script src="/shared/ace-plan.js?v=1"></script>
-<script src="/shared/ace-question.js?v=9"></script>
-<script src="/shared/ace-set.js?v=4"></script>
-<script src="/shared/ace-ui.js?v=6" defer></script>
+<script src="/shared/ace-record.js?v=7"></script>
+<script src="/shared/ace-mastery.js?v=1"></script>
+<script src="/shared/ace-visuals.js?v=6"></script>
+<script src="/shared/ace-plan.js?v=2"></script>
+<script src="/shared/ace-question.js?v=10"></script>
+<script src="/shared/ace-set.js?v=5"></script>
+<script src="/shared/ace-hub.js?v=3"></script>
+<script src="/shared/ace-ui.js?v=7" defer></script>
 <script>
-(function () {
-  'use strict';
-  var SECTION = 'qr', BANKS = ['/data/qr-climb.json', '/data/qr-dat.json'];
-  var rec = window.AceRecord, items = [];
-  rec.migrate();
-  function $(id) { return document.getElementById(id); }
-  function el(tag, cls, text) { var n = document.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; }
-  var params = new URLSearchParams(location.search);
-
-  function drawPick() {
-    var byTopic = {}, order = [];
-    items.forEach(function (it) { if (!byTopic[it.topic]) { byTopic[it.topic] = { name: it.topicName, total: 0 }; order.push(it.topic); } byTopic[it.topic].total += 1; });
-    var st = rec.stats({ section: SECTION }), mine = rec.topics(SECTION);
-    $('lede').textContent = items.length + ' questions across ' + order.length + ' topics. So far: ' + st.answers + ' answered, ' + st.right + ' right.';
-    $('btn-miss').textContent = 'Repair (' + (rec.missCounts().bySection.qr || 0) + ' open)';
-    var host = $('topics'); host.textContent = '';
-    order.forEach(function (t) {
-      var m = mine[t] || { items: 0, missed: 0 }, a = el('a', 'aui-card aui-card--flat'); a.href = '?topic=' + encodeURIComponent(t); a.setAttribute('data-topic', t);
-      a.appendChild(el('h3', 'aui-h3', byTopic[t].name));
-      a.appendChild(el('p', 'aui-small', m.items + ' of ' + byTopic[t].total + ' seen' + (m.missed ? ', ' + m.missed + (m.missed === 1 ? ' miss open' : ' misses open') : '')));
-      var meter = el('div', 'aui-meter'), fill = el('span'); fill.style.width = Math.round(100 * m.items / byTopic[t].total) + '%'; meter.appendChild(fill); a.appendChild(meter);
-      host.appendChild(a);
-    });
-  }
-  function start(o) {
-    $('pick').hidden = true; $('run').hidden = false;
-    var name = o.topic ? (items.filter(function (i) { return i.topic === o.topic; })[0] || {}).topicName : null;
-    $('run-title').textContent = o.mode === 'misses' ? 'QR: miss review' : name ? 'QR: ' + name : 'QR: mixed set';
-    window.AceSet.run($('stage'), items, { mode: o.mode, section: SECTION, topic: o.topic, size: 10, src: 'qr-drill', homeHref: '/qr/drill/', homeLabel: 'Back to QR drill' });
-    window.scrollTo(0, 0);
-  }
-  Promise.all(BANKS.map(function (u) { return window.AceSet.load(u); })).then(function (banks) {
-    items = banks.reduce(function (a, b) { return a.concat(b.items); }, []);
-    var run = params.get('run'), topic = params.get('topic');
-    if (topic && items.some(function (i) { return i.topic === topic; })) start({ mode: 'topic', topic: topic });
-    else if (run === 'daily' || run === 'misses') start({ mode: run });
-    else drawPick();
-  }).catch(function () { $('lede').textContent = 'The question bank did not load. Check your connection and reload the page.'; });
-})();
+AceHub.init({ section: 'qr', name: 'QR drill', bank: ['/data/qr-climb.json', '/data/qr-dat.json', '/data/qr-topics.json'], home: '/qr/drill/', setSize: 10, topicSize: 10, src: 'qr-drill',
+  lede: function (count, topics) { return count + ' questions across ' + topics + ' topics. Every question comes with its worked reason.'; } });
 </script>
 <script src="/shared/ace-tabs.js?v=5" defer></script>
 </body>

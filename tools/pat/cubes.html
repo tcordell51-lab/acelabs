@@ -260,6 +260,7 @@ function showExplain(n){
   if(n==null||MODE!=='drill'||!window.PAT||!PAT.explain||!PAT.cubes){ box.innerHTML=''; return; }
   var item={type:'cubes',figure:{cubes:P.cubes},options:[1,2,3,4,5].map(function(c){return {count:c};}),answer:P.question.answer-1,meta:{k:P.question.n}};
   box.innerHTML=PAT.explain.html(PAT.explain(item,n-1));
+  if(window.AceVisuals&&AceVisuals.chipHTML){ var see=AceVisuals.chipHTML({section:'pat',topic:'cubes'},'set'); if(see) box.innerHTML+='<p class="pex-see">'+see+'</p>'; }
 }
 function renderCoach(){
   var c=document.getElementById('coach');
@@ -307,7 +308,8 @@ if(MODE==='drill')startTimer();
 })();
 </script>
 <script src="/shared/ace-skills.js?v=2"></script>
-<script src="/shared/ace-record.js?v=6"></script>
+<script src="/shared/ace-record.js?v=7"></script>
+<script src="/shared/ace-visuals.js?v=6"></script>
 <script src="pat-ledger.js"></script>
 <script src="engine/pat-core.js"></script>
 <script src="engine/pat-cubes.js"></script>

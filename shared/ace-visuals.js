@@ -631,7 +631,7 @@
     var go = function () { if (href) root.location.href = href; };
     var run = function () { try { root.AceBoard.ready(function () { if (!root.AceBoard.get(id)) return go(); root.AceBoard.open(id, { from: from }); }); } catch (e) { go(); } };
     if (root.AceBoard) return run();
-    var sc = document.createElement('script'); sc.src = '/shared/ace-board.js?v=2'; sc.onload = run; sc.onerror = go; document.head.appendChild(sc);
+    var sc = document.createElement('script'); sc.src = '/shared/ace-board.js?v=3'; sc.onload = run; sc.onerror = go; document.head.appendChild(sc);
   }
   if (typeof document !== 'undefined' && document.addEventListener) {
     document.addEventListener('click', function (e) {
