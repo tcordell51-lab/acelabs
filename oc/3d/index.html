@@ -6,23 +6,23 @@
 <title>3D beside the drawing · OChem · Ace Labs</title>
 <meta name="description" content="Each molecule three ways: the 3D model, the skeleton drawing the DAT shows, and written out. Call it first.">
 <link rel="icon" type="image/svg+xml" href="/shared/ace-dat-mark.svg">
-<link rel="stylesheet" href="/shared/ace-ui.css?v=8">
+<link rel="stylesheet" href="/shared/ace-ui.css?v=9">
 <style>
   .oc-three { display: grid; gap: var(--aui-3); }
   @media (min-width: 900px) { .oc-three { grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); } }
-  .oc-view { position: relative; background: #FFFDF7; border: 1px solid var(--aui-line); border-radius: var(--aui-r); aspect-ratio: 4 / 3; overflow: hidden; touch-action: none; cursor: grab; }
+  .oc-view { position: relative; background: var(--aui-paper); border: 1px solid var(--aui-line); border-radius: var(--aui-r); aspect-ratio: 4 / 3; overflow: hidden; touch-action: none; cursor: grab; }
   .oc-view canvas { display: block; width: 100%; height: 100%; }
-  .oc-view .tag { position: absolute; transform: translate(-50%, -50%); min-width: 26px; height: 26px; border-radius: 13px; background: #1B3A2D; color: #F5F0E8; font: 700 14px/26px var(--aui-font); text-align: center; pointer-events: none; opacity: 0; transition: opacity .35s; box-shadow: 0 0 0 2px #FFFDF7; }
+  .oc-view .tag { position: absolute; transform: translate(-50%, -50%); min-width: 26px; height: 26px; border-radius: 13px; background: var(--aui-forest); color: var(--aui-cream); font: 700 var(--aui-t-sm)/26px var(--aui-font); text-align: center; pointer-events: none; opacity: 0; transition: opacity .35s; box-shadow: 0 0 0 2px var(--aui-paper); }
   .oc-view.is-revealed .tag { opacity: 1; }
-  .oc-view .hint { position: absolute; left: 10px; bottom: 8px; font-size: 12px; color: var(--aui-ink-3); background: rgba(255,253,247,.85); padding: 2px 8px; border-radius: 8px; }
-  .oc-view .nogl { position: absolute; inset: 0; display: grid; place-items: center; text-align: center; padding: 20px; font-size: 14px; color: var(--aui-ink-2); }
+  .oc-view .hint { position: absolute; left: 10px; bottom: 8px; font-size: var(--aui-t-xs); color: var(--aui-ink-3); background: rgba(255,253,247,.85); padding: 2px 8px; border-radius: 8px; }
+  .oc-view .nogl { position: absolute; inset: 0; display: grid; place-items: center; text-align: center; padding: 20px; font-size: var(--aui-t-sm); color: var(--aui-ink-2); }
   .oc-side { display: grid; gap: var(--aui-3); }
-  .oc-draw { background: #FFFDF7; border: 1px solid var(--aui-line); border-radius: var(--aui-r); padding: 8px; }
+  .oc-draw { background: var(--aui-paper); border: 1px solid var(--aui-line); border-radius: var(--aui-r); padding: 8px; }
   .oc-draw svg { width: 100%; height: auto; display: block; }
   .oc-lbl { font-size: var(--aui-t-xs); font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--aui-gold-ink); margin: 0 0 4px; }
-  .oc-written { font: 600 var(--aui-t-lg) var(--aui-mono); background: #FFFDF7; border: 1px solid var(--aui-line); border-radius: var(--aui-r); padding: 10px 12px; overflow-x: auto; }
+  .oc-written { font: 600 var(--aui-t-lg) var(--aui-mono); background: var(--aui-paper); border: 1px solid var(--aui-line); border-radius: var(--aui-r); padding: 10px 12px; overflow-x: auto; }
   .oc-picks { display: flex; flex-wrap: wrap; gap: var(--aui-2); }
-  .oc-picks button { min-height: 40px; padding: 0 12px; border-radius: 999px; border: 1.5px solid var(--aui-line-2); background: var(--aui-paper); font: 600 var(--aui-t-sm) var(--aui-font); cursor: pointer; color: var(--aui-ink); }
+  .oc-picks button { min-height: 44px; padding: 0 12px; border-radius: 999px; border: 1.5px solid var(--aui-line-2); background: var(--aui-paper); font: 600 var(--aui-t-sm) var(--aui-font); cursor: pointer; color: var(--aui-ink); }
   .oc-picks button[aria-current="true"] { background: var(--aui-forest); color: var(--aui-cream); border-color: var(--aui-forest); }
 </style>
 </head>
@@ -48,7 +48,7 @@
   <div id="q"></div>
   <p class="aui-small">Coordinates, drawings and answers are computed by RDKit (scripts/build-oc-3d.py): 3D shapes from MMFF94, R and S from the CIP rules, chair energies from MMFF94. The rules: OpenStax Organic Chemistry, 5.5 Sequence Rules for Specifying Configuration and 4.7 Conformations of Monosubstituted Cyclohexanes.</p>
 </main>
-<script src="/shared/ace-ui.js?v=5"></script>
+<script src="/shared/ace-ui.js?v=6"></script>
 <script src="/shared/ace-skills.js?v=2"></script>
 <script src="/shared/ace-record.js?v=6"></script>
 <script src="/shared/ace-question.js?v=9"></script>
@@ -168,6 +168,6 @@ show(0);
 const load = () => import('/shared/three.module.min.js').then((m) => { THREE = m; init3d(); size(); if (pending) { const p = pending; pending = null; p(); } else size(); }).catch(() => { $('hint').hidden = true; });
 if ('requestIdleCallback' in window) requestIdleCallback(load, { timeout: 1500 }); else setTimeout(load, 300);
 </script>
-<script src="/shared/ace-tabs.js?v=4" defer></script>
+<script src="/shared/ace-tabs.js?v=5" defer></script>
 </body>
 </html>

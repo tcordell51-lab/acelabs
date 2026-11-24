@@ -1,46 +1,92 @@
-/* ace-cream.css : the cream skin for the older dark tool pages (2026-11-16).
+/* ace-cream.css (v4) : puts every older page on the one Ace Labs system.
 
-   Those pages share one family of token names (--bg, --card, --panel, --line,
-   --ink, --ink2, --gold, --good ...). This file maps every one of them onto the
-   Ace Labs cream tokens from ace-ui.css, so a page turns cream by adding one line
-   at the end of its <head>:
+   ace-ui.css is the only place colors, type and shape are defined. This file imports it,
+   then maps the token names the older pages use (--bg, --card, --ink, --gold, --serif ...)
+   onto the --aui-* tokens, and gives the older pages the same chrome as the new ones:
+   one header, one h1 scale, one button family, one card, 44px taps, phone text floors.
 
-     <link rel="stylesheet" href="/shared/ace-cream.css?v=3">
+   A page gets it with one line at the end of its <head> and a family on <html>:
+     <html data-cream="games">  ...  <link rel="stylesheet" href="/shared/ace-cream.css?v=4">
+   scripts/design/fit-pages.mjs writes both, plus the page's own phone text floors.
+   The @import version below must equal the ?v= pages use for ace-ui.css
+   (tests/shell/ace-tokens.test.js). */
+@import url("/shared/ace-ui.css?v=9");
 
-   ":root:root" outranks the page's own ":root" whatever the order. Page-specific
-   fixes for colors a page hard-codes sit at the bottom, scoped by a class the
-   page already carries or by html[data-cream="name"]. */
-
-@font-face { font-family: "DM Sans"; src: url("/shared/fonts/dm-sans.woff2") format("woff2"); font-weight: 100 1000; font-style: normal; font-display: swap; }
-@font-face { font-family: "Playfair Display"; src: url("/shared/fonts/playfair-display.woff2") format("woff2"); font-weight: 400 900; font-style: normal; font-display: swap; }
+/* Older pages named these families in their CSS. They now resolve to the two self-hosted
+   faces, so no page loads a font from the network and no page shows a third typeface. */
+@font-face { font-family: "JetBrains Mono"; src: url("/shared/fonts/dm-sans.woff2") format("woff2"); font-weight: 100 1000; font-style: normal; font-display: swap; }
+@font-face { font-family: "Hanken Grotesk"; src: url("/shared/fonts/dm-sans.woff2") format("woff2"); font-weight: 100 1000; font-style: normal; font-display: swap; }
+@font-face { font-family: "Newsreader"; src: url("/shared/fonts/playfair-display.woff2") format("woff2"); font-weight: 400 900; font-style: normal; font-display: swap; }
 
 :root:root {
   /* surfaces */
-  --bg: #F5F0E8; --bg2: #EFE7D6; --bg-2: #EFE7D6;
-  --card: #FCFAF6; --panel: #FCFAF6; --panel2: #F7F1E4; --panel-2: #F7F1E4; --panel-3: #EFE7D6; --raise: #FFFFFF;
-  --paper: #FFFFFF;
+  --bg: var(--aui-cream); --bg2: var(--aui-paper-2); --bg-2: var(--aui-paper-2);
+  --card: var(--aui-paper); --panel: var(--aui-paper); --panel2: var(--aui-paper-2); --panel-2: var(--aui-paper-2); --panel-3: var(--aui-paper-2); --raise: var(--aui-white);
+  --paper: var(--aui-paper); --paper-2: var(--aui-paper-2); --paper-3: var(--aui-paper-2); --cream: var(--aui-cream); --cream-2: var(--aui-paper-2); --white: var(--aui-paper);
   /* lines */
-  --line: rgba(27, 58, 45, .16); --line2: rgba(27, 58, 45, .30); --line-2: rgba(27, 58, 45, .30);
+  --line: var(--aui-line); --line2: var(--aui-line-2); --line-2: var(--aui-line-2); --line-strong: var(--aui-line-2); --border: var(--aui-line); --border2: var(--aui-line-2);
   /* text */
-  --ink: #0d2018; --ink2: #3a4a42; --ink-2: #3a4a42; --ink3: #5c6a63; --muted: #5c6a63; --mute: #5c6a63; --faint: #6b746d;
+  --ink: var(--aui-ink); --ink2: var(--aui-ink-2); --ink-2: var(--aui-ink-2); --ink3: var(--aui-ink-3); --ink-mute: var(--aui-ink-3); --ink-soft: var(--aui-ink-3);
+  --muted: var(--aui-ink-3); --mute: var(--aui-ink-3); --faint: var(--aui-ink-3); --dim: var(--aui-ink-3); --slate: var(--aui-ink-2); --mid: var(--aui-ink-2);
+  /* primary */
+  --forest: var(--aui-forest); --forest-2: var(--aui-forest-2); --teal: var(--aui-forest); --teal-2: var(--aui-forest-2); --teal-3: var(--aui-forest-2); --brand: var(--aui-forest); --deep: var(--aui-ink);
   /* accents: gold fills stay gold; gold used as text gets the brass that reads on cream */
-  --gold: #8C7235; --goldhi: #7c6113; --gold-hi: #7c6113; --gold-d: #6e5a22; --gold-ink: #1a1408;
-  --gold-bg: rgba(201, 168, 76, .16); --gold-wash: rgba(201, 168, 76, .18);
-  --hl: rgba(226, 201, 122, .45); --proof: rgba(201, 168, 76, .30); --proof-edge: #8C7235;
-  --good: #007a59; --ok: #007a59; --green: #2f7d4f; --good-bg: rgba(0, 158, 115, .12); --ok-bg: rgba(0, 158, 115, .12); --good-wash: rgba(0, 158, 115, .12);
-  --bad: #9b4500; --miss: #9b4500; --trap: #9b4500; --coral: #a3402c; --hot: #a3402c; --bad-bg: rgba(213, 94, 0, .12); --miss-bg: rgba(213, 94, 0, .12); --trap-wash: rgba(213, 94, 0, .12);
-  --warn: #8a5a0b; --amber: #8a5a0b; --warm: #8a5a0b; --cool: #2f5f9e; --blue: #2f5f9e; --grey: #6b746d;
-  --bio: #2f7d4f; --gchem: #2f5f9e; --gc: #2f5f9e; --ochem: #6b4fa0; --oc: #6b4fa0; --qr: #a3405c; --pat: #8a5a0b; --rc: #1f7a70;
+  --gold: var(--aui-brass); --goldhi: var(--aui-gold-ink); --gold-hi: var(--aui-gold-ink); --gold-d: var(--aui-gold-ink); --gold-m: var(--aui-gold-hi); --gold2: var(--aui-gold); --gold-ink: var(--aui-ink); --goldink: var(--aui-gold-ink);
+  --brass: var(--aui-brass); --brass-lt: var(--aui-gold);
+  --gold-bg: var(--aui-gold-soft); --gold-wash: var(--aui-gold-soft);
+  --hl: rgba(226, 201, 122, .45); --proof: rgba(201, 168, 76, .30); --proof-edge: var(--aui-brass);
+  --good: var(--aui-good); --ok: var(--aui-good); --good-d: var(--aui-good); --green: var(--aui-sec-bio); --good-bg: var(--aui-good-soft); --ok-bg: var(--aui-good-soft); --okbg: var(--aui-good-soft); --good-wash: var(--aui-good-soft); --rich: var(--aui-good); --richbg: var(--aui-good-soft);
+  --bad: var(--aui-miss); --miss: var(--aui-miss); --trap: var(--aui-miss); --trap-d: var(--aui-miss); --coral: #a3402c; --hot: #a3402c; --bad-bg: var(--aui-miss-soft); --miss-bg: var(--aui-miss-soft); --trap-bg: var(--aui-miss-soft); --trapbg: var(--aui-miss-soft); --trap-wash: var(--aui-miss-soft); --poor: var(--aui-miss); --poorbg: var(--aui-miss-soft);
+  --warn: var(--aui-warn); --amber: var(--aui-warn); --warm: var(--aui-warn); --cool: var(--aui-info); --blue: var(--aui-info); --grey: var(--aui-ink-3);
+  --bio: var(--aui-sec-bio); --gchem: var(--aui-sec-gc); --gc: var(--aui-sec-gc); --ochem: var(--aui-sec-oc); --oc: var(--aui-sec-oc); --qr: var(--aui-sec-qr); --qr-c: var(--aui-sec-qr); --pat: var(--aui-sec-pat); --rc: var(--aui-sec-rc);
   /* type */
-  --serif: "Playfair Display", Georgia, "Times New Roman", serif;
-  --sans: "DM Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --serif: var(--aui-display); --display: var(--aui-display);
+  --sans: var(--aui-font); --body: var(--aui-font); --mono: var(--aui-font);
+  --shadow: var(--aui-shadow); --shadow-md: var(--aui-shadow);
   color-scheme: light;
 }
-html:root { background: #F5F0E8; }
-html:root body { background: #F5F0E8; color: #0d2018; -webkit-font-smoothing: auto; }
+html:root { background: var(--aui-cream); }
+html:root body { background: var(--aui-cream); color: var(--aui-ink); -webkit-font-smoothing: auto; }
 
-/* Buttons that sat on dark panels with a gold fill keep a dark label */
-html:root body .btn-gold, html:root body .btn.gold, html:root body button.primary, html:root body .primary-btn { color: #F5F0E8; }
+/* ---------- The system on every older page ---------- */
+html[data-cream] body { font-family: var(--aui-font); overflow-wrap: break-word; -webkit-text-size-adjust: 100%; }
+html[data-cream] :where(h1, h2, h3) { font-family: var(--aui-display); letter-spacing: -.01em; color: var(--aui-ink); }
+html[data-cream] :where(h1, h2, h3) em { font-style: normal; color: var(--aui-gold-ink); }
+html[data-cream] :where(h1):not(svg *) { font-size: var(--aui-t-2xl); line-height: 1.1; font-weight: 600; }
+@media (min-width: 720px) { html[data-cream] :where(h1):not(svg *) { font-size: var(--aui-t-3xl); } }
+html[data-cream] :focus-visible { outline: 3px solid var(--aui-gold); outline-offset: 2px; }
+html[data-cream] :where(img, video) { max-width: 100%; }
+
+/* One button family. Forest pill is primary, outline is secondary, gold is the one action that matters most. */
+html[data-cream] :where(button, .btn, .button, a.cta, input[type="submit"], input[type="button"]) { font-family: var(--aui-font); }
+html[data-cream] :where(.btn, .btn-primary, .btn-secondary, .btn-ghost, .btn-gold, button.primary, button.ghost, .primary-btn, .ghost-btn, a.cta, .cta-btn) {
+  min-height: var(--aui-tap); border-radius: var(--aui-r-pill); font-weight: 700; letter-spacing: 0; text-transform: none; }
+html[data-cream] :where(.btn-primary, button.primary, .primary-btn, .btn.primary) { background: var(--aui-forest); border: 1.5px solid var(--aui-forest); color: var(--aui-cream); }
+html[data-cream] :where(.btn-primary, button.primary, .primary-btn, .btn.primary):hover { background: var(--aui-forest-2); }
+html[data-cream] :where(.btn-secondary, .btn-ghost, button.ghost, .ghost-btn, .btn.ghost, .btn.secondary) { background: transparent; border: 1.5px solid var(--aui-forest); color: var(--aui-forest); }
+html:root body .btn-gold, html:root body .btn.gold { color: var(--aui-ink); }
+
+/* Tap targets and room for the tab bar on a phone */
+@media (max-width: 759px) {
+  html[data-cream] :where(button, [role="button"], select, summary, input:not([type="checkbox"], [type="radio"], [type="range"], [type="hidden"], [type="file"]), textarea) { min-height: var(--aui-tap); }
+  html[data-cream] :where(button, [role="button"]) { min-width: var(--aui-tap); }
+  html[data-cream] :where(input, select, textarea) { font-size: 16px; }   /* no zoom on focus in iOS */
+  html[data-cream] body.has-ace-tabs { padding-bottom: calc(var(--aui-tabs) + env(safe-area-inset-bottom)); }
+  html[data-cream] body { font-size: 16px; }
+  /* sliders keep their look and gain a finger-sized band around the track */
+  html[data-cream] input[type="range"] { box-sizing: content-box; padding-block: 14px; background-clip: content-box; margin-block: 0; }
+  html[data-cream] input[type="range"].mech-scrub { padding-block: 19px; }
+  html[data-cream] label:has(> input[type="checkbox"], > input[type="radio"]) { min-height: var(--aui-tap); padding-block: 10px; }
+  /* links that stand alone as a control (not a word in a sentence) are a full tap tall */
+  html[data-cream] :is(.tw-quick-link, .tw-foot-link, .engine-link, .dash-cta, .see-also a, a.all, a.drill, .links a, .cram-pattern a, .hub-night-tie, .jump-chip, .cardio-xlink, .qual-xlink, .cta a, .sb-foot a, .muted a, .rxn-overview a, .tm-modal-close, .wrap > p > a:only-child) { display: inline-flex; align-items: center; min-height: var(--aui-tap); min-width: var(--aui-tap); }
+}
+/* Sizes written inline, by hand or by a script: the same floor. Text drawn in an svg keeps its size. */
+@media (max-width: 759px) {
+  html[data-cream] :is([style*="font-size:8"], [style*="font-size: 8"], [style*="font-size:9"], [style*="font-size: 9"], [style*="font-size:10"], [style*="font-size: 10"], [style*="font-size:11"], [style*="font-size: 11"], [style*="font-size:12"], [style*="font-size: 12"], [style*="font-size:.7"], [style*="font-size:.6"], [style*="font-size:0.7"], [style*="font-size:0.6"]):not(svg *, [style*="font-size:100"], [style*="font-size:110"], [style*="font-size:120"], [style*="font-size:9em"], [style*="font-size:8em"]) { font-size: 13px !important; }
+  html[data-cream] :is([style*="font-size:11px"], [style*="font-size:11.5px"], [style*="font-size:12px"], [style*="font-size: 12px"], [style*="font-size:12.5px"], [style*="font-size:13px"], [style*="font-size: 13px"], [style*="font-size:13.5px"], [style*="font-size:14px"], [style*="font-size: 14px"], [style*="font-size:14.5px"]):is(p, li, div, td, dd, span[style*="line-height"]):not(svg *, [style*="uppercase"], [style*="letter-spacing"]) { font-size: 15px !important; }
+}
+
+/* ---------- Page families ---------- */
 
 /* Trick Sheets */
 html[data-cream~="tricks"] .sheet { background: linear-gradient(170deg, #F3E9CF 0%, #FCFAF6 100%); }
@@ -123,3 +169,233 @@ html[data-cream] .ob-back, html[data-cream] .modal-back, html[data-cream] .fb-mo
 html[data-cream] .student-modal, html[data-cream] .welcome-backdrop, html[data-cream] .fv-back, html[data-cream] .vid-modal, html[data-cream] .celeb-back, html[data-cream] .tm-backdrop, html[data-cream] .ochem-stuck-back {
   background: rgba(239, 231, 214, .72); }
 html[data-cream] .sb-backdrop, html[data-cream] .nav-backdrop { background: rgba(13, 32, 24, .25); }
+
+/* Shared by the families below: the system's kicker, card and pills written once as custom
+   properties so each family only names its own classes. */
+html[data-cream] { --ac-kicker: 700 var(--aui-t-xs)/1.3 var(--aui-font); --ac-btn: 700 var(--aui-t-sm)/1.2 var(--aui-font); }
+
+/* ----- Retold courses (six pages, one stylesheet shape) ----- */
+html[data-cream~="retold"] body { background: var(--aui-cream); }
+html[data-cream~="retold"] .top { position: static; background: transparent; backdrop-filter: none; -webkit-backdrop-filter: none; border-bottom: 1px solid var(--aui-line); padding: var(--aui-2) var(--aui-4); max-width: var(--aui-max); margin: 0 auto; align-items: center; gap: var(--aui-3); }
+html[data-cream~="retold"] .top .brand { font: var(--ac-kicker); letter-spacing: .12em; text-transform: uppercase; color: var(--aui-gold-ink) !important; display: inline-flex; align-items: center; min-height: var(--aui-tap); }
+html[data-cream~="retold"] .top .brand em { font-style: normal; color: inherit; }
+html[data-cream~="retold"] .top .kick { display: none; }
+html[data-cream~="retold"] .wrap { max-width: var(--aui-max); padding: var(--aui-5) var(--aui-4) 120px; }
+html[data-cream~="retold"] .wrap > :is(h1, .lede, .nightbar, .legend, #coachReps, .gate, .syll, .cont, .front, section, p) { max-width: var(--aui-read); }
+html[data-cream~="retold"] .lede { font-size: var(--aui-t-md); color: var(--aui-ink-2); }
+html[data-cream~="retold"] :is(.mode button, .nightnav a, .gate a, .syll .nlinks a, .coachreps a, .anim-ctl button, .aud-btn) { display: inline-flex; align-items: center; justify-content: center; min-height: var(--aui-tap); padding: 0 16px; border-radius: var(--aui-r-pill); border: 1.5px solid var(--aui-line-2); background: transparent; color: var(--aui-forest); font: var(--ac-btn) !important; letter-spacing: 0 !important; text-transform: none; }
+html[data-cream~="retold"] :is(.mode button.on, .anim-ctl button.primary, .cont a.go, .reveal-btn) { display: inline-flex; align-items: center; justify-content: center; min-height: var(--aui-tap); padding: 0 20px; border-radius: var(--aui-r-pill); border: 1.5px solid var(--aui-forest); background: var(--aui-forest); color: var(--aui-cream); font: var(--ac-btn) !important; letter-spacing: 0 !important; text-transform: none; box-shadow: none; }
+html[data-cream~="retold"] .reveal-btn { display: flex; margin: 12px auto 0; }
+html[data-cream~="retold"] :is(.cont a.go, .reveal-btn):hover { background: var(--aui-forest-2); transform: none; box-shadow: none; }
+html[data-cream~="retold"] .scene { border: 1px solid var(--aui-line); border-radius: var(--aui-r); background: var(--aui-paper); box-shadow: var(--aui-shadow); }
+html[data-cream~="retold"] .scene-head { background: none; border-bottom-color: var(--aui-line); }
+html[data-cream~="retold"] .scene-title { font-family: var(--aui-display); font-weight: 600; }
+html[data-cream~="retold"] :is(.night, .scene-num, .syll .nnum, .coachreps .lb) { font: var(--ac-kicker) !important; letter-spacing: .12em; color: var(--aui-gold-ink); }
+html[data-cream~="retold"] .commit button.opt { min-height: 52px; border-radius: var(--aui-r-sm); border: 1.5px solid var(--aui-line-2); background: var(--aui-cream); font-size: var(--aui-t-md); }
+html[data-cream~="retold"] .commit button.opt.ok { border-color: var(--aui-good); box-shadow: none; background: var(--aui-good-soft); }
+html[data-cream~="retold"] :is(.gate, .syll) { border-top: 1px solid var(--aui-line); }
+html[data-cream~="retold"] .syll li { border-bottom-color: var(--aui-line); }
+html[data-cream~="retold"] .syll .st { font: var(--ac-kicker) !important; letter-spacing: .04em; }
+html[data-cream~="retold"] .syll .nsync { font: 400 var(--aui-t-sm)/1.45 var(--aui-font) !important; letter-spacing: 0 !important; color: var(--aui-ink-3); }
+html[data-cream~="retold"] .progress { border-top: 1px solid var(--aui-line); background: var(--aui-cream); font: 500 var(--aui-t-xs)/1.2 var(--aui-font); padding: 10px var(--aui-4); }
+@media (max-width: 759px) {
+  html[data-cream~="retold"] .top { flex-wrap: wrap; }
+  html[data-cream~="retold"] .mode { margin-left: 0; width: 100%; }
+  html[data-cream~="retold"] .mode button { flex: 1; }
+  html[data-cream~="retold"] .nightbar { flex-direction: column; align-items: flex-start; gap: 8px; }
+  html[data-cream~="retold"] .nightnav { margin-left: 0; flex-wrap: wrap; }
+  html[data-cream~="retold"] .syll .nlinks { flex-wrap: wrap; }
+  /* its own progress strip sits above the tab bar, never under it */
+  html[data-cream~="retold"] body.has-ace-tabs .progress { bottom: calc(68px + env(safe-area-inset-bottom)); }
+  html[data-cream~="retold"] body.has-ace-tabs { padding-bottom: calc(var(--aui-tabs) + 48px + env(safe-area-inset-bottom)); }
+  html[data-cream~="retold"] .wrap { padding-bottom: var(--aui-6); }
+}
+
+/* ----- Left-rail tools: Biology hubs, Gen Chem engine, QR engine -----
+   The site bar carries the brand, so the rail's own masthead goes. */
+html[data-cream~="rail"] .sb-brand { display: none; }
+html[data-cream~="rail"] .sb { padding-top: var(--aui-3); }
+html[data-cream~="rail"] :is(.sb-link, .sb-section, .sb-progress .row, .sb-progress .row b, .sb-link .meta) { font-family: var(--aui-font); }
+html[data-cream~="rail"] .topbar { background: rgba(245,240,232,.94); border-bottom: 1px solid var(--aui-line); }
+html[data-cream~="rail"] .tb-where { font: var(--ac-kicker); letter-spacing: .12em; color: var(--aui-gold-ink); }
+html[data-cream~="rail"] .tb-where b { color: inherit; }
+html[data-cream~="rail"] :is(.btn, .tutor-toggle) { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: var(--aui-tap); padding: 0 16px; border-radius: var(--aui-r-pill); border: 1.5px solid var(--aui-line-2); background: transparent; color: var(--aui-forest); font: var(--ac-btn); letter-spacing: 0; text-transform: none; }
+html[data-cream~="rail"] .btn.primary { background: var(--aui-forest); border-color: var(--aui-forest); color: var(--aui-cream); }
+html[data-cream~="rail"] .btn.gold { background: var(--aui-gold); border-color: var(--aui-gold); color: var(--aui-ink); }
+html[data-cream~="bio"] .topbar .btn.primary { background: transparent; color: var(--aui-forest); border-color: var(--aui-line-2); }   /* Restart is not the main action */
+@media (max-width: 760px) {
+  /* Biology hubs on a phone: site bar, one row of topics, then the page header. */
+  html[data-cream~="bio"] .sb { display: flex; align-items: center; gap: 8px; max-height: none; height: auto; overflow-x: auto; overflow-y: hidden; padding: 8px var(--aui-4); border-right: 0; border-bottom: 1px solid var(--aui-line); background: var(--aui-cream); scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+  html[data-cream~="bio"] .sb::-webkit-scrollbar { display: none; }
+  html[data-cream~="bio"] .sb > :not(.sb-link) { display: none !important; }
+  html[data-cream~="bio"] .sb .sb-link { flex: none; min-height: var(--aui-tap); padding: 0 14px !important; margin: 0 !important; border: 1.5px solid var(--aui-line-2) !important; border-radius: var(--aui-r-pill); background: var(--aui-paper) !important; color: var(--aui-ink); font-size: var(--aui-t-sm) !important; white-space: nowrap; }
+  html[data-cream~="bio"] .sb .sb-link :is(.dot, .meta) { display: none; }
+  html[data-cream~="bio"] .sb .sb-link.active { background: var(--aui-forest) !important; border-color: var(--aui-forest) !important; color: var(--aui-cream); }
+  html[data-cream~="bio"] .sb .sb-link.locked { display: none; }
+  /* the tool row (Coach mode, Ace Cards, Restart) moves to the end of the page */
+  html[data-cream~="bio"] .mn { display: flex; flex-direction: column; min-width: 0; }
+  html[data-cream~="bio"] .mn > * { width: 100%; min-width: 0; margin-left: 0; margin-right: 0; box-sizing: border-box; }
+  html[data-cream~="bio"] .mn > .topbar { order: 99; position: static; flex-wrap: wrap; gap: 8px; padding: var(--aui-4); border-top: 1px solid var(--aui-line); border-bottom: 0; background: transparent; backdrop-filter: none; }
+  html[data-cream~="bio"] .mn > .topbar :is(.tb-where, .tb-spacer) { display: none; }
+  html[data-cream~="bio"] .lab { padding: var(--aui-4) var(--aui-4) var(--aui-6); }
+  html[data-cream~="rail"] .topbar { padding-left: var(--aui-4); padding-right: var(--aui-4); }
+}
+
+/* Engine first-run card: one row of actions, forest for the way forward */
+html[data-cream~="engine"] .ob-card .actions { flex-wrap: wrap; gap: 8px; align-items: center; }
+html[data-cream~="engine"] .ob-card .btn { white-space: nowrap; }
+html[data-cream~="engine"] .ob-card .btn.gold { background: var(--aui-forest); border-color: var(--aui-forest); color: var(--aui-cream); }
+html[data-cream~="engine"] .ob-card { border-radius: var(--aui-r-lg); border: 1px solid var(--aui-line); box-shadow: var(--aui-shadow); }
+/* Osmosis lab: its own lockup goes, the forest hero keeps light type */
+html[data-cream~="osmosis"] .wrap > a.brand { display: none; }
+html[data-cream~="osmosis"] .hero :is(h1, h2, h3) { color: var(--aui-cream); }
+html[data-cream~="osmosis"] .hero :is(h1, h2, h3) em { color: var(--aui-gold-hi); }
+/* Trick sheets: the dark masthead strip repeated the bar */
+html[data-cream~="tricks"] .bug:not(:has(span)) { display: none; }
+
+/* ----- Cheat sheets ----- */
+html[data-cream~="sheets"] .topbar { position: static; background: transparent; color: var(--aui-ink); border-bottom: 1px solid var(--aui-line); box-shadow: none; padding: var(--aui-2) var(--aui-4); max-width: var(--aui-max); margin: 0 auto; gap: var(--aui-2); align-items: center; }
+html[data-cream~="sheets"] .topbar > div:first-child { display: none; }
+html[data-cream~="sheets"] .topbar-nav { margin-left: 0; gap: 6px; flex-wrap: wrap; }
+html[data-cream~="sheets"] :is(.topbar-nav a, .print-btn) { display: inline-flex; align-items: center; min-height: var(--aui-tap); padding: 0 16px; border-radius: var(--aui-r-pill); border: 1.5px solid var(--aui-line-2); background: transparent; color: var(--aui-forest); font: var(--ac-btn); letter-spacing: 0; text-transform: none; text-decoration: none; }
+html[data-cream~="sheets"] .print-btn { margin-left: auto; cursor: pointer; }
+html[data-cream~="sheets"] :is(.topbar-nav a, .print-btn):hover { background: var(--aui-gold-soft); color: var(--aui-forest); }
+html[data-cream~="sheets"] :is(.hero, .section-wrap) { max-width: var(--aui-max); margin-left: auto; margin-right: auto; padding-left: var(--aui-4); padding-right: var(--aui-4); }
+html[data-cream~="sheets"] .hero-sub { font-size: var(--aui-t-md); color: var(--aui-ink-2); }
+html[data-cream~="sheets"] :is(.hero-meta, .section-kicker, .section-count, .subsec-label, .card-kicker, .card-when b) { font: var(--ac-kicker); letter-spacing: .1em; }
+html[data-cream~="sheets"] .section-title { font-family: var(--aui-display); }
+html[data-cream~="sheets"] .section-title em, html[data-cream~="sheets"] .card-name em { font-style: normal; }
+html[data-cream~="sheets"] .card { background: var(--aui-paper); border-radius: var(--aui-r); border-top: 1px solid var(--aui-line); border-right: 1px solid var(--aui-line); border-bottom: 1px solid var(--aui-line); box-shadow: var(--aui-shadow); }
+html[data-cream~="sheets"] .card-head { min-height: 56px; cursor: pointer; }
+html[data-cream~="sheets"] .card-hook { font-size: var(--aui-t-sm); font-style: normal; color: var(--aui-ink-2); }
+html[data-cream~="sheets"] .card-desc, html[data-cream~="sheets"] .card-when { font-size: var(--aui-t-sm); }
+@media (max-width: 759px) { html[data-cream~="sheets"] .card-grid { grid-template-columns: minmax(0, 1fr); } }
+
+/* ----- Tricks and games (were dark) ----- */
+html[data-cream~="tricks"] body, html[data-cream~="games"] body { background: var(--aui-cream); line-height: 1.55; }
+html[data-cream~="tricks"] .wrap, html[data-cream~="games"] .wrap { max-width: var(--aui-max); padding: var(--aui-5) var(--aui-4) var(--aui-7); }
+html[data-cream~="tricks"] :is(.sub, form, .list, .wrap > p, .wrap > div:not(.grid):not(.top):not(.bug)), html[data-cream~="games"] .lede { max-width: var(--aui-read); }
+html[data-cream~="tricks"] .sub { font: 400 var(--aui-t-md)/1.55 var(--aui-font); color: var(--aui-ink-2); }
+html[data-cream~="tricks"] .bug { margin-bottom: var(--aui-2); }
+html[data-cream~="tricks"] .bug .a, html[data-cream~="tricks"] .bug b { display: none; }
+html[data-cream~="tricks"] .bug span, html[data-cream~="games"] .kick, html[data-cream~="games"] .gcard .k, html[data-cream~="games"] .topic { font: var(--ac-kicker); letter-spacing: .12em; text-transform: uppercase; color: var(--aui-gold-ink); }
+html[data-cream~="tricks"] .pill { font: 700 var(--aui-t-xs)/1.2 var(--aui-font); letter-spacing: .04em; text-transform: none; color: var(--aui-gold-ink); background: var(--aui-gold-soft); border: 0; padding: 6px 12px; }
+html[data-cream~="tricks"] form { background: var(--aui-paper); border: 1px solid var(--aui-line); border-radius: var(--aui-r); box-shadow: var(--aui-shadow); }
+html[data-cream~="tricks"] form label { font: 700 var(--aui-t-sm)/1.3 var(--aui-font); letter-spacing: 0; text-transform: none; color: var(--aui-ink); }
+html[data-cream~="tricks"] form input[type="email"] { min-height: var(--aui-tap); border-radius: var(--aui-r-sm); border: 1.5px solid var(--aui-line-2); background: var(--aui-paper); }
+html[data-cream~="tricks"] form button { min-height: var(--aui-tap); border-radius: var(--aui-r-pill); border: 1.5px solid var(--aui-forest); background: var(--aui-forest); color: var(--aui-cream); font: 700 var(--aui-t-md)/1.2 var(--aui-font); letter-spacing: 0; text-transform: none; }
+html[data-cream~="tricks"] .list li { border-bottom-color: var(--aui-line); font-size: var(--aui-t-md); }
+html[data-cream~="tricks"] .list .n { font: var(--ac-kicker); color: var(--aui-gold-ink); }
+html[data-cream~="tricks"] .fine { font-size: var(--aui-t-xs); color: var(--aui-ink-3); }
+html[data-cream~="tricks"] .top { padding: 0 0 var(--aui-3); gap: var(--aui-2); }
+html[data-cream~="tricks"] .toplink { display: inline-flex; align-items: center; min-height: var(--aui-tap); padding: 0 16px; border-radius: var(--aui-r-pill); border: 1.5px solid var(--aui-line-2); background: transparent; color: var(--aui-forest); font: var(--ac-btn); letter-spacing: 0; text-transform: none; }
+html[data-cream~="tricks"] .toplink.gold { background: var(--aui-forest); border-color: var(--aui-forest); color: var(--aui-cream); }
+html[data-cream~="tricks"] .card, html[data-cream~="games"] a.gcard { background: var(--aui-paper); border: 1px solid var(--aui-line); border-radius: var(--aui-r); box-shadow: var(--aui-shadow); }
+html[data-cream~="tricks"] .card { border-left-width: 4px; }
+html[data-cream~="tricks"] .card:hover { background: var(--aui-paper); }
+html[data-cream~="tricks"] .card .tag, html[data-cream~="games"] .gcard p { font-size: var(--aui-t-sm); color: var(--aui-ink-2); }
+html[data-cream~="games"] a.gcard { border-top: 1px solid var(--aui-line); }
+html[data-cream~="games"] a.gcard:hover { border-color: var(--aui-line-2); }
+html[data-cream~="games"] .gcard .st { font: 700 var(--aui-t-xs)/1.2 var(--aui-font); letter-spacing: .04em; border: 0; background: var(--aui-forest); color: var(--aui-cream); padding: 6px 14px; }
+html[data-cream~="games"] .gcard .best { font: 500 var(--aui-t-xs)/1.2 var(--aui-font); color: var(--aui-ink-3); }
+html[data-cream~="games"] .lede b { color: var(--aui-ink); }
+html[data-cream~="games"] .links { font: 400 var(--aui-t-sm)/1.6 var(--aui-font); color: var(--aui-ink-3); }
+html[data-cream~="games"] .links a { color: var(--aui-forest); font-weight: 700; text-decoration: underline; text-underline-offset: 3px; }
+html[data-cream~="games"] .top { border-bottom: 1px solid var(--aui-line); align-items: center; }
+html[data-cream~="games"] .top .brand { font: var(--ac-kicker); letter-spacing: .12em; text-transform: uppercase; color: var(--aui-gold-ink); }
+html[data-cream~="games"] .top .brand span { color: inherit; }
+html[data-cream~="games"] .top a { display: inline-flex; align-items: center; min-height: var(--aui-tap); padding: 0 16px; border-radius: var(--aui-r-pill); border: 1.5px solid var(--aui-line-2); color: var(--aui-forest); font: var(--ac-btn); }
+html[data-cream~="games"] button.opt { min-height: 52px; border-radius: var(--aui-r-sm); border: 1.5px solid var(--aui-line-2); background: var(--aui-paper); font-size: var(--aui-t-md); }
+html[data-cream~="games"] button.opt.correct { border-color: var(--aui-good); background: var(--aui-good-soft); box-shadow: none; }
+html[data-cream~="games"] button.opt.wrong { border-color: var(--aui-miss); background: var(--aui-miss-soft); box-shadow: none; }
+
+/* ----- Diagnostic and Test week (the --al-* pages) ----- */
+html[data-cream~="al"] .al-top { background: transparent; border: 0; box-shadow: none; padding: var(--aui-2) var(--aui-4) 0; max-width: var(--aui-max); margin: 0 auto; min-height: 0; }
+html[data-cream~="al"] .al-top .al-brand { display: none; }
+html[data-cream~="diag"] :is(.diag-timer, .diag-progress-pill) { font: 700 var(--aui-t-sm)/1 var(--aui-font); font-variant-numeric: tabular-nums; background: var(--aui-paper); border: 1.5px solid var(--aui-line-2); color: var(--aui-ink); border-radius: var(--aui-r-pill); padding: 8px 14px; }
+html[data-cream~="diag"] .diag-timer.warning { background: var(--aui-miss-soft); border-color: var(--aui-miss); color: var(--aui-miss); }
+html[data-cream~="diag"] .diag-timer.critical { background: var(--aui-miss); border-color: var(--aui-miss); color: #fff; }
+html[data-cream~="diag"] .diag-shell { max-width: var(--aui-max); }
+html[data-cream~="diag"] .diag-intro-card { background: var(--aui-paper); border: 1px solid var(--aui-line); border-radius: var(--aui-r); box-shadow: var(--aui-shadow); max-width: var(--aui-read); margin-left: 0; }
+html[data-cream~="diag"] .diag-intro-card .lede { font-size: var(--aui-t-md); color: var(--aui-ink-2); }
+html[data-cream~="diag"] .diag-meta-item { border-radius: var(--aui-r-sm); border: 1px solid var(--aui-line); background: var(--aui-cream); }
+html[data-cream~="diag"] .diag-meta-item strong { font: 700 var(--aui-t-xl)/1.1 var(--aui-font); font-variant-numeric: tabular-nums; }
+html[data-cream~="diag"] .diag-meta-item span { font-size: var(--aui-t-xs); }
+html[data-cream~="diag"] .diag-section-pill { border-radius: var(--aui-r-sm); font-size: var(--aui-t-sm); }
+html[data-cream~="diag"] .diag-section-pill .pill-label { font: var(--ac-kicker); letter-spacing: .08em; }
+html[data-cream~="al"] :is(.btn-primary, .btn-secondary, .tw-date-btn) { display: inline-flex; align-items: center; justify-content: center; min-height: var(--aui-tap); padding: 10px 20px; border-radius: var(--aui-r-pill); font: 700 var(--aui-t-md)/1.2 var(--aui-font); letter-spacing: 0; text-transform: none; }
+html[data-cream~="al"] :is(.btn-primary, .tw-date-btn) { background: var(--aui-forest); border: 1.5px solid var(--aui-forest); color: var(--aui-cream); }
+html[data-cream~="al"] .btn-secondary { background: transparent; border: 1.5px solid var(--aui-forest); color: var(--aui-forest); }
+html[data-cream~="testweek"] .tw-hero { padding: var(--aui-5) 0 var(--aui-6); }
+html[data-cream~="testweek"] .tw-hero-eyebrow, html[data-cream~="testweek"] .tw-tiles-label, html[data-cream~="testweek"] .tw-tile-tag { font: var(--ac-kicker); letter-spacing: .12em; text-transform: uppercase; color: var(--aui-gold-ink); background: none; border: 0; padding: 0; }
+html[data-cream~="testweek"] .tw-hero-sub { font-size: var(--aui-t-lg); color: var(--aui-ink-2); }
+html[data-cream~="testweek"] .tw-date-prompt { background: var(--aui-paper); border: 1px solid var(--aui-line); border-radius: var(--aui-r); box-shadow: var(--aui-shadow); }
+html[data-cream~="testweek"] .tw-date-prompt label { font: 700 var(--aui-t-sm)/1.4 var(--aui-font); letter-spacing: 0; text-transform: none; }
+html[data-cream~="testweek"] .tw-date-input { min-height: var(--aui-tap); border-radius: var(--aui-r-sm); border: 1.5px solid var(--aui-line-2); background: var(--aui-paper); font: 400 16px/1.3 var(--aui-font); }
+html[data-cream~="testweek"] .tw-tile { background: var(--aui-paper); border: 1px solid var(--aui-line); border-left-width: 4px; border-radius: var(--aui-r); box-shadow: var(--aui-shadow); }
+html[data-cream~="testweek"] .tw-tile-name { font-family: var(--aui-display); }
+html[data-cream~="testweek"] .tw-tile-name em { font-style: normal; color: inherit !important; }
+html[data-cream~="testweek"] .tw-tile-desc { font-size: var(--aui-t-sm); color: var(--aui-ink-2); }
+html[data-cream~="testweek"] .tw-tile-foot { font: 700 var(--aui-t-sm)/1.2 var(--aui-font); letter-spacing: 0; text-transform: none; color: var(--aui-forest); }
+@media (max-width: 759px) { html[data-cream~="testweek"] .tw-tiles { grid-template-columns: minmax(0, 1fr); } }
+
+/* ----- Printable guide ----- */
+html[data-cream~="guide"] body { background: var(--aui-cream); font: 400 var(--aui-t-md)/1.6 var(--aui-font); }
+html[data-cream~="guide"] .page { max-width: var(--aui-max); margin: 0 auto; padding: var(--aui-5) var(--aui-4) var(--aui-7); }
+html[data-cream~="guide"] .page > :is(p, ol, ul, .rule, h1, h2, h3) { max-width: var(--aui-read); }
+html[data-cream~="guide"] .eyebrow { font: var(--ac-kicker); letter-spacing: .12em; text-transform: uppercase; color: var(--aui-gold-ink); }
+html[data-cream~="guide"] .rule { background: var(--aui-paper); border: 1px solid var(--aui-line); border-left: 4px solid var(--aui-gold); border-radius: var(--aui-r); padding: var(--aui-4); }
+html[data-cream~="guide"] .rule b, html[data-cream~="guide"] li b:first-child { font-family: var(--aui-font); }
+@media print { html[data-cream~="guide"] body { background: #fff; } }
+
+/* ----- PAT: trainers, playbook, studio front, full PAT test -----
+   One page header under the site bar: the module name as a kicker, the way back as an outline pill.
+   Drawing fills keep their own greys (the page draws on them). */
+:is(html[data-cream~="pat"], html[data-cream~="tfe"]):root { --panel: #BFBFBF; --panel-2: #D2D2D2; --faint: #A7B0A6; }
+:is(html[data-cream~="pat"], html[data-cream~="tfe"]) body > header { background: transparent; color: var(--aui-ink); border: 0; padding: var(--aui-4) var(--aui-4) 0; max-width: var(--aui-max); margin: 0 auto; align-items: center; gap: var(--aui-3); }
+:is(html[data-cream~="pat"], html[data-cream~="tfe"]) body > header h1 { font: 700 var(--aui-t-xs)/1.3 var(--aui-font); letter-spacing: .12em; text-transform: uppercase; color: var(--aui-gold-ink); }
+:is(html[data-cream~="pat"], html[data-cream~="tfe"]) body > header :is(.tag, .seed) { display: none; }
+:is(html[data-cream~="pat"], html[data-cream~="tfe"]) body > header a.back { display: inline-flex; align-items: center; min-height: var(--aui-tap); padding: 0 16px; border-radius: var(--aui-r-pill); border: 1.5px solid var(--aui-line-2); color: var(--aui-forest); font: 700 var(--aui-t-sm)/1 var(--aui-font); letter-spacing: 0; text-transform: none; }
+:is(html[data-cream~="pat"], html[data-cream~="tfe"]) body > header a.back:hover { background: var(--aui-gold-soft); }
+:is(html[data-cream~="pat"], html[data-cream~="tfe"]) .wrap { max-width: var(--aui-max); padding: var(--aui-3) var(--aui-4) var(--aui-7); }
+:is(html[data-cream~="pat"], html[data-cream~="tfe"]) .lede { color: var(--aui-ink-2); font-size: var(--aui-t-md); max-width: 68ch; }
+:is(html[data-cream~="pat"], html[data-cream~="tfe"]) .card { background: var(--aui-paper); border: 1px solid var(--aui-line); border-radius: var(--aui-r); box-shadow: var(--aui-shadow); }
+:is(html[data-cream~="pat"], html[data-cream~="tfe"]) .card .k, :is(html[data-cream~="pat"], html[data-cream~="tfe"]) .kick { color: var(--aui-gold-ink); font-weight: 700; letter-spacing: .12em; }
+:is(html[data-cream~="pat"], html[data-cream~="tfe"]) :is(button, select) { border-radius: var(--aui-r-sm); border: 1.5px solid var(--aui-line-2); background: var(--aui-paper); color: var(--aui-ink); min-height: var(--aui-tap); min-width: var(--aui-tap); }
+:is(html[data-cream~="pat"], html[data-cream~="tfe"]) :is(button.primary, button.ghost, button.choice) { border-radius: var(--aui-r-pill); padding: 8px 18px; font-weight: 700; }
+:is(html[data-cream~="pat"], html[data-cream~="tfe"]) :is(button.primary, button.on) { background: var(--aui-forest); border-color: var(--aui-forest); color: var(--aui-cream); }
+:is(html[data-cream~="pat"], html[data-cream~="tfe"]) button.ghost { background: transparent; border-color: var(--aui-forest); color: var(--aui-forest); }
+:is(html[data-cream~="pat"], html[data-cream~="tfe"]) button.choice.right { background: var(--aui-good-soft); border-color: var(--aui-good); color: var(--aui-good); }
+:is(html[data-cream~="pat"], html[data-cream~="tfe"]) button.choice.wrong { background: var(--aui-miss-soft); border-color: var(--aui-miss); color: var(--aui-miss); }
+/* builder controls a student never needs */
+:is(html[data-cream~="pat"], html[data-cream~="tfe"]) #export { display: none !important; }
+/* studio front */
+html[data-cream~="pat"] a.mod { border-radius: var(--aui-r); border: 1px solid var(--aui-line); background: var(--aui-paper); box-shadow: var(--aui-shadow); }
+html[data-cream~="pat"] a.mod:hover { border-color: var(--aui-line-2); }
+html[data-cream~="pat"] .mod .k, html[data-cream~="pat"] .hero .kick { color: var(--aui-gold-ink); font-weight: 700; letter-spacing: .12em; }
+html[data-cream~="pat"] .mod p { color: var(--aui-ink-2); font-size: var(--aui-t-sm); }
+html[data-cream~="pat"] .mod .st { border-color: var(--aui-good); color: var(--aui-good); }
+@media (max-width: 759px) {
+  :is(html[data-cream~="pat"], html[data-cream~="tfe"]) .bar { gap: 8px; }
+  :is(html[data-cream~="pat"], html[data-cream~="tfe"]) .hp-rule { font-size: var(--aui-t-sm); }
+  :is(html[data-cream~="pat"], html[data-cream~="tfe"]) figcaption { font-size: var(--aui-t-xs); }
+  :is(html[data-cream~="pat"], html[data-cream~="tfe"]) :is(a.all, a.drill) { padding: 0 14px; border-radius: var(--aui-r-pill); border: 1.5px solid var(--aui-line-2); color: var(--aui-forest); font: 700 var(--aui-t-sm)/1.2 var(--aui-font); letter-spacing: 0; text-transform: none; }
+  :is(html[data-cream~="pat"], html[data-cream~="tfe"]) .pill { margin-left: 0; }
+}
+/* full PAT test: no second header under the site bar; the way back stays as a pill */
+html[data-cream~="pattest"] .topbar { background: transparent; border: 0; padding: var(--aui-3) var(--aui-4) 0; max-width: var(--aui-max); margin: 0 auto; }
+html[data-cream~="pattest"] .topbar .brand, html[data-cream~="pattest"] .topbar .spacer { display: none; }
+html[data-cream~="pattest"] .topbar a.back { display: inline-flex; align-items: center; min-height: var(--aui-tap); padding: 0 16px; border-radius: var(--aui-r-pill); border: 1.5px solid var(--aui-line-2); color: var(--aui-forest); font: 700 var(--aui-t-sm)/1 var(--aui-font); letter-spacing: 0; text-transform: none; }
+
+/* BEGIN pat-fit (written by scripts/design/fit-pages.mjs) */
+@media (max-width:759px){
+:is(html[data-cream~="pat"],html[data-cream~="tfe"]) table,:is(html[data-cream~="pat"],html[data-cream~="tfe"]) .coach,:is(html[data-cream~="pat"],html[data-cream~="tfe"]) .verdict p,:is(html[data-cream~="pat"],html[data-cream~="tfe"]) details summary,:is(html[data-cream~="pat"],html[data-cream~="tfe"]) details p,:is(html[data-cream~="pat"],html[data-cream~="tfe"]) details li,
+:is(html[data-cream~="pat"],html[data-cream~="tfe"]) .hint,:is(html[data-cream~="pat"],html[data-cream~="tfe"]) .foot,:is(html[data-cream~="pat"],html[data-cream~="tfe"]) .steps,:is(html[data-cream~="pat"],html[data-cream~="tfe"]) .mantra,:is(html[data-cream~="pat"],html[data-cream~="tfe"]) body,:is(html[data-cream~="pat"],html[data-cream~="tfe"]) .legend,
+:is(html[data-cream~="pat"],html[data-cream~="tfe"]) .tax,:is(html[data-cream~="pat"],html[data-cream~="tfe"]) .stepline,:is(html[data-cream~="pat"],html[data-cream~="tfe"]) .sb-body{font-size:15px!important}
+:is(html[data-cream~="pat"],html[data-cream~="tfe"]) header .tag,:is(html[data-cream~="pat"],html[data-cream~="tfe"]) header .seed,:is(html[data-cream~="pat"],html[data-cream~="tfe"]) header a.back,:is(html[data-cream~="pat"],html[data-cream~="tfe"]) .bar label,:is(html[data-cream~="pat"],html[data-cream~="tfe"]) .bar .lab,:is(html[data-cream~="pat"],html[data-cream~="tfe"]) .tgt,
+:is(html[data-cream~="pat"],html[data-cream~="tfe"]) kbd,:is(html[data-cream~="pat"],html[data-cream~="tfe"]) .card .k,:is(html[data-cream~="pat"],html[data-cream~="tfe"]) .stat span,:is(html[data-cream~="pat"],html[data-cream~="tfe"]) .chip,:is(html[data-cream~="pat"],html[data-cream~="tfe"]) th,:is(html[data-cream~="pat"],html[data-cream~="tfe"]) .meta,
+:is(html[data-cream~="pat"],html[data-cream~="tfe"]) .coach .who,:is(html[data-cream~="pat"],html[data-cream~="tfe"]) .choice .lab,:is(html[data-cream~="pat"],html[data-cream~="tfe"]) .top .kick,:is(html[data-cream~="pat"],html[data-cream~="tfe"]) .top a.all,:is(html[data-cream~="pat"],html[data-cream~="tfe"]) .tab,:is(html[data-cream~="pat"],html[data-cream~="tfe"]) button,
+:is(html[data-cream~="pat"],html[data-cream~="tfe"]) .opt .lab,:is(html[data-cream~="pat"],html[data-cream~="tfe"]) .pair,:is(html[data-cream~="pat"],html[data-cream~="tfe"]) .pill,:is(html[data-cream~="pat"],html[data-cream~="tfe"]) .tierbtn,:is(html[data-cream~="pat"],html[data-cream~="tfe"]) .feat,:is(html[data-cream~="pat"],html[data-cream~="tfe"]) .sb-lab,
+:is(html[data-cream~="pat"],html[data-cream~="tfe"]) .cell .trap,:is(html[data-cream~="pat"],html[data-cream~="tfe"]) .verdict .views figcaption{font-size:13px!important}
+}
+/* END pat-fit */

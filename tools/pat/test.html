@@ -7,7 +7,20 @@
 <meta name="description" content="AceTheDAT full Perceptual Ability Test: 90 questions, six sections, 60 minutes, with a section-by-section review."/>
 <link rel="stylesheet" href="pat-test.css"/>
 <link rel="stylesheet" href="pat-explain.css"/>
-<link rel="stylesheet" href="/shared/ace-cream.css?v=3">
+<style id="ace-fit">
+/* phone text floors, written by scripts/design/fit-pages.mjs. Do not edit by hand. */
+@media (max-width:759px){
+.note,.sections-list li,.order-toggle button span,.phone-note,.history table,.check,
+.rules,.markbox,.banner,.nav-sec span,.legend,.sec-table,
+.prow,.traps,.steps li,.clean,.explain,.pat-ex,
+.pat-ex .pex-note,.pat-ex .pex-traps li>b,.pat-ex .pex-check details>summary,.pat-ex .pex-src,.pat-ex .pex-src>summary{font-size:15px!important}
+.topbar a.back,.kicker,.pill,.facts span,.sections-list li span,.tcard .lbl,
+.tcard .st,.history th,.run-top .t-left small,.run-top .qcount small,.timer small,.opt .tag,
+.kbd-hint,.navcell,.sec-table th,.sec-card .sub,.prow .v,.steps li::before,
+.items-list button,.pat-panel figcaption,.tfe-lab,.tfe-missing span,.pat-ex .pex-k{font-size:13px!important}
+}
+</style>
+<link rel="stylesheet" href="/shared/ace-cream.css?v=4">
 </head>
 <body>
 
@@ -205,7 +218,7 @@
   function readPref() { try { return JSON.parse(localStorage.getItem(PREF) || '{}'); } catch (e) { return {}; } }
   function writePref(p) { try { localStorage.setItem(PREF, JSON.stringify(p)); } catch (e) { /* convenience only */ } }
   /* The shared bar and the phone tab bar hide while the test clock runs (acelabs.timed, read by
-     shared/ace-shell.js and shared/ace-tabs.js); any other screen clears it. (2026-11-16) */
+     shared/ace-shell.js?v=6 and shared/ace-tabs.js?v=5); any other screen clears it. (2026-11-16) */
   var timedUntil = 0;
   function setTimed(sec) { timedUntil = Date.now() + sec * 1000; try { localStorage.setItem('acelabs.timed', JSON.stringify({ until: timedUntil })); window.dispatchEvent(new Event('acelabs:timed')); } catch (e) { /* storage blocked */ } }
   function clearTimed() { if (!timedUntil) return; timedUntil = 0; try { localStorage.setItem('acelabs.timed', JSON.stringify({ until: 0 })); window.dispatchEvent(new Event('acelabs:timed')); } catch (e) { /* storage blocked */ } }
@@ -616,6 +629,6 @@
   renderLanding();
 })();
 </script>
-<script src="/shared/ace-shell.js?v=5" defer></script>
+<script src="/shared/ace-shell.js?v=6" defer></script>
 </body>
 </html>

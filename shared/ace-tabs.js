@@ -2,7 +2,7 @@
    Today, Labs, Test, Repair, Progress: the same five places as the top bar on a wide screen
    (shared/ace-ui.js, shared/ace-shell.js), which load this file themselves. Shown under 760 px.
    Hidden while a timed section runs (acelabs.timed), like the top bar. Load with:
-     <script src="/shared/ace-tabs.js?v=4" defer></script>
+     <script src="/shared/ace-tabs.js?v=5" defer></script>
    Skipped inside frames, with ?embed, or when <html data-ace-tabs="off">. */
 (function () {
   'use strict';
@@ -28,7 +28,7 @@
       '.ace-tabs{display:none}.ace-tabs[hidden]{display:none!important}' +
       '@media (max-width:759px){' +
       '.ace-tabs{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));position:fixed;left:0;right:0;bottom:0;z-index:60;background:#fffdf7;border-top:1px solid #e6dccb;padding:6px 4px calc(10px + env(safe-area-inset-bottom));font-family:"DM Sans",system-ui,sans-serif}' +
-      '.ace-tabs a{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;min-height:52px;text-decoration:none;color:#5c6a63;font-size:12px;font-weight:500}' +
+      '.ace-tabs a{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;min-height:52px;text-decoration:none;color:#5c6a63;font-size:13px;font-weight:500}' +
       '.ace-tabs a[aria-current="page"]{color:#1B3A2D;font-weight:700}' +
       '.ace-tabs a[aria-current="page"] svg{stroke:#1B3A2D}' +
       '.ace-tabs svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}' +

@@ -14,7 +14,8 @@
 (function () {
   'use strict';
   if (window.AceShell) return;
-  var VERSION = '3';
+  var VERSION = '4';
+  var CREAM = '4';   /* the ?v= pages use for /shared/ace-cream.css (tests/shell/ace-tokens.test.js) */
   /* Keep in step with PLACES in shared/ace-ui.js. */
   var DOORS = [
     { id: 'today', label: 'Today', href: '/' },
@@ -83,12 +84,25 @@
       '#ace-shell[hidden]{display:none!important}' +
       '@media print{#ace-shell{display:none!important}}' +
       'html.ace-shell-on #al-home{display:none!important}' +
-      'html.ace-shell-on header.ace-legacy-nav{display:none!important}';
+      'html.ace-shell-on header.ace-legacy-nav{display:none!important}' +
+      /* self-hosted, the same file ace-ui.css uses: no page loads a font from the network */
+      '@font-face{font-family:"DM Sans";src:url("/shared/fonts/dm-sans.woff2") format("woff2");font-weight:100 1000;font-style:normal;font-display:swap}';
     (document.head || root).appendChild(s);
-    if (!document.getElementById('aui-font')) {
-      var l = document.createElement('link'); l.id = 'aui-font'; l.rel = 'stylesheet';
-      l.href = 'https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&display=swap';
+    skin();
+  }
+
+  /* The older PAT trainers carry no skin link of their own. Give them the one system
+     (shared/ace-cream.css imports the ace-ui.css tokens) and the PAT family name. */
+  var SKIN = [[/^\/tools\/pat\//, 'pat']];
+  function skin() {
+    if (document.querySelector('link[href*="/shared/ace-cream.css"]')) return;
+    for (var i = 0; i < SKIN.length; i++) {
+      if (!SKIN[i][0].test(location.pathname)) continue;
+      var have = root.getAttribute('data-cream');
+      root.setAttribute('data-cream', have ? have + ' ' + SKIN[i][1] : SKIN[i][1]);
+      var l = document.createElement('link'); l.rel = 'stylesheet'; l.href = '/shared/ace-cream.css?v=' + CREAM;
       (document.head || root).appendChild(l);
+      return;
     }
   }
 
@@ -155,7 +169,7 @@
   /* The phone tab bar: the same five places. Loaded here so every page with a bar has it. */
   function tabs() {
     if (window.AceTabs || document.querySelector('script[src*="/shared/ace-tabs.js"]')) return;
-    var t = document.createElement('script'); t.src = '/shared/ace-tabs.js?v=4'; t.defer = true; document.head.appendChild(t);
+    var t = document.createElement('script'); t.src = '/shared/ace-tabs.js?v=5'; t.defer = true; document.head.appendChild(t);
   }
 
   function mount() {

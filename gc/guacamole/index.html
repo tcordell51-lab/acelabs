@@ -4,26 +4,28 @@
 <title>GuacaMOLE: everything goes through the pit · Ace Labs</title>
 <meta name="description" content="Moles are the pit: grams, particles and liters of gas all go through moles. Board, whiteboard, practice ladder and a step-by-step walkthrough when you miss.">
 <link rel="icon" type="image/svg+xml" href="/shared/ace-dat-mark.svg">
-<link rel="stylesheet" href="/shared/ace-ui.css?v=8">
+<link rel="stylesheet" href="/shared/ace-ui.css?v=9">
 <link rel="stylesheet" href="/shared/ace-walkthrough.css?v=1">
 <style>
-:root{--paper:#F5F0E8;--card:#fbfaf6;--ink:#14281f;--brand:#1B3A2D;--gold:#8C7235;--gold2:#C9A84C;--trap:#9a3b2e;--trapbg:#f6e4dd;--ok:#1f5c43;--okbg:#e0eee6;--blue:#3f5f86;--line:#DDD6C6}
+:root{--paper:var(--aui-cream);--card:var(--aui-paper);--ink:var(--aui-ink);--brand:var(--aui-forest);--gold:var(--aui-brass);--gold2:var(--aui-gold);--trap:var(--aui-miss);--trapbg:var(--aui-miss-soft);--ok:var(--aui-good);--okbg:var(--aui-good-soft);--blue:var(--aui-info);--line:var(--aui-line)}
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
-body{margin:0;background:var(--paper);color:var(--ink);font:17px/1.55 "DM Sans","Helvetica Neue",Arial,system-ui,sans-serif;overflow-x:hidden}
-header{background:var(--brand);color:#fff;padding:18px 16px 16px}
-header .brand{font-weight:700;letter-spacing:.12em;font-size:16px;color:var(--gold2)}
-header h1{margin:6px 0 4px;font-size:30px;line-height:1.15}
-header p{margin:0;font-size:17px;color:#eef2ec}
-nav{position:sticky;top:0;z-index:5;background:var(--card);border-bottom:2px solid var(--line)}
-nav details summary{list-style:none;min-height:48px;display:flex;align-items:center;padding:0 16px;font-weight:700;cursor:pointer;color:var(--brand)}
-nav details summary::-webkit-details-marker{display:none}
-nav details summary::after{content:"";margin-left:auto;width:10px;height:10px;border-right:3px solid var(--brand);border-bottom:3px solid var(--brand);transform:rotate(45deg);margin-top:-4px}
-nav details[open] summary::after{transform:rotate(-135deg);margin-top:4px}
-nav ol{margin:0;padding:0 8px 10px;list-style:none;display:grid;grid-template-columns:1fr 1fr;gap:6px}
-nav a{display:flex;align-items:center;min-height:44px;padding:6px 10px;border-radius:10px;background:var(--paper);color:var(--ink);text-decoration:none;font-size:16px}
-main{max-width:980px;margin:0 auto;padding:12px 12px 40px}
-main>section{background:var(--card);border:2px solid var(--line);border-radius:16px;padding:16px;margin:14px 0;scroll-margin-top:60px}
+body{margin:0;background:var(--paper);color:var(--ink);font:17px/1.55 var(--aui-font);overflow-x:hidden}
+.pagehead{max-width:var(--aui-max);margin:0 auto;padding:var(--aui-5) var(--aui-4) var(--aui-2)}
+.pagehead .brand{font:700 var(--aui-t-xs)/1.3 var(--aui-font);letter-spacing:.12em;text-transform:uppercase;color:var(--aui-gold-ink)}
+.pagehead h1{margin:6px 0 4px;font:600 var(--aui-t-2xl)/1.1 var(--aui-display);letter-spacing:-.01em}
+@media (min-width:720px){.pagehead h1{font-size:var(--aui-t-3xl)}}
+.pagehead p{margin:0;font-size:17px;color:var(--aui-ink-2)}
+nav.pieces{max-width:var(--aui-max);margin:var(--aui-3) auto 0;padding:0 var(--aui-4)}
+nav.pieces details{background:var(--card);border:1px solid var(--line);border-radius:var(--aui-r)}
+nav.pieces details summary{list-style:none;min-height:48px;display:flex;align-items:center;padding:0 16px;font-weight:700;cursor:pointer;color:var(--brand)}
+nav.pieces details summary::-webkit-details-marker{display:none}
+nav.pieces details summary::after{content:"";margin-left:auto;width:10px;height:10px;border-right:3px solid var(--brand);border-bottom:3px solid var(--brand);transform:rotate(45deg);margin-top:-4px}
+nav.pieces details[open] summary::after{transform:rotate(-135deg);margin-top:4px}
+nav.pieces ol{margin:0;padding:0 8px 10px;list-style:none;display:grid;grid-template-columns:1fr 1fr;gap:6px}
+nav.pieces a{display:flex;align-items:center;min-height:44px;padding:6px 10px;border-radius:10px;background:var(--paper);color:var(--ink);text-decoration:none;font-size:16px}
+main{max-width:var(--aui-max);margin:0 auto;padding:0 var(--aui-4) 40px}
+main>section{background:var(--card);border:1px solid var(--line);border-radius:var(--aui-r);box-shadow:var(--aui-shadow);padding:16px;margin:14px 0;scroll-margin-top:60px}
 main h2{margin:0 0 4px;font-size:23px;color:var(--brand);line-height:1.25}
 .num{display:inline-block;min-width:30px;height:30px;line-height:30px;text-align:center;border-radius:50%;background:var(--gold2);color:var(--brand);font-size:16px;font-weight:700;margin-right:8px;vertical-align:2px}
 .lead{margin:2px 0 12px;color:#3d4d44}
@@ -74,17 +76,18 @@ details.ans p{margin:10px 2px 0}
 @media (min-width:701px){.mob2{display:none}}
 .mob2 img{margin-top:10px}
 footer{text-align:center;color:#4f5c55;font-size:16px;padding:10px 16px 30px}
+footer a{display:inline-flex;align-items:center;min-height:44px;color:var(--aui-forest);font-weight:700}
 @media (min-width:760px){
  body{font-size:18px} header{padding:28px 32px} header h1{font-size:40px} main{padding:16px 24px 48px}
  main>section{padding:24px 28px} main h2{font-size:27px}
- nav ol{grid-template-columns:repeat(5,1fr)}
+ nav.pieces ol{grid-template-columns:repeat(5,1fr)}
  .cards{grid-template-columns:1fr 1fr} .choices{grid-template-columns:1fr 1fr}
 }
 </style></head>
 <body>
-<header><div class="brand">ACE DAT . GEN CHEM . STOICHIOMETRY</div>
+<header class="pagehead"><div class="brand">Gen Chem · Stoichiometry</div>
 <h1>GuacaMOLE</h1><p>Holy guaca-MOLE, everything goes through the pit.</p></header>
-<nav aria-label="Pieces"><details><summary>Jump to a piece (10)</summary><ol><li><a href="#p1-board">1. Trick board</a></li><li><a href="#p2-whiteboard">2. Whiteboard notes</a></li><li><a href="#p3-explainer">3. Thomas explains it</a></li><li><a href="#p4-interactive">4. Walk it through the pit</a></li><li><a href="#p5-idoyoudo">5. I do, we do, you do</a></li><li><a href="#p6-trap">6. Trap card</a></li><li><a href="#p7-ladder">7. Practice ladder</a></li><li><a href="#p8-review">8. Review cards</a></li><li><a href="#p9-mixed">9. Mixed practice</a></li><li><a href="#p10-routing">10. Where to go if you miss</a></li></ol></details></nav>
+<nav class="pieces" aria-label="Pieces"><details><summary>Jump to a piece (10)</summary><ol><li><a href="#p1-board">1. Trick board</a></li><li><a href="#p2-whiteboard">2. Whiteboard notes</a></li><li><a href="#p3-explainer">3. Thomas explains it</a></li><li><a href="#p4-interactive">4. Walk it through the pit</a></li><li><a href="#p5-idoyoudo">5. I do, we do, you do</a></li><li><a href="#p6-trap">6. Trap card</a></li><li><a href="#p7-ladder">7. Practice ladder</a></li><li><a href="#p8-review">8. Review cards</a></li><li><a href="#p9-mixed">9. Mixed practice</a></li><li><a href="#p10-routing">10. Where to go if you miss</a></li></ol></details></nav>
 <main>
 
 <section id="p1-board"><h2><span class="num">1</span>Trick board</h2>
@@ -159,7 +162,7 @@ footer{text-align:center;color:#4f5c55;font-size:16px;padding:10px 16px 30px}
 <p class="lead">Every wrong answer on this page links back to one of these. If you keep missing for the same reason, redo that piece first.</p>
 <ul class="route"><li>Multiplied by molar mass when going from grams to moles (or the reverse): <a href="#p1-board">Trick board</a></li><li>Divided the wrong way round (small over big): <a href="#p4-interactive">Walk it through the pit</a></li><li>Jumped from grams or liters straight to the answer without moles: <a href="#p6-trap">Trap card</a></li><li>Stopped in the pit and gave moles as the answer: <a href="#p5-idoyoudo">I do, we do, you do</a></li><li>Used the wrong exit (22.4 L/mol for grams, or molar mass for liters): <a href="#p1-board">Trick board</a></li><li>Forgot that O<sub>2</sub>, N<sub>2</sub>, H<sub>2</sub> are diatomic, or skipped the coefficient step: <a href="#p2-whiteboard">Whiteboard notes</a></li><li>Still fuzzy on why moles are the bridge: <a href="#p3-explainer">Thomas explains it</a></li></ul></section>
 </main>
-<footer>ACE DAT . Gen Chem . GuacaMOLE</footer>
+<footer><a href="/gc/">Back to Gen Chem</a></footer>
 <script src="/shared/ace-record.js?v=6"></script>
 <script src="/shared/ace-question.js?v=9"></script>
 <script src="/shared/ace-walkthrough.js?v=4"></script>
@@ -242,6 +245,6 @@ D.cards.forEach((c,i)=>{const b=document.createElement('button');b.type='button'
 const t0=new Date();const sc=document.getElementById('sched');
 [1,3,7,21].forEach(n=>{const d=new Date(t0);d.setDate(d.getDate()+n);sc.insertAdjacentHTML('beforeend','<div><b>Day '+n+'</b>'+d.toLocaleDateString(undefined,{month:'short',day:'numeric'})+'</div>');});
 </script>
-<script src="/shared/ace-shell.js?v=5" defer></script>
-<script src="/shared/ace-tabs.js?v=4" defer></script>
+<script src="/shared/ace-shell.js?v=6" defer></script>
+<script src="/shared/ace-tabs.js?v=5" defer></script>
 </body></html>

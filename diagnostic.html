@@ -1,12 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-cream="al diag">
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>Ace Labs · Cross-Section Diagnostic</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;1,400;1,700&family=DM+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 /* ── Design tokens (inline for single-file portability) ─────────────── */
 :root{
@@ -647,6 +644,16 @@ body{
 header.al-top .al-brand{display:none}
 html:not(.diag-running) header.al-top{display:none}
 </style>
+<style id="ace-fit">
+/* phone text floors, written by scripts/design/fit-pages.mjs. Do not edit by hand. */
+@media (max-width:759px){
+.al-product,.diag-meta-item span,.diag-note,.diag-loading,.diag-q-topic,.diag-submit-zone p,
+.diag-result-hero p,.diag-weak-rec,.diag-feedback-strip,.diag-prev-banner{font-size:15px!important}
+.diag-section-pill .pill-label,.diag-section-badge,.diag-opt-letter,.diag-jump-panel h4,.diag-jump-btn,.diag-jump-section-label,
+.diag-section-card h3,.diag-weak-rank{font-size:13px!important}
+}
+</style>
+<link rel="stylesheet" href="/shared/ace-cream.css?v=4">
 </head>
 <body>
 
@@ -830,7 +837,7 @@ function clearProgress(){ try{ localStorage.removeItem(INPROG_KEY); }catch(e){} 
 function readProgress(){
   try{ const p = JSON.parse(localStorage.getItem(INPROG_KEY) || 'null'); return p && Array.isArray(p.ids) && p.ids.length ? p : null; }catch(e){ return null; }
 }
-/* The six-door shell hides itself while a timed section runs (shared/ace-shell.js reads acelabs.timed). */
+/* The six-door shell hides itself while a timed section runs (shared/ace-shell.js?v=6 reads acelabs.timed). */
 function setTimed(sec){ try{ localStorage.setItem('acelabs.timed', JSON.stringify({ until: Date.now() + sec * 1000 })); window.dispatchEvent(new Event('acelabs:timed')); }catch(e){} }
 function clearTimed(){ try{ localStorage.setItem('acelabs.timed', JSON.stringify({ until: 0 })); window.dispatchEvent(new Event('acelabs:timed')); }catch(e){} }
 function leaveDiagnostic(){
@@ -1548,6 +1555,6 @@ function retakeDiagnostic(){
   <script src="/shared/ace-record.js?v=6"></script>
   <script src="/shared/ace-test-review.js?v=6"></script>
   <script src="/shared/ace-next-steps.js?v=4"></script>
-  <script src="/shared/ace-shell.js?v=5" defer></script>
+  <script src="/shared/ace-shell.js?v=6" defer></script>
 </body>
 </html>
