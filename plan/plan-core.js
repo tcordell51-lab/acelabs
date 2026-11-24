@@ -23,8 +23,11 @@
      runway allows it, else 10 or 7; Test-week mode and the last-7-days calendar take over
      there), then full-length testing (up to about six weeks before the final stretch), then
      drill and repair, then learn (the Retold nights) at the front.
-     Time per section is the DAT's question count (Bio 40, Gen Chem 30, OChem 30, PAT 90,
-     Reading 50, QR 40) times a confidence multiplier, stronger for a retake.
+     Time per section starts from a default study load (Bio 30, Gen Chem 22, OChem 22,
+     PAT 26, Reading 12, QR 18). These are Ace Labs planning weights, not DAT statistics:
+     the science sections carry the most content, Reading the least. That is times a
+     confidence multiplier, stronger for a retake. No one section takes more than 40% of
+     study time, so a weak section never crowds out the rest.
      Full-lengths go about every 8 days in a long testing window, every 6 or 4 when time is
      short, never in the last 2 days before the test, each followed by a review day.
    No score predictions and no invented numbers: the only figures are the DAT's own question
@@ -41,6 +44,8 @@
   var SHORT = { bio: 'Bio', gchem: 'Gen Chem', ochem: 'OChem', pat: 'PAT', rc: 'Reading', qr: 'QR' };
   // Questions per section on the DAT (ADA candidate guide).
   var ITEMS = { bio: 40, gchem: 30, ochem: 30, pat: 90, rc: 50, qr: 40 };
+  var BASE_MIN = { bio: 30, gchem: 22, ochem: 22, pat: 26, rc: 12, qr: 18 };
+  var MAX_SHARE = 0.4;
   var COURSE = { bio: '/tools/bio-retold/', gchem: '/tools/gchem/', ochem: '/tools/organic/', qr: '/tools/qr-retold/', pat: '/tools/pat-retold/', rc: '/tools/rc-retold/' };
   var NIGHT_COUNT = { bio: 14, gchem: 14, ochem: 13, qr: 14, pat: 10, rc: 10 };
   var DRILL = { bio: '/bio/?run=daily', gchem: '/gc/?run=daily', ochem: '/oc/?run=daily', qr: '/qr/drill/?run=daily', rc: '/tools/rc/' };
@@ -98,8 +103,16 @@
 
   function weights(conf, attempt) {
     var raw = {}, sum = 0, mult = MULT[attempt] || MULT.first;
-    SECTIONS.forEach(function (s) { raw[s] = ITEMS[s] * mult[conf[s]]; sum += raw[s]; });
+    SECTIONS.forEach(function (s) { raw[s] = BASE_MIN[s] * mult[conf[s]]; sum += raw[s]; });
     var out = {}; SECTIONS.forEach(function (s) { out[s] = raw[s] / sum; });
+    // Cap any one section, then hand the excess to the others by their own share.
+    for (var pass = 0; pass < SECTIONS.length; pass++) {
+      var over = 0, freeSum = 0;
+      SECTIONS.forEach(function (s) { if (out[s] > MAX_SHARE) { over += out[s] - MAX_SHARE; out[s] = MAX_SHARE; } });
+      if (over <= 1e-9) break;
+      SECTIONS.forEach(function (s) { if (out[s] < MAX_SHARE) freeSum += out[s]; });
+      SECTIONS.forEach(function (s) { if (out[s] < MAX_SHARE) out[s] += over * out[s] / freeSum; });
+    }
     return out;
   }
 
@@ -456,6 +469,6 @@
 
   return {
     generate: generate, toICS: toICS, fmtMinutes: fmtMinutes, addDays: addDays, diff: diff, dow: dow,
-    SECTIONS: SECTIONS, NAMES: NAMES, ITEMS: ITEMS, PHASE: PHASE, weights: weights, FULL_MIN: FULL_MIN
+    SECTIONS: SECTIONS, NAMES: NAMES, ITEMS: ITEMS, BASE_MIN: BASE_MIN, PHASE: PHASE, weights: weights, FULL_MIN: FULL_MIN
   };
 });

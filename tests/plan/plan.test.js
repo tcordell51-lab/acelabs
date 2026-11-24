@@ -133,13 +133,17 @@ test('retake with weak PAT: PAT leads the time split and gets the 90-question PA
   assert.ok(learnDays(p) < learnDays(first));
 });
 
-test('time split follows DAT question counts when confidence is even', () => {
+test('time split follows the default study load when confidence is even, and caps at 40%', () => {
   const even = { bio: 3, gchem: 3, ochem: 3, pat: 3, rc: 3, qr: 3 };
   const w = P.weights(even, 'first');
-  const total = 40 + 30 + 30 + 90 + 50 + 40;
-  assert.ok(Math.abs(w.bio - 40 / total) < 1e-9);
-  assert.ok(Math.abs(w.pat - 90 / total) < 1e-9);
-  assert.ok(Math.abs(w.rc - 50 / total) < 1e-9);
+  const B = P.BASE_MIN, total = Object.values(B).reduce((a, b) => a + b, 0);
+  assert.ok(Math.abs(w.bio - B.bio / total) < 1e-9);
+  assert.ok(Math.abs(w.pat - B.pat / total) < 1e-9);
+  assert.ok(w.bio > w.rc, 'science carries more study time than Reading');
+  const lop = P.weights({ bio: 5, gchem: 5, ochem: 5, pat: 1, rc: 5, qr: 5 }, 'retake');
+  assert.ok(lop.pat <= 0.4 + 1e-9, 'no section above 40%');
+  const sum = Object.values(lop).reduce((a, b) => a + b, 0);
+  assert.ok(Math.abs(sum - 1) < 1e-9, 'shares still add to 1');
 });
 
 test('under a week: test-week note, no full-length, still a rest day before the test', () => {
