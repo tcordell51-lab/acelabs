@@ -1,5 +1,5 @@
 // A tiny static server for the end-to-end run: serves the repo root the way Netlify serves the
-// published folder (directory index, .html optional). No redirects, no functions: the sign-in
+// published folder (directory index, .html optional, _redirects and 200 rewrites). No functions: the sign-in
 // flag is off by default, so the site behaves the same. node tests/e2e/server.mjs [port]
 import http from 'node:http';
 import fs from 'node:fs';
@@ -25,6 +25,14 @@ function redirect(p) {
   }
   return null;
 }
+// 200 rules are rewrites: serve the target file at the same address when no file answers.
+function rewrite(p) {
+  for (const r of RULES) {
+    if (r.code !== 200 || r.from.endsWith('*')) continue;
+    if (p === r.from && (r.force || !exists(p)) && /^\//.test(r.to)) return r.to;
+  }
+  return null;
+}
 
 export function start(port = 0) {
   const server = http.createServer((req, res) => {
@@ -32,7 +40,7 @@ export function start(port = 0) {
     if (p.includes('..') || /^\/(node_modules|\.git)(\/|$)/.test(p)) { res.writeHead(403); return res.end(); }
     const to = redirect(p);
     if (to && /^\//.test(to)) { res.writeHead(302, { Location: to }); return res.end(); }
-    let f = path.join(ROOT, p);
+    let f = path.join(ROOT, rewrite(p) || p);
     try {
       if (fs.existsSync(f) && fs.statSync(f).isDirectory()) f = path.join(f, 'index.html');
       else if (!fs.existsSync(f) && fs.existsSync(f + '.html')) f += '.html';
