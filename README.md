@@ -141,3 +141,7 @@ Internal docs under `docs/` are NOT served by the deploy (publish dir intentiona
 | Cross-engine surfaces | 8.1 | Hub + Prometric runner (8.5+) | Design tokens (7.2) |
 
 Full ratings + the roadmap to 9+ across the board live in `docs/acelabs-scorecard-2026-05-27.html` and `docs/acelabs-roadmap-2026-05-28.html`.
+
+## Deploy previews
+
+Netlify builds a deploy preview only for pull requests whose base branch is `main`. A pull request stacked on another preview branch gets no preview link (the address shows Netlify's "Site not found"). Keep preview pull requests based on `main`; the preview address is `https://deploy-preview-<PR number>--acelabs.netlify.app`.
