@@ -23,247 +23,237 @@ Flow every topic follows: Learn, Whiteboard, Drill, Game, Quick check, Review (R
 
 | Section | Topics | Average | Best | Worst | At 10 of 10 |
 |---|---|---|---|---|---|
-| General Chemistry | 42 | 4.60 | 6 | 3.5 | 0 |
-| Biology | 25 | 3.60 | 4.5 | 3 | 0 |
-| Organic Chemistry | 14 | 4.18 | 5.5 | 3 | 0 |
-| Quantitative Reasoning | 55 | 2.67 | 5.5 | 1 | 0 |
-| Perceptual Ability | 6 | 5.67 | 6 | 5 | 0 |
-| Reading Comprehension | 8 | 4.56 | 5.5 | 2.5 | 0 |
-| All | 150 | 3.73 | 6 | 1 | 0 |
+| General Chemistry | 42 | 6.77 | 8.5 | 5 | 0 |
+| Biology | 25 | 5.68 | 7 | 4 | 0 |
+| Organic Chemistry | 14 | 6.68 | 8 | 5.5 | 0 |
+| Quantitative Reasoning | 49 | 6.12 | 8 | 1.5 | 0 |
+| Perceptual Ability | 6 | 7.00 | 7 | 7 | 0 |
+| Reading Comprehension | 8 | 5.56 | 6.5 | 3.5 | 0 |
+| All | 144 | 6.30 | 8.5 | 1.5 | 0 |
 
-Average points per check, across all 150 topics (1.00 is the most):
+Average points per check, across all 144 topics (1.00 is the most):
 
 | Check | Average |
 |---|---|
-| 1. Learn | 0.32 |
+| 1. Learn | 0.39 |
 | 2. Whiteboard | 0.60 |
-| 3. Drill depth | 0.33 |
-| 4. Explanation standard | 0.27 |
-| 5. See it | 0.64 |
-| 6. Game | 0.61 |
-| 7. Quick check | 0.00 |
-| 8. Review loop | 0.38 |
-| 9. Engagement | 0.00 |
-| 10. Phone and correctness | 0.59 |
+| 3. Drill depth | 0.49 |
+| 4. Explanation standard | 0.28 |
+| 5. See it | 0.83 |
+| 6. Game | 0.60 |
+| 7. Quick check | 0.69 |
+| 8. Review loop | 0.97 |
+| 9. Engagement | 0.83 |
+| 10. Phone and correctness | 0.61 |
 
-### What does not exist yet, site-wide
+### Site-wide features, and what is still missing
 
-- Quick check: there is no 5-question check that marks a topic mastered at 4 of 5. Every topic scores 0. A whiteboard ends on three Try it questions, which count toward the Whiteboard check, not this one.
-- Engagement: XP, a daily streak, a mastery ring per topic do not exist anywhere in the shell, so every topic scores 0. The only part met is a question one tap away.
+- Quick check: 100 of 144 topics have one (5 questions from the topic's public drill bank, mastered at 4 of 5, offered on the hub topic row and at the end of a drill). The rest score 0: Perceptual Ability and Reading drill from generators and passages, not a question bank, and a science or QR topic needs 5 public questions.
+- Engagement: XP (10 per right answer, 50 per mastered topic) and a daily streak come from the shared answer record; a mastery ring shows per topic and per section on the hubs. A topic without a quick check has no ring and tops out at 0.5.
+- Review loop: checked by running shared/ace-record.js: a miss came back 1, 3, 7 days apart and cleared after the last return was answered right.
 - Learn, one tap: the hub topic row has a Practice button only. No topic links its lesson, and there is no one-screen lesson per topic, so Learn tops out at 0.5 (a Retold night that covers the topic).
-- Review loop, 1, 3, 7 days: Repair exists and takes every miss, but a miss returns after 1 or 2 days and clears after 2 wins on different days. Review tops out at 0.5.
-- Explanation standard, served: of 1160 science and QR drill questions, 0 are served with all four parts (answer line, steps, a trap per wrong choice, check question) and 638 have a full walk-through written in a sidecar that is still review pending.
-
-The weakest check in each table below leaves out Quick check and Engagement, which are 0 for every topic.
+- Explanation standard, served: of 1745 science and QR drill questions, 0 are served with all four parts (answer line, steps, a trap per wrong choice, check question) and 637 have a full walk-through written in a sidecar that is still review pending.
 
 ### How the phone point was measured
 
 scripts/measure-phone.mjs at 390 px on 2026-11-24: 188 pages (hubs, Retold courses, every whiteboard, every board game, the arcade, the PAT and Reading tools). A topic gets the point when every page in its flow has no sideways scroll, no text under 13 px, no tap target under 44 px and no JavaScript error. Wrong keys and DAT scope are held by `npm run test:gates` and `npm run test:banks`; a topic also loses the point when the scope file lists it or one of its items.
 
-## General Chemistry (42 topics, average 4.60)
+## General Chemistry (42 topics, average 6.77)
 
 | Topic | Key | Score | Weakest check |
 |---|---|---|---|
-| Periodic Trends | periodic | 6 | Learn, Explanation standard, Review loop and 1 more (0.5) |
-| Mole Conversions | mole-conv | 5.5 | Learn, Explanation standard, Game and 2 more (0.5) |
-| Acid-Base: pH/pOH/Ka/Kb | ph-basics | 5 | Learn, Whiteboard, Explanation standard and 3 more (0.5) |
-| Equilibrium | equilibrium | 5 | Drill depth (0) |
-| Equilibrium: ICE Table | eq-ice | 5 | Learn, Whiteboard, Drill depth and 3 more (0.5) |
-| Equilibrium: Kc and Kp | eq-kc | 5 | Learn, Whiteboard, Drill depth and 3 more (0.5) |
-| Equilibrium: Le Châtelier | eq-lechat | 5 | Learn, Whiteboard, Drill depth and 3 more (0.5) |
-| Gas Laws | gas-laws | 5 | Learn (0) |
-| Gases | gases | 5 | Drill depth (0) |
-| Kinetics: Arrhenius + Catalysis | arrhenius | 5 | Learn, Whiteboard, Drill depth and 3 more (0.5) |
-| Limiting Reactant | lim-react | 5 | Learn, Whiteboard, Explanation standard and 3 more (0.5) |
-| Solubility Equilibria | ksp | 5 | Learn, Whiteboard, Drill depth and 3 more (0.5) |
-| Solutions and Concentration | solutions | 5 | Learn, Whiteboard, Explanation standard and 3 more (0.5) |
-| Thermo: Entropy | entropy | 5 | Learn, Whiteboard, Drill depth and 3 more (0.5) |
-| Thermo: Gibbs ΔG | gibbs | 5 | Learn, Whiteboard, Drill depth and 3 more (0.5) |
-| Acid-Base: Buffers | buffers | 4.5 | Learn, Whiteboard, Drill depth and 4 more (0.5) |
-| Acid-Base: Strong vs Weak | strong-weak | 4.5 | Learn, Whiteboard, Drill depth and 4 more (0.5) |
-| Acid-Base: Titration Curves | titration | 4.5 | Learn, Whiteboard, Drill depth and 4 more (0.5) |
-| Acids and Bases | acid-base | 4.5 | Drill depth (0) |
-| Atomic Structure | atomic | 4.5 | Learn, Whiteboard, Explanation standard and 4 more (0.5) |
-| Bonding Basics | bonding | 4.5 | Learn (0) |
-| Calorimetry | calorimetry | 4.5 | Learn (0) |
-| Intermolecular Forces | imf-rank | 4.5 | Learn, Whiteboard, Drill depth and 4 more (0.5) |
-| Kinetics | kinetics | 4.5 | Learn, Drill depth (0) |
-| Kinetics: Rate Laws | rate-laws | 4.5 | Learn (0) |
-| Lewis Structures | lewis | 4.5 | Learn, Whiteboard, Drill depth and 4 more (0.5) |
-| Nuclear Chemistry | nuclear | 4.5 | Learn (0) |
-| Quantum Numbers + Photons | quantum-numbers | 4.5 | Drill depth (0) |
-| Redox | redox | 4.5 | Drill depth (0) |
-| Sig Figs and Measurement | sig-figs | 4.5 | Learn (0) |
-| Std Reduction Potentials | red-pot | 4.5 | Learn, Whiteboard, Drill depth and 4 more (0.5) |
-| Thermo: Enthalpy | enthalpy | 4.5 | Learn (0) |
-| VSEPR and Geometry | vsepr | 4.5 | Learn, Whiteboard, Drill depth and 4 more (0.5) |
-| Electrochem: Galvanic Cells | galvanic | 4 | Drill depth (0) |
-| Electrochem: Nernst Eqn | nernst | 4 | Learn (0) |
-| Heating and Cooling Curves | heating-curve | 4 | Drill depth (0) |
-| Hybridization | hybridization | 4 | Drill depth (0) |
-| Liquids | liquids | 4 | Drill depth (0) |
-| Phase Diagrams | phase-diag | 4 | Drill depth (0) |
-| Stoichiometry | stoich | 4 | Drill depth (0) |
-| Thermochemistry | thermo | 4 | Learn, Drill depth (0) |
-| Electrolysis | electrolysis | 3.5 | Learn, Drill depth (0) |
+| Periodic Trends | periodic | 8.5 | Learn, Explanation standard, Phone and correctness (0.5) |
+| Mole Conversions | mole-conv | 8 | Learn, Explanation standard, Game and 1 more (0.5) |
+| Acid-Base: pH/pOH/Ka/Kb | ph-basics | 7.5 | Learn, Whiteboard, Explanation standard and 2 more (0.5) |
+| Equilibrium: ICE Table | eq-ice | 7.5 | Learn, Whiteboard, Drill depth and 2 more (0.5) |
+| Equilibrium: Kc and Kp | eq-kc | 7.5 | Learn, Whiteboard, Drill depth and 2 more (0.5) |
+| Equilibrium: Le Châtelier | eq-lechat | 7.5 | Learn, Whiteboard, Drill depth and 2 more (0.5) |
+| Gas Laws | gas-laws | 7.5 | Learn (0) |
+| Kinetics: Arrhenius + Catalysis | arrhenius | 7.5 | Learn, Whiteboard, Drill depth and 2 more (0.5) |
+| Limiting Reactant | lim-react | 7.5 | Learn, Whiteboard, Explanation standard and 2 more (0.5) |
+| Solubility Equilibria | ksp | 7.5 | Learn, Whiteboard, Drill depth and 2 more (0.5) |
+| Solutions and Concentration | solutions | 7.5 | Learn, Whiteboard, Explanation standard and 2 more (0.5) |
+| Thermo: Entropy | entropy | 7.5 | Learn, Whiteboard, Drill depth and 2 more (0.5) |
+| Thermo: Gibbs ΔG | gibbs | 7.5 | Learn, Whiteboard, Drill depth and 2 more (0.5) |
+| Acid-Base: Buffers | buffers | 7 | Learn, Whiteboard, Drill depth and 3 more (0.5) |
+| Acid-Base: Strong vs Weak | strong-weak | 7 | Learn, Whiteboard, Drill depth and 3 more (0.5) |
+| Acid-Base: Titration Curves | titration | 7 | Learn, Whiteboard, Drill depth and 3 more (0.5) |
+| Atomic Structure | atomic | 7 | Learn, Whiteboard, Explanation standard and 3 more (0.5) |
+| Bonding Basics | bonding | 7 | Learn (0) |
+| Calorimetry | calorimetry | 7 | Learn (0) |
+| Intermolecular Forces | imf-rank | 7 | Learn, Whiteboard, Drill depth and 3 more (0.5) |
+| Kinetics: Rate Laws | rate-laws | 7 | Learn (0) |
+| Lewis Structures | lewis | 7 | Learn, Whiteboard, Drill depth and 3 more (0.5) |
+| Nuclear Chemistry | nuclear | 7 | Learn (0) |
+| Quantum Numbers + Photons | quantum-numbers | 7 | Drill depth (0) |
+| Sig Figs and Measurement | sig-figs | 7 | Learn (0) |
+| Std Reduction Potentials | red-pot | 7 | Learn, Whiteboard, Drill depth and 3 more (0.5) |
+| Thermo: Enthalpy | enthalpy | 7 | Learn (0) |
+| VSEPR and Geometry | vsepr | 7 | Learn, Whiteboard, Drill depth and 3 more (0.5) |
+| Electrochem: Galvanic Cells | galvanic | 6.5 | Drill depth (0) |
+| Electrochem: Nernst Eqn | nernst | 6.5 | Learn (0) |
+| Hybridization | hybridization | 6.5 | Drill depth (0) |
+| Phase Diagrams | phase-diag | 6.5 | Drill depth (0) |
+| Electrolysis | electrolysis | 6 | Learn, Drill depth (0) |
+| Equilibrium | equilibrium | 6 | Drill depth, Quick check (0) |
+| Gases | gases | 6 | Drill depth, Quick check (0) |
+| Acids and Bases | acid-base | 5.5 | Drill depth, Quick check (0) |
+| Kinetics | kinetics | 5.5 | Learn, Drill depth, Quick check (0) |
+| Redox | redox | 5.5 | Drill depth, Quick check (0) |
+| Heating and Cooling Curves | heating-curve | 5 | Drill depth, Quick check (0) |
+| Liquids | liquids | 5 | Drill depth, Quick check (0) |
+| Stoichiometry | stoich | 5 | Drill depth, Quick check (0) |
+| Thermochemistry | thermo | 5 | Learn, Drill depth, Quick check (0) |
 
-## Biology (25 topics, average 3.60)
-
-| Topic | Key | Score | Weakest check |
-|---|---|---|---|
-| Membranes and transport | membranes | 4.5 | Explanation standard (0) |
-| Cell cycle and mitosis | cell-cycle | 4 | Explanation standard (0) |
-| Genetics | genetics | 4 | Drill depth, Explanation standard (0) |
-| Krebs cycle and electron transport | krebs-etc | 4 | Explanation standard (0) |
-| Photosynthesis | photosynthesis | 4 | Drill depth, Explanation standard (0) |
-| Prokaryotes and eukaryotes | cell-types | 4 | Explanation standard (0) |
-| Biomolecules | biomolecules | 3.5 | Drill depth, Explanation standard (0) |
-| Body systems | body-systems | 3.5 | Drill depth, Explanation standard (0) |
-| Carbohydrates | carbohydrates | 3.5 | Drill depth, Explanation standard (0) |
-| Cell signaling | signaling | 3.5 | Drill depth, Explanation standard (0) |
-| DNA replication and repair | replication-repair | 3.5 | Drill depth, Explanation standard (0) |
-| Enzymes | enzymes | 3.5 | Learn, Explanation standard (0) |
-| Evolution | evolution | 3.5 | Drill depth, Explanation standard (0) |
-| Glycolysis | glycolysis | 3.5 | Drill depth, Explanation standard (0) |
-| Lab techniques | lab-techniques | 3.5 | Learn, Drill depth, Explanation standard (0) |
-| Lipids | lipids | 3.5 | Drill depth, Explanation standard (0) |
-| Mutations | mutations | 3.5 | Drill depth, Explanation standard (0) |
-| Nucleic acids | nucleic-acids | 3.5 | Drill depth, Explanation standard (0) |
-| Organelles | organelles | 3.5 | Drill depth, Explanation standard (0) |
-| Proteins | proteins | 3.5 | Drill depth, Explanation standard (0) |
-| Transcription | transcription | 3.5 | Drill depth, Explanation standard (0) |
-| Translation | translation | 3.5 | Drill depth, Explanation standard (0) |
-| Water | water | 3.5 | Drill depth, Explanation standard (0) |
-| Cytoskeleton | cytoskeleton | 3 | Learn, Drill depth, Explanation standard (0) |
-| Gene regulation | gene-regulation | 3 | Learn, Drill depth, Explanation standard (0) |
-
-## Organic Chemistry (14 topics, average 4.18)
+## Biology (25 topics, average 5.68)
 
 | Topic | Key | Score | Weakest check |
 |---|---|---|---|
-| Acids and bases in OChem | ab-ochem | 5.5 | Explanation standard (0) |
-| Carbonyl chemistry | carbonyl | 5 | Explanation standard (0) |
-| Stereochemistry | stereo-rs | 5 | Explanation standard (0) |
-| IR and NMR | spec-ir-nmr | 4.5 | Explanation standard (0) |
-| Substitution and elimination | mech-sne | 4.5 | Learn, Explanation standard (0) |
-| Synthesis | synth | 4.5 | Learn, Explanation standard (0) |
-| Alkene additions | alkene-add | 4 | Learn, Explanation standard (0) |
-| Aromaticity and EAS | arom-eas | 4 | Explanation standard (0) |
-| Carboxylic acids and derivatives | acids | 4 | Explanation standard (0) |
-| Lab techniques | lab | 4 | Learn, Explanation standard (0) |
-| Alcohols and ethers | alc-eth | 3.5 | Learn, Explanation standard (0) |
-| Alkynes | alkyne | 3.5 | Learn, Explanation standard (0) |
-| Amines | amines | 3.5 | Learn, Explanation standard (0) |
-| Arrow pushing | mech-arrows | 3 | Drill depth, Explanation standard (0) |
+| Membranes and transport | membranes | 7 | Explanation standard (0) |
+| Cell cycle and mitosis | cell-cycle | 6.5 | Explanation standard (0) |
+| Krebs cycle and electron transport | krebs-etc | 6.5 | Explanation standard (0) |
+| Photosynthesis | photosynthesis | 6.5 | Drill depth, Explanation standard (0) |
+| Prokaryotes and eukaryotes | cell-types | 6.5 | Explanation standard (0) |
+| Biomolecules | biomolecules | 6 | Drill depth, Explanation standard (0) |
+| Cell signaling | signaling | 6 | Drill depth, Explanation standard (0) |
+| DNA replication and repair | replication-repair | 6 | Drill depth, Explanation standard (0) |
+| Enzymes | enzymes | 6 | Learn, Explanation standard (0) |
+| Glycolysis | glycolysis | 6 | Drill depth, Explanation standard (0) |
+| Lab techniques | lab-techniques | 6 | Learn, Drill depth, Explanation standard (0) |
+| Lipids | lipids | 6 | Drill depth, Explanation standard (0) |
+| Nucleic acids | nucleic-acids | 6 | Drill depth, Explanation standard (0) |
+| Organelles | organelles | 6 | Drill depth, Explanation standard (0) |
+| Proteins | proteins | 6 | Drill depth, Explanation standard (0) |
+| Transcription | transcription | 6 | Drill depth, Explanation standard (0) |
+| Translation | translation | 6 | Drill depth, Explanation standard (0) |
+| Gene regulation | gene-regulation | 5.5 | Learn, Drill depth, Explanation standard (0) |
+| Genetics | genetics | 5 | Drill depth, Explanation standard, Quick check (0) |
+| Body systems | body-systems | 4.5 | Drill depth, Explanation standard, Quick check (0) |
+| Carbohydrates | carbohydrates | 4.5 | Drill depth, Explanation standard, Quick check (0) |
+| Evolution | evolution | 4.5 | Drill depth, Explanation standard, Quick check (0) |
+| Mutations | mutations | 4.5 | Drill depth, Explanation standard, Quick check (0) |
+| Water | water | 4.5 | Drill depth, Explanation standard, Quick check (0) |
+| Cytoskeleton | cytoskeleton | 4 | Learn, Drill depth, Explanation standard and 1 more (0) |
 
-## Quantitative Reasoning (55 topics, average 2.67)
-
-| Topic | Key | Score | Weakest check |
-|---|---|---|---|
-| Exponents and roots | exponents-and-roots | 5.5 | Learn, Drill depth, Explanation standard and 2 more (0.5) |
-| Fractions and decimals | fractions-and-decimals | 5.5 | Learn, Drill depth, Explanation standard and 2 more (0.5) |
-| Algebra and equations | algebra-and-equations | 5 | Learn, Drill depth, Explanation standard and 3 more (0.5) |
-| Percentages | percentages | 5 | Learn, Whiteboard, Drill depth and 3 more (0.5) |
-| Probability | probability | 5 | Learn, Drill depth, Explanation standard and 3 more (0.5) |
-| Statistics | statistics-mean-median-sd | 5 | Learn, Drill depth, Explanation standard and 3 more (0.5) |
-| Data sufficiency and discrimination | discr | 4.5 | Drill depth (0) |
-| Percent change | pct-chg | 4.5 | Drill depth (0) |
-| Word problems | word-problems-rate-work-mixture | 4.5 | Learn, Whiteboard, Drill depth and 4 more (0.5) |
-| Algebra | algebra | 4 | Drill depth (0) |
-| Data interpretation | data | 4 | Drill depth (0) |
-| Estimation | estim | 4 | Learn, Drill depth (0) |
-| Geometry | geometry-area-volume | 4 | Drill depth, Phone and correctness (0) |
-| Linear equations | lin-eq | 4 | Drill depth (0) |
-| Probability | p-andor | 4 | Drill depth (0) |
-| Rates and work | rate | 4 | Drill depth (0) |
-| Ratios | ratios | 4 | Drill depth (0) |
-| Ratios and proportions | ratios-and-proportions | 4 | Game (0) |
-| Word problems | word-problem | 4 | Drill depth (0) |
-| Fractions | frac-add | 2.5 | Drill depth, Explanation standard, See it and 1 more (0) |
-| binomials | binomials | 2 | Learn, Drill depth, Explanation standard and 2 more (0) |
-| dec arith | dec-arith | 2 | Learn, Drill depth, Explanation standard and 2 more (0) |
-| exps | exps | 2 | Learn, Drill depth, Explanation standard and 2 more (0) |
-| frac dec | frac-dec | 2 | Learn, Drill depth, Explanation standard and 2 more (0) |
-| frac mul | frac-mul | 2 | Learn, Drill depth, Explanation standard and 2 more (0) |
-| harm | harm | 2 | Learn, Drill depth, Explanation standard and 2 more (0) |
-| interest | interest | 2 | Whiteboard, Drill depth, Explanation standard and 2 more (0) |
-| mental | mental | 2 | Learn, Drill depth, Explanation standard and 2 more (0) |
-| mixture | mixture | 2 | Drill depth, Explanation standard, See it and 1 more (0) |
-| pct of | pct-of | 2 | Learn, Drill depth, Explanation standard and 2 more (0) |
-| pct seq | pct-seq | 2 | Learn, Drill depth, Explanation standard and 2 more (0) |
-| rate time | rate-time | 2 | Drill depth, Explanation standard, See it and 1 more (0) |
-| Test strategy | untimed | 2 | Whiteboard, Drill depth, Explanation standard and 2 more (0) |
-| Test strategy | guess | 2 | Whiteboard, Drill depth, Explanation standard and 2 more (0) |
-| tri inv | tri-inv | 2 | Learn, Drill depth, Explanation standard and 2 more (0) |
-| units | units | 2 | Learn, Drill depth, Explanation standard and 2 more (0) |
-| word decode | word-decode | 2 | Drill depth, Explanation standard, See it and 1 more (0) |
-| work rate | work-rate | 2 | Drill depth, Explanation standard, See it and 1 more (0) |
-| absval | absval | 1.5 | Learn, Drill depth, Explanation standard and 2 more (0) |
-| count pc | count-pc | 1.5 | Learn, Drill depth, Explanation standard and 2 more (0) |
-| desc stats | desc-stats | 1.5 | Learn, Drill depth, Explanation standard and 2 more (0) |
-| distrib | distrib | 1.5 | Learn, Whiteboard, Drill depth and 3 more (0) |
-| ds | ds | 1.5 | Learn, Drill depth, Explanation standard and 2 more (0) |
-| Logarithms | logarithms | 1.5 | Learn, Drill depth, Explanation standard and 3 more (0) |
-| logs | logs | 1.5 | Learn, Drill depth, Explanation standard and 3 more (0) |
-| neg ineq | neg-ineq | 1.5 | Learn, Drill depth, Explanation standard and 2 more (0) |
-| p cond | p-cond | 1.5 | Learn, Drill depth, Explanation standard and 2 more (0) |
-| p flip | p-flip | 1.5 | Learn, Drill depth, Explanation standard and 2 more (0) |
-| pemdas | pemdas | 1.5 | Learn, Whiteboard, Drill depth and 3 more (0) |
-| sets | sets | 1.5 | Learn, Drill depth, Explanation standard and 2 more (0) |
-| skip ret | skip-ret | 1.5 | Learn, Whiteboard, Drill depth and 3 more (0) |
-| zscore | zscore | 1.5 | Learn, Drill depth, Explanation standard and 2 more (0) |
-| coord | coord | 1 | Learn, Drill depth, Explanation standard and 3 more (0) |
-| geo 2d | geo-2d | 1 | Learn, Drill depth, Explanation standard and 3 more (0) |
-| vol sa | vol-sa | 1 | Learn, Drill depth, Explanation standard and 3 more (0) |
-
-## Perceptual Ability (6 topics, average 5.67)
+## Organic Chemistry (14 topics, average 6.68)
 
 | Topic | Key | Score | Weakest check |
 |---|---|---|---|
-| Hole punching | holepunch | 6 | Learn, Game, Review loop and 1 more (0.5) |
-| Keyholes | keyholes | 6 | Learn, Game, Review loop and 1 more (0.5) |
-| Pattern folding | patternfold | 6 | Learn, Game, Review loop and 1 more (0.5) |
-| Top, front, end | tfe | 6 | Learn, Game, Review loop and 1 more (0.5) |
-| Angle ranking | angles | 5 | See it (0) |
-| Cube counting | cubes | 5 | See it (0) |
+| Acids and bases in OChem | ab-ochem | 8 | Explanation standard (0) |
+| Carbonyl chemistry | carbonyl | 7.5 | Explanation standard (0) |
+| Stereochemistry | stereo-rs | 7.5 | Explanation standard (0) |
+| IR and NMR | spec-ir-nmr | 7 | Explanation standard (0) |
+| Substitution and elimination | mech-sne | 7 | Learn, Explanation standard (0) |
+| Synthesis | synth | 7 | Learn, Explanation standard (0) |
+| Alkene additions | alkene-add | 6.5 | Learn, Explanation standard (0) |
+| Aromaticity and EAS | arom-eas | 6.5 | Explanation standard (0) |
+| Carboxylic acids and derivatives | acids | 6.5 | Explanation standard (0) |
+| Lab techniques | lab | 6.5 | Learn, Explanation standard (0) |
+| Alcohols and ethers | alc-eth | 6 | Learn, Explanation standard (0) |
+| Alkynes | alkyne | 6 | Learn, Explanation standard (0) |
+| Amines | amines | 6 | Learn, Explanation standard (0) |
+| Arrow pushing | mech-arrows | 5.5 | Drill depth, Explanation standard (0) |
 
-## Reading Comprehension (8 topics, average 4.56)
+## Quantitative Reasoning (49 topics, average 6.12)
 
 | Topic | Key | Score | Weakest check |
 |---|---|---|---|
-| Main idea | mainidea | 5.5 | Learn, Explanation standard, Game and 2 more (0.5) |
-| Detail | detail | 5 | Learn, Whiteboard, Explanation standard and 3 more (0.5) |
-| Inference | inference | 5 | Learn, Whiteboard, Explanation standard and 3 more (0.5) |
-| Tone and attitude | tone | 5 | Learn, Whiteboard, Explanation standard and 3 more (0.5) |
-| Application | application | 4.5 | Learn (0) |
-| Except and NOT | except | 4.5 | Learn (0) |
-| Function | function | 4.5 | Learn (0) |
-| Vocabulary in context | vocab | 2.5 | Learn, Whiteboard, See it and 1 more (0) |
+| Exponents and roots | exponents-and-roots | 8 | Learn, Drill depth, Explanation standard and 1 more (0.5) |
+| Fractions and decimals | fractions-and-decimals | 8 | Learn, Drill depth, Explanation standard and 1 more (0.5) |
+| Adding and subtracting fractions | frac-add | 7.5 | Explanation standard (0) |
+| Algebra and equations | algebra-and-equations | 7.5 | Learn, Drill depth, Explanation standard and 2 more (0.5) |
+| Decimal arithmetic | dec-arith | 7.5 | Explanation standard (0) |
+| Mental math | mental | 7.5 | Explanation standard (0) |
+| Multiplying and dividing fractions | frac-mul | 7.5 | Explanation standard (0) |
+| Percent changes in a row | pct-seq | 7.5 | Explanation standard (0) |
+| Percent of a number | pct-of | 7.5 | Explanation standard (0) |
+| Percentages | percentages | 7.5 | Learn, Whiteboard, Drill depth and 2 more (0.5) |
+| Probability | probability | 7.5 | Learn, Drill depth, Explanation standard and 2 more (0.5) |
+| Statistics | statistics-mean-median-sd | 7.5 | Learn, Drill depth, Explanation standard and 2 more (0.5) |
+| Distance, rate and time | rate-time | 7 | Explanation standard (0) |
+| Exponent rules | exps | 7 | Explanation standard (0) |
+| Fractions and decimals | frac-dec | 7 | Explanation standard (0) |
+| Mixtures | mixture | 7 | Explanation standard (0) |
+| Slope and data sufficiency | ds | 7 | Explanation standard (0) |
+| Unit conversions | units | 7 | Learn, Explanation standard (0) |
+| Word problems | word-problems-rate-work-mixture | 7 | Learn, Whiteboard, Drill depth and 3 more (0.5) |
+| Words into equations | word-decode | 7 | Explanation standard (0) |
+| Average speed | harm | 6.5 | Explanation standard (0) |
+| Binomials and factoring | binomials | 6.5 | Learn, Explanation standard (0) |
+| Conditional probability | p-cond | 6.5 | Explanation standard (0) |
+| Negatives and inequalities | neg-ineq | 6.5 | Learn, Explanation standard (0) |
+| Permutations and combinations | count-pc | 6.5 | Explanation standard (0) |
+| Probability: coins and dice | p-flip | 6.5 | Explanation standard (0) |
+| Ratios and proportions | ratios-and-proportions | 6.5 | Game (0) |
+| Work rates | work-rate | 6.5 | Explanation standard (0) |
+| Z-scores and the normal curve | zscore | 6.5 | Explanation standard (0) |
+| Absolute value | absval | 6 | Learn, Explanation standard (0) |
+| Distributive property | distrib | 6 | Whiteboard, Explanation standard, See it (0) |
+| Mean, median and mode | desc-stats | 6 | Drill depth, Explanation standard (0) |
+| Order of operations | pemdas | 6 | Whiteboard, Explanation standard, See it (0) |
+| Sets and Venn counts | sets | 6 | Drill depth, Explanation standard (0) |
+| Simple and compound interest | interest | 6 | Whiteboard, Explanation standard, See it (0) |
+| Data sufficiency and discrimination | discr | 5.5 | Drill depth, Quick check (0) |
+| Percent change | pct-chg | 5.5 | Drill depth, Quick check (0) |
+| Algebra | algebra | 5 | Drill depth, Quick check (0) |
+| Data interpretation | data | 5 | Drill depth, Quick check (0) |
+| Estimation | estim | 5 | Learn, Drill depth, Quick check (0) |
+| Linear equations | lin-eq | 5 | Drill depth, Quick check (0) |
+| Probability | p-andor | 5 | Drill depth, Quick check (0) |
+| Rates and work | rate | 5 | Drill depth, Quick check (0) |
+| Ratios | ratios | 5 | Drill depth, Quick check (0) |
+| Word problems | word-problem | 5 | Drill depth, Quick check (0) |
+| Test strategy | untimed | 2 | Whiteboard, Drill depth, Explanation standard and 4 more (0) |
+| Test strategy | guess | 2 | Whiteboard, Drill depth, Explanation standard and 4 more (0) |
+| tri inv | tri-inv | 2 | Learn, Drill depth, Explanation standard and 4 more (0) |
+| skip ret | skip-ret | 1.5 | Learn, Whiteboard, Drill depth and 5 more (0) |
+
+## Perceptual Ability (6 topics, average 7.00)
+
+| Topic | Key | Score | Weakest check |
+|---|---|---|---|
+| Angle ranking | angles | 7 | Quick check (0) |
+| Cube counting | cubes | 7 | Quick check (0) |
+| Hole punching | holepunch | 7 | Quick check (0) |
+| Keyholes | keyholes | 7 | Quick check (0) |
+| Pattern folding | patternfold | 7 | Quick check (0) |
+| Top, front, end | tfe | 7 | Quick check (0) |
+
+## Reading Comprehension (8 topics, average 5.56)
+
+| Topic | Key | Score | Weakest check |
+|---|---|---|---|
+| Main idea | mainidea | 6.5 | Quick check (0) |
+| Detail | detail | 6 | Quick check (0) |
+| Inference | inference | 6 | Quick check (0) |
+| Tone and attitude | tone | 6 | Quick check (0) |
+| Application | application | 5.5 | Learn, Quick check (0) |
+| Except and NOT | except | 5.5 | Learn, Quick check (0) |
+| Function | function | 5.5 | Learn, Quick check (0) |
+| Vocabulary in context | vocab | 3.5 | Learn, Whiteboard, See it and 2 more (0) |
 
 ## The 15 lowest topics and what each needs
 
-1. **coord** (qr, `coord`), 1 of 10. Learn 0: no lesson resolves for this topic. Whiteboard 0.5: opens a lab (/tools/qr/proposals/agent-06-geometry/coord.html), not a whiteboard. Drill depth 0: 0 questions tagged (20 needed); the arcade bank holds 23 under this key, which the drill does not serve. Explanation standard 0: no drill items. See it 0: no drill items to link from. Game 0.5: only the mixed arcade carries it (23 questions; a round runs up to 720 s across all topics). Review loop 0: no drill writes this topic to the record, so nothing reaches Repair. Phone and correctness 0: midpoint and distance listed as not named in the 2026 outline (scripts/bank/scope-exclusions.json); drop the topic or confirm it is in scope.
-2. **geo 2d** (qr, `geo-2d`), 1 of 10. Learn 0: no lesson resolves for this topic. Whiteboard 0.5: opens the "geometry" board, shared with 2 other topics; needs its own board. Drill depth 0: 0 questions tagged (20 needed). Explanation standard 0: no drill items. See it 0: no drill items to link from. Game 0.5: the Pathway Builder game has no streak. Review loop 0: no drill writes this topic to the record, so nothing reaches Repair. Phone and correctness 0: geometry listed as not named in the 2026 outline (scripts/bank/scope-exclusions.json); drop the topic or confirm it is in scope.
-3. **vol sa** (qr, `vol-sa`), 1 of 10. Learn 0: no lesson resolves for this topic. Whiteboard 0.5: opens the "geometry" board, shared with 2 other topics; needs its own board. Drill depth 0: 0 questions tagged (20 needed); the arcade bank holds 23 under this key, which the drill does not serve. Explanation standard 0: no drill items. See it 0: no drill items to link from. Game 0.5: the Pathway Builder game has no streak. Review loop 0: no drill writes this topic to the record, so nothing reaches Repair. Phone and correctness 0: geometry listed as not named in the 2026 outline (scripts/bank/scope-exclusions.json); drop the topic or confirm it is in scope.
-4. **absval** (qr, `absval`), 1.5 of 10. Learn 0: no lesson resolves for this topic. Whiteboard 0.5: opens the "algebra-setup" board, shared with 11 other topics; needs its own board. Drill depth 0: 0 questions tagged (20 needed); the arcade bank holds 22 under this key, which the drill does not serve. Explanation standard 0: no drill items. See it 0: no drill items to link from. Game 0.5: the Pathway Builder game has no streak. Review loop 0: no drill writes this topic to the record, so nothing reaches Repair. Phone and correctness 0.5: /see/?b=algebra-setup: 23% of text under 13 px (smallest 12).
-5. **count pc** (qr, `count-pc`), 1.5 of 10. Learn 0: no lesson resolves for this topic. Whiteboard 0.5: opens the "probability" board, shared with 5 other topics; needs its own board. Drill depth 0: 0 questions tagged (20 needed); the arcade bank holds 23 under this key, which the drill does not serve. Explanation standard 0: no drill items. See it 0: no drill items to link from. Game 0.5: the Pathway Builder game has no streak. Review loop 0: no drill writes this topic to the record, so nothing reaches Repair. Phone and correctness 0.5: /see/?b=probability: 19% of text under 13 px (smallest 12).
-6. **desc stats** (qr, `desc-stats`), 1.5 of 10. Learn 0: no lesson resolves for this topic. Whiteboard 0.5: opens the "statistics" board, shared with 4 other topics; needs its own board. Drill depth 0: 0 questions tagged (20 needed). Explanation standard 0: no drill items. See it 0: no drill items to link from. Game 0.5: the Pathway Builder game has no streak. Review loop 0: no drill writes this topic to the record, so nothing reaches Repair. Phone and correctness 0.5: /see/?b=statistics: 20% of text under 13 px (smallest 12).
-7. **distrib** (qr, `distrib`), 1.5 of 10. Learn 0: no lesson resolves for this topic. Whiteboard 0: no board or visual resolves. Drill depth 0: 0 questions tagged (20 needed); the arcade bank holds 27 under this key, which the drill does not serve. Explanation standard 0: no drill items. See it 0: no drill items to link from. Game 0.5: only the mixed arcade carries it (27 questions; a round runs up to 720 s across all topics). Review loop 0: no drill writes this topic to the record, so nothing reaches Repair.
-8. **ds** (qr, `ds`), 1.5 of 10. Learn 0: no lesson resolves for this topic. Whiteboard 0.5: opens the "statistics" board, shared with 4 other topics; needs its own board. Drill depth 0: 0 questions tagged (20 needed); the arcade bank holds 23 under this key, which the drill does not serve. Explanation standard 0: no drill items. See it 0: no drill items to link from. Game 0.5: the Pathway Builder game has no streak. Review loop 0: no drill writes this topic to the record, so nothing reaches Repair. Phone and correctness 0.5: /see/?b=statistics: 20% of text under 13 px (smallest 12).
-9. **Logarithms** (qr, `logarithms`), 1.5 of 10. Learn 0: no lesson resolves for this topic. Whiteboard 0.5: opens the "powers-roots" board, shared with 5 other topics; needs its own board. Drill depth 0: 0 questions tagged (20 needed). Explanation standard 0: no drill items. See it 0: no drill items to link from. Review loop 0: no drill writes this topic to the record, so nothing reaches Repair. Phone and correctness 0: logarithms listed as not named in the 2026 outline (scripts/bank/scope-exclusions.json); drop the topic or confirm it is in scope.
-10. **logs** (qr, `logs`), 1.5 of 10. Learn 0: no lesson resolves for this topic. Whiteboard 0.5: opens the "powers-roots" board, shared with 5 other topics; needs its own board. Drill depth 0: 0 questions tagged (20 needed); the arcade bank holds 31 under this key, which the drill does not serve. Explanation standard 0: no drill items. See it 0: no drill items to link from. Review loop 0: no drill writes this topic to the record, so nothing reaches Repair. Phone and correctness 0: logarithms listed as not named in the 2026 outline (scripts/bank/scope-exclusions.json); drop the topic or confirm it is in scope.
-11. **neg ineq** (qr, `neg-ineq`), 1.5 of 10. Learn 0: no lesson resolves for this topic. Whiteboard 0.5: opens the "algebra-setup" board, shared with 11 other topics; needs its own board. Drill depth 0: 0 questions tagged (20 needed); the arcade bank holds 26 under this key, which the drill does not serve. Explanation standard 0: no drill items. See it 0: no drill items to link from. Game 0.5: the Pathway Builder game has no streak. Review loop 0: no drill writes this topic to the record, so nothing reaches Repair. Phone and correctness 0.5: /see/?b=algebra-setup: 23% of text under 13 px (smallest 12).
-12. **p cond** (qr, `p-cond`), 1.5 of 10. Learn 0: no lesson resolves for this topic. Whiteboard 0.5: opens the "probability" board, shared with 5 other topics; needs its own board. Drill depth 0: 0 questions tagged (20 needed); the arcade bank holds 21 under this key, which the drill does not serve. Explanation standard 0: no drill items. See it 0: no drill items to link from. Game 0.5: the Pathway Builder game has no streak. Review loop 0: no drill writes this topic to the record, so nothing reaches Repair. Phone and correctness 0.5: /see/?b=probability: 19% of text under 13 px (smallest 12).
-13. **p flip** (qr, `p-flip`), 1.5 of 10. Learn 0: no lesson resolves for this topic. Whiteboard 0.5: opens the "probability" board, shared with 5 other topics; needs its own board. Drill depth 0: 0 questions tagged (20 needed); the arcade bank holds 23 under this key, which the drill does not serve. Explanation standard 0: no drill items. See it 0: no drill items to link from. Game 0.5: the Pathway Builder game has no streak. Review loop 0: no drill writes this topic to the record, so nothing reaches Repair. Phone and correctness 0.5: /see/?b=probability: 19% of text under 13 px (smallest 12).
-14. **pemdas** (qr, `pemdas`), 1.5 of 10. Learn 0: no lesson resolves for this topic. Whiteboard 0: no board or visual resolves. Drill depth 0: 0 questions tagged (20 needed); the arcade bank holds 26 under this key, which the drill does not serve. Explanation standard 0: no drill items. See it 0: no drill items to link from. Game 0.5: only the mixed arcade carries it (26 questions; a round runs up to 720 s across all topics). Review loop 0: no drill writes this topic to the record, so nothing reaches Repair.
-15. **sets** (qr, `sets`), 1.5 of 10. Learn 0: no lesson resolves for this topic. Whiteboard 0.5: opens the "probability" board, shared with 5 other topics; needs its own board. Drill depth 0: 0 questions tagged (20 needed). Explanation standard 0: no drill items. See it 0: no drill items to link from. Game 0.5: the Pathway Builder game has no streak. Review loop 0: no drill writes this topic to the record, so nothing reaches Repair. Phone and correctness 0.5: /see/?b=probability: 19% of text under 13 px (smallest 12).
-
-Every topic above also needs Quick check and Engagement, which do not exist site-wide.
+1. **skip ret** (qr, `skip-ret`), 1.5 of 10. Learn 0: no lesson resolves for this topic. Whiteboard 0: no board or visual resolves. Drill depth 0: 0 questions tagged (20 needed). Explanation standard 0: no drill items. See it 0: no drill items to link from. Game 0.5: only the mixed arcade carries it (9 questions; a round runs up to 720 s across all topics). Quick check 0: 0 public questions under this topic; the check needs 5. Review loop 0: no drill writes this topic to the record, so nothing reaches Repair. Engagement 0: missing XP, a daily streak, a mastery ring (it needs a quick check), a question one tap away.
+2. **Test strategy** (qr, `guess`), 2 of 10. Learn 0.5: Retold night 14 teaches it, but the topic row has no lesson link and there is no one-screen lesson. Whiteboard 0: no board or visual resolves. Drill depth 0: 0 questions tagged (20 needed). Explanation standard 0: no drill items. See it 0: no drill items to link from. Game 0.5: only the mixed arcade carries it (8 questions; a round runs up to 720 s across all topics). Quick check 0: 0 public questions under this topic; the check needs 5. Review loop 0: no drill writes this topic to the record, so nothing reaches Repair. Engagement 0: missing XP, a daily streak, a mastery ring (it needs a quick check), a question one tap away.
+3. **tri inv** (qr, `tri-inv`), 2 of 10. Learn 0: no lesson resolves for this topic. Whiteboard 0.5: opens a lab (/tools/qr/proposals/agent-06-geometry/tri-inv.html), not a whiteboard. Drill depth 0: 0 questions tagged (20 needed); the arcade bank holds 23 under this key, which the drill does not serve. Explanation standard 0: no drill items. See it 0: no drill items to link from. Game 0.5: only the mixed arcade carries it (23 questions; a round runs up to 720 s across all topics). Quick check 0: 0 public questions under this topic; the check needs 5. Review loop 0: no drill writes this topic to the record, so nothing reaches Repair. Engagement 0: missing XP, a daily streak, a mastery ring (it needs a quick check), a question one tap away.
+4. **Test strategy** (qr, `untimed`), 2 of 10. Learn 0.5: Retold night 14 teaches it, but the topic row has no lesson link and there is no one-screen lesson. Whiteboard 0: no board or visual resolves. Drill depth 0: 0 questions tagged (20 needed). Explanation standard 0: no drill items. See it 0: no drill items to link from. Game 0.5: only the mixed arcade carries it (8 questions; a round runs up to 720 s across all topics). Quick check 0: 0 public questions under this topic; the check needs 5. Review loop 0: no drill writes this topic to the record, so nothing reaches Repair. Engagement 0: missing XP, a daily streak, a mastery ring (it needs a quick check), a question one tap away.
+5. **Vocabulary in context** (rc, `vocab`), 3.5 of 10. Learn 0: no lesson resolves for this topic. Whiteboard 0: no board or visual resolves. Explanation standard 0.5: passage questions carry answer and traps; missing steps and check. See it 0: no board teaches this question type, so no See it link. Game 0: no game includes this topic. Quick check 0: the quick check draws from a question bank; this section drills from passages, so it has none. Engagement 0.5: missing a mastery ring (it needs a quick check). Phone and correctness 0.5: /tools/rc/: 32% of text under 13 px (smallest 9.9), 1 tap target under 44 px.
+6. **Cytoskeleton** (bio, `cytoskeleton`), 4 of 10. Learn 0: no lesson resolves for this topic. Whiteboard 0.5: opens a lab (/tools/bio/bio-cell.html#node-cytoskeleton), not a whiteboard. Drill depth 0: 2 questions tagged (20 needed). Explanation standard 0: 0 of 2 items have a standard walk-through written; the rest show only an answer paragraph. See it 0.5: 0 of 2 items open a whiteboard, 2 open a lab. Game 0.5: only the mixed arcade carries it (2 questions; a round runs up to 720 s across all topics). Quick check 0: 2 public questions under this topic; the check needs 5. Engagement 0.5: missing a mastery ring (it needs a quick check).
+7. **Body systems** (bio, `body-systems`), 4.5 of 10. Learn 0.5: Retold night 13 teaches it, but the topic row has no lesson link and there is no one-screen lesson. Whiteboard 0.5: opens a lab (/tools/bio/bio-physiology.html), not a whiteboard. Drill depth 0: 1 questions tagged (20 needed). Explanation standard 0: 0 of 1 items have a standard walk-through written; the rest show only an answer paragraph. See it 0.5: 0 of 1 items open a whiteboard, 1 open a lab. Game 0.5: only the mixed arcade carries it (1 questions; a round runs up to 720 s across all topics). Quick check 0: 1 public questions under this topic; the check needs 5. Engagement 0.5: missing a mastery ring (it needs a quick check).
+8. **Carbohydrates** (bio, `carbohydrates`), 4.5 of 10. Learn 0.5: Retold night 6 teaches it, but the topic row has no lesson link and there is no one-screen lesson. Whiteboard 0.5: opens a lab (/tools/bio/bio-cell.html#node-nucleic), not a whiteboard. Drill depth 0: 4 questions tagged (20 needed). Explanation standard 0: 1 of 4 items have a standard walk-through written; the rest show only an answer paragraph. See it 0.5: 0 of 4 items open a whiteboard, 4 open a lab. Game 0.5: only the mixed arcade carries it (4 questions; a round runs up to 720 s across all topics). Quick check 0: 4 public questions under this topic; the check needs 5. Engagement 0.5: missing a mastery ring (it needs a quick check).
+9. **Evolution** (bio, `evolution`), 4.5 of 10. Learn 0.5: Retold night 11 teaches it, but the topic row has no lesson link and there is no one-screen lesson. Whiteboard 0.5: opens a lab (/tools/bio/bio-evolution.html#node-speciation), not a whiteboard. Drill depth 0: 1 questions tagged (20 needed). Explanation standard 0: 0 of 1 items have a standard walk-through written; the rest show only an answer paragraph. See it 0.5: 0 of 1 items open a whiteboard, 1 open a lab. Game 0.5: only the mixed arcade carries it (1 questions; a round runs up to 720 s across all topics). Quick check 0: 1 public questions under this topic; the check needs 5. Engagement 0.5: missing a mastery ring (it needs a quick check).
+10. **Mutations** (bio, `mutations`), 4.5 of 10. Learn 0.5: Retold night 7 teaches it, but the topic row has no lesson link and there is no one-screen lesson. Whiteboard 0.5: opens a lab (/tools/bio/bio-genetics.html#node-mutations), not a whiteboard. Drill depth 0: 4 questions tagged (20 needed). Explanation standard 0: 0 of 4 items have a standard walk-through written; the rest show only an answer paragraph. See it 0.5: 0 of 4 items open a whiteboard, 4 open a lab. Game 0.5: only the mixed arcade carries it (14 questions; a round runs up to 720 s across all topics). Quick check 0: 4 public questions under this topic; the check needs 5. Engagement 0.5: missing a mastery ring (it needs a quick check).
+11. **Water** (bio, `water`), 4.5 of 10. Learn 0.5: Retold night 6 teaches it, but the topic row has no lesson link and there is no one-screen lesson. Whiteboard 0.5: opens a lab (/tools/bio/bio-cell.html#node-nucleic), not a whiteboard. Drill depth 0: 4 questions tagged (20 needed). Explanation standard 0: 1 of 4 items have a standard walk-through written; the rest show only an answer paragraph. See it 0.5: 0 of 4 items open a whiteboard, 4 open a lab. Game 0.5: only the mixed arcade carries it (4 questions; a round runs up to 720 s across all topics). Quick check 0: 4 public questions under this topic; the check needs 5. Engagement 0.5: missing a mastery ring (it needs a quick check).
+12. **Genetics** (bio, `genetics`), 5 of 10. Learn 0.5: Retold night 3 teaches it, but the topic row has no lesson link and there is no one-screen lesson. Drill depth 0: 1 questions tagged (20 needed). Explanation standard 0: 0 of 1 items have a standard walk-through written; the rest show only an answer paragraph. Game 0.5: the Pathway Builder game has no streak. Quick check 0: 1 public questions under this topic; the check needs 5. Engagement 0.5: missing a mastery ring (it needs a quick check). Phone and correctness 0.5: /see/?b=genetics: 16% of text under 13 px (smallest 12).
+13. **Heating and Cooling Curves** (gchem, `heating-curve`), 5 of 10. Learn 0.5: Retold night 8 teaches it, but the topic row has no lesson link and there is no one-screen lesson. Whiteboard 0.5: opens a lab (/tools/gc/recognition-lab.html), not a whiteboard. Drill depth 0: 3 questions tagged (20 needed). Explanation standard 0.5: all 3 walk-throughs are written to the standard but not served (review pending); 0 served in full. See it 0.5: 0 of 3 items open a whiteboard, 3 open a lab. Game 0.5: only the mixed arcade carries it (3 questions; a round runs up to 720 s across all topics). Quick check 0: 3 public questions under this topic; the check needs 5. Engagement 0.5: missing a mastery ring (it needs a quick check).
+14. **Liquids** (gchem, `liquids`), 5 of 10. Learn 0.5: Retold night 6 teaches it, but the topic row has no lesson link and there is no one-screen lesson. Whiteboard 0.5: opens a lab (/tools/gc/recognition-lab.html), not a whiteboard. Drill depth 0: 1 questions tagged (20 needed). Explanation standard 0.5: all 1 walk-throughs are written to the standard but not served (review pending); 0 served in full. See it 0.5: 0 of 1 items open a whiteboard, 1 open a lab. Game 0.5: only the mixed arcade carries it (1 questions; a round runs up to 720 s across all topics). Quick check 0: 1 public questions under this topic; the check needs 5. Engagement 0.5: missing a mastery ring (it needs a quick check).
+15. **Stoichiometry** (gchem, `stoich`), 5 of 10. Learn 0.5: Retold night 2 teaches it, but the topic row has no lesson link and there is no one-screen lesson. Whiteboard 0.5: opens the "mole-bridge" board, shared with 3 other topics; needs its own board. Drill depth 0: 2 questions tagged (20 needed). Explanation standard 0.5: all 2 walk-throughs are written to the standard but not served (review pending); 0 served in full. Game 0.5: the Pathway Builder game has no streak. Quick check 0: 2 public questions under this topic; the check needs 5. Engagement 0.5: missing a mastery ring (it needs a quick check). Phone and correctness 0.5: /see/?b=mole-bridge: 15% of text under 13 px (smallest 12).
 
 ## Notes on the topic list
 
 - data/topics.json keys that point at one canonical id are one topic (Biology: 31 keys, 25 topics).
-- QR: 8 topic keys come from the QR drill bank (data/qr-climb.json) and are not in data/topics.json. They are kept as their own rows because the data does not say they are the same topics.
-- 36 science and QR topics have no question in their hub drill bank at all (36 of them in QR); 36 of those have questions under the same key in the arcade bank (games/), which the drill does not serve.
+- QR: 7 topic keys come from the QR drill bank (data/qr-climb.json) and are not in data/topics.json. They are kept as their own rows because the data does not say they are the same topics.
+- 4 science and QR topics have no question in their hub drill bank at all (4 of them in QR); 4 of those have questions under the same key in the arcade bank (games/), which the drill does not serve.
+- Left out of the list: QR `logs`, `logarithms`, `geo-2d`, `vol-sa`, `geometry-area-volume`, `coord` (scripts/bank/scope-topics.json: not named in the 2026 outline, removed from the topic list, the drills and the arcade).
 - Drill depth counts the public banks (data/*.json and the free samples). The arcade banks in games/ hold more questions per key and count toward the Game check only.
-- Scope: `logs`, `coord`, `vol-sa`, `geo-2d`, `logarithms`, `geometry-area-volume` are listed by the scope audit as not named in the 2026 QR outline, yet they are still topic keys and the QR arcade bank still carries questions under them. They score 0 on check 10 until they are dropped or confirmed.

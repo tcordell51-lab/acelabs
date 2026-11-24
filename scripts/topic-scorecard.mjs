@@ -40,6 +40,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createRequire } from 'node:module';
+import vm from 'node:vm';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const require = createRequire(import.meta.url);
@@ -70,7 +71,7 @@ const HUB = {
   gchem: { home: '/gc/', drill: (t) => '/gc/?topic=' + t, banks: ['gchem'], arcade: 'gchem' },
   bio: { home: '/bio/', drill: (t) => '/bio/?topic=' + t, banks: ['bio'], arcade: 'bio' },
   ochem: { home: '/oc/', drill: (t) => '/oc/?topic=' + t, banks: ['ochem'], arcade: 'ochem' },
-  qr: { home: '/qr/', drill: (t) => '/qr/drill/?topic=' + t, banks: ['qr-dat', 'qr-climb'], arcade: 'qr' }
+  qr: { home: '/qr/', drill: (t) => '/qr/drill/?topic=' + t, banks: ['qr-dat', 'qr-climb', 'qr-topics'], arcade: 'qr', page: '/qr/drill/' }
 };
 const PAT = [['keyholes', 'Keyholes'], ['tfe', 'Top, front, end'], ['angles', 'Angle ranking'], ['holepunch', 'Hole punching'], ['cubes', 'Cube counting'], ['patternfold', 'Pattern folding']];
 const RC_NAME = { detail: 'Detail', inference: 'Inference', tone: 'Tone and attitude', purpose: 'Purpose', except: 'Except and NOT', function: 'Function', application: 'Application', vocab: 'Vocabulary in context', mainidea: 'Main idea' };
@@ -84,7 +85,8 @@ const SCOPE_WORDS = { qr: { logarithms: ['logs', 'logarithms'], geometry: ['geo-
 
 /* ---------- banks ---------- */
 const bank = {};
-for (const f of ['bio', 'gchem', 'ochem', 'qr-dat', 'qr-climb']) {
+for (const f of ['bio', 'gchem', 'ochem', 'qr-dat', 'qr-climb', 'qr-topics']) {
+  if (!has('data/' + f + '.json')) { bank[f] = []; continue; }
   const byId = new Map();
   for (const it of json('data/' + f + '.json').items) byId.set(it.id, it);
   if (has('data/free/sample-' + f + '.json')) for (const it of json('data/free/sample-' + f + '.json').items) byId.set(it.id, Object.assign({}, byId.get(it.id) || {}, it));
@@ -123,15 +125,62 @@ const shellJs = src(['shared/ace-hub.js', 'shared/ace-set.js', 'shared/ace-quest
 const hubRow = src(['shared/ace-hub.js']);
 const recordJs = src(['shared/ace-record.js']);
 const repairFn = (/function repairAnswer[\s\S]*?\n {2}}/.exec(recordJs) || [''])[0] + (/function repairSkillAnswer[\s\S]*?\n {2}}/.exec(recordJs) || [''])[0];
+/* Behaviour, not wording: run the shared record and mastery files and watch what they do. */
+function sandbox(files) {
+  const store = {}, localStorage = { getItem: (k) => (k in store ? store[k] : null), setItem: (k, v) => { store[k] = String(v); }, removeItem: (k) => { delete store[k]; } };
+  const window = { localStorage }, ctx = vm.createContext({ window, localStorage, console, Promise, Date, Math, JSON, Object, Array, String, Number, Error, isFinite });
+  for (const f of files) if (has(f)) vm.runInContext(read(f), ctx);
+  return window;
+}
+const DAY = 864e5, T0 = new Date(2026, 0, 5, 9, 0, 0).getTime();
+const dayOf = (t) => Math.round((new Date(t).setHours(0, 0, 0, 0) - new Date(T0).setHours(0, 0, 0, 0)) / DAY);
+const probeItem = (id) => ({ id, section: 'gchem', topic: 'probe', topicName: 'Probe', stem: 'probe ' + id, choices: ['a', 'b', 'c', 'd', 'e'], answer: 0 });
+/* A miss, then a right answer on each due day: the days it came back on, and whether it cleared. */
+function reviewProbe() {
+  try {
+    const R = sandbox(['shared/ace-record.js']).AceRecord, days = [];
+    R.record({ item: probeItem('p1'), picked: 1, answer: 0, ok: false, at: T0 });
+    for (let k = 0; k < 6; k++) {
+      const e = R.repairEntry('p1'); if (!e || e.cleared) break;
+      days.push(dayOf(e.due)); R.repairAnswer('p1', { ok: true, at: e.due + 3600e3 });
+    }
+    const e = R.repairEntry('p1'), gaps = days.map((d, i) => d - (i ? days[i - 1] : 0));
+    return { gaps, cleared: !!(e && e.cleared) };
+  } catch (err) { return { gaps: [], cleared: false, error: String(err && err.message) }; }
+}
+/* XP, streak and the 4 of 5 rule, by using them. */
+function masteryProbe() {
+  const out = { loaded: false, xp: false, dailyStreak: false, quickCheck: false, ring: false, canCheck: null };
+  try {
+    const w = sandbox(['shared/ace-record.js', 'shared/ace-mastery.js']), R = w.AceRecord, M = w.AceMastery;
+    if (!R || !M) return out; out.loaded = true;
+    const x0 = M.xp(T0).total; R.record({ item: probeItem('x1'), picked: 0, answer: 0, ok: true, at: T0 - DAY }); R.record({ item: probeItem('x2'), picked: 0, answer: 0, ok: true, at: T0 });
+    out.xp = M.xp(T0).total > x0;
+    out.dailyStreak = M.streak(T0).days === 2 && M.streak(T0 + 3 * DAY).days === 0;
+    const three = M.saveCheck('gchem', 'probe', 3, 5, T0).mastered, four = M.saveCheck('gchem', 'probe', 4, 5, T0).mastered;
+    const five = []; for (let i = 0; i < 5; i++) five.push(probeItem('c' + i));
+    out.quickCheck = !three && four === true && M.pickCheck(five, 'gchem', 'probe').length === 5 && M.pickCheck(five.slice(1), 'gchem', 'probe').length === 0 && typeof M.runCheck === 'function';
+    out.ring = typeof M.topicRing === 'function' && typeof M.strip === 'function';
+    out.canCheck = (items, sec, key) => M.canCheck(items, sec, key);
+  } catch (err) { out.error = String(err && err.message); }
+  return out;
+}
+const REVIEW = reviewProbe(), MASTERY = masteryProbe();
+const hubJs = src(['shared/ace-hub.js']), setJs = src(['shared/ace-set.js']);
+/* Which hub pages really run the quick check: they load the shared hub and the mastery file. */
+const hubPage = (home) => { const p = home.slice(1) + 'index.html', h = has(p) ? read(p) : ''; return /shared\/ace-hub\.js/.test(h) && /AceHub\.init/.test(h) && (/shared\/ace-mastery\.js/.test(h) || /ace-mastery\.js/.test(recordJs)); };
 const SITE = {
   learnLinkedFromTopicRow: /learn|AceRoute|night/i.test(hubRow),
-  quickCheck: /quick[ -]?check|4 of 5|mastery check/i.test(shellJs),
+  quickCheck: MASTERY.quickCheck && /runCheck/.test(hubJs) && /data-check/.test(hubJs),
+  quickCheckFromHubRow: /data-check/.test(hubJs) && /\?check=/.test(hubJs),
+  quickCheckAfterDrill: /quick-check/.test(setJs) && /checkHref/.test(hubJs),
   repair: has('repair/index.html') && /r\.repair\[/.test(recordJs),
-  repairSchedule137: /daysOut\(now, 3\)/.test(recordJs) && /daysOut\(now, 7\)/.test(recordJs),
-  repairScheduleDays: [...new Set([...recordJs.matchAll(/daysOut\((?:now|e\.lastMiss[^,]*), (\d)\)/g)].map((m) => +m[1]))].sort(),
-  xp: /\bXP\b|\bxp\s*[:=+]/.test(shellJs),
-  dailyStreak: /daily streak|streakDays|dayStreak/i.test(shellJs),
-  masteryRing: /mastery ring|aui-ring|--ring|class="ring/i.test(shellJs),
+  repairSchedule137: REVIEW.cleared && REVIEW.gaps.join(',') === '1,3,7',
+  repairScheduleDays: REVIEW.gaps,
+  xp: MASTERY.xp && /ace-mastery\.js/.test(recordJs),
+  dailyStreak: MASTERY.dailyStreak && /ace-mastery\.js/.test(recordJs),
+  masteryRing: MASTERY.ring && /topicRing/.test(hubJs) && /\.strip\(/.test(hubJs),
+  xpShownOn: /ace-mastery\.js/.test(recordJs) ? 'every page that loads shared/ace-record.js (toast on a right practice answer; pill in the shared bar)' : 'nowhere',
   arcadeRoundSeconds: ARCADE_SECONDS
 };
 void repairFn;
@@ -177,7 +226,9 @@ const half = (x) => Math.round(x * 2) / 2;
 const topics = [];
 for (const [sec] of SECTIONS.slice(0, 4)) {
   const groups = new Map();
+  const dropped = new Set((TOPICS.excluded || {})[sec] || []);
   for (const [key, [canon, name]] of Object.entries(TOPICS[sec])) {
+    if (dropped.has(key) || dropped.has(canon)) continue;
     if (!groups.has(canon)) groups.set(canon, { key: canon, name, keys: [] });
     groups.get(canon).keys.push(key);
   }
@@ -303,17 +354,21 @@ const rows = topics.map((t) => {
   if (hub && s.drill < 1 && t.arcadeItems >= 20) note.drill += '; the arcade bank holds ' + t.arcadeItems + ' under this key, which the drill does not serve';
   if (games.length) { flow.game = games[0].href; s.game = games[0].score; note.game = games[0].why; } else { s.game = 0; note.game = 'no game includes this topic'; }
 
-  /* 7 quick check */
-  s.quickCheck = SITE.quickCheck ? 1 : 0; note.quickCheck = SITE.quickCheck ? '' : 'no 5-question mastery check exists on the site';
+  /* 7 quick check: the hub runs it for this topic only when the topic has 5 public questions */
+  const checkKey = hub && SITE.quickCheck && hubPage(hub.page || hub.home) ? [...new Set([t.key].concat(t.keys))].find((k) => MASTERY.canCheck(t.items, t.items[0] ? t.items[0].section : sec, k)) : null;
+  if (checkKey) { flow.check = (hub.page || hub.home) + '?check=' + checkKey; s.quickCheck = SITE.quickCheckFromHubRow && SITE.quickCheckAfterDrill ? 1 : 0.5; note.quickCheck = s.quickCheck === 1 ? '' : 'the check runs, but it is not offered from both the topic row and the end of a drill'; }
+  else { s.quickCheck = 0; note.quickCheck = !SITE.quickCheck ? 'no 5-question mastery check exists on the site' : !hub ? 'the quick check draws from a question bank; this section drills from ' + (sec === 'pat' ? 'a generator' : 'passages') + ', so it has none' : n + ' public questions under this topic; the check needs 5'; }
 
   /* 8 review */
-  if (SITE.repair && t.records) { flow.review = '/repair/'; s.review = SITE.repairSchedule137 ? 1 : 0.5; note.review = SITE.repairSchedule137 ? '' : 'misses reach Repair, but a miss returns after ' + SITE.repairScheduleDays.join(' or ') + ' days and clears on 2 wins; no 1, 3, 7 day schedule'; }
+  if (SITE.repair && t.records) { flow.review = '/repair/'; s.review = SITE.repairSchedule137 ? 1 : 0.5; note.review = SITE.repairSchedule137 ? '' : 'misses reach Repair, but a miss returns after ' + SITE.repairScheduleDays.join(', ') + ' days' + (REVIEW.cleared ? '' : ' and never clears') + '; not the 1, 3, 7 day schedule'; }
   else { s.review = 0; note.review = SITE.repair ? 'no drill writes this topic to the record, so nothing reaches Repair' : 'no Repair'; }
 
-  /* 9 engagement */
-  const eng = { xp: SITE.xp, dailyStreak: SITE.dailyStreak, masteryRing: SITE.masteryRing, firstWin: !!(flow.drill || (m && m.board)) }, got = Object.values(eng).filter(Boolean).length;
+  /* 9 engagement: XP and the streak come from answers on the shared record, so they count only
+     where this topic's drill writes to it; the ring shows the topic's quick check, so it counts
+     only where there is one. */
+  const eng = { xp: SITE.xp && !!t.records, dailyStreak: SITE.dailyStreak && !!t.records, masteryRing: SITE.masteryRing && !!checkKey, firstWin: !!(flow.drill || (m && m.board)) }, got = Object.values(eng).filter(Boolean).length;
   s.engagement = got === 4 ? 1 : got >= 2 ? 0.5 : 0;
-  note.engagement = got === 4 ? '' : 'missing ' + [['xp', 'XP'], ['dailyStreak', 'a daily streak'], ['masteryRing', 'a mastery ring'], ['firstWin', 'a question one tap away']].filter(([k]) => !eng[k]).map((x) => x[1]).join(', ');
+  note.engagement = got === 4 ? '' : 'missing ' + [['xp', 'XP'], ['dailyStreak', 'a daily streak'], ['masteryRing', 'a mastery ring (it needs a quick check)'], ['firstWin', 'a question one tap away']].filter(([k]) => !eng[k]).map((x) => x[1]).join(', ');
 
   /* 10 phone and correctness */
   const pages = [...new Set([flow.learn && flow.learn.split('?')[0], m && m.board ? '/see/?b=' + m.board : null, flow.drill && (sec === 'rc' ? '/tools/rc/' : flow.drill.split('?')[0]), flow.game].filter(Boolean))];
@@ -360,14 +415,18 @@ function md() {
   L.push(`| All | ${summary.topics} | ${summary.average.toFixed(2)} | ${Math.max(...rows.map((r) => r.total))} | ${Math.min(...rows.map((r) => r.total))} | ${summary.at10} |`, '',
     'Average points per check, across all ' + summary.topics + ' topics (1.00 is the most):', '', '| Check | Average |', '|---|---|');
   CHECKS.forEach((c, i) => L.push(`| ${i + 1}. ${CHECK_NAME[c]} | ${summary.checkAverages[c].toFixed(2)} |`));
-  L.push('', '### What does not exist yet, site-wide', '');
+  L.push('', '### Site-wide features, and what is still missing', '');
+  const withCheck = rows.filter((r) => r.scores.quickCheck > 0).length;
+  if (SITE.quickCheck) L.push('- Quick check: ' + withCheck + ' of ' + rows.length + ' topics have one (5 questions from the topic\'s public drill bank, mastered at 4 of 5, offered on the hub topic row and at the end of a drill). The rest score 0: Perceptual Ability and Reading drill from generators and passages, not a question bank, and a science or QR topic needs 5 public questions.');
   if (!SITE.quickCheck) L.push('- Quick check: there is no 5-question check that marks a topic mastered at 4 of 5. Every topic scores 0. A whiteboard ends on three Try it questions, which count toward the Whiteboard check, not this one.');
+  if (SITE.xp && SITE.dailyStreak && SITE.masteryRing) L.push('- Engagement: XP (10 per right answer, 50 per mastered topic) and a daily streak come from the shared answer record; a mastery ring shows per topic and per section on the hubs. A topic without a quick check has no ring and tops out at 0.5.');
+  if (SITE.repairSchedule137) L.push('- Review loop: checked by running shared/ace-record.js: a miss came back ' + SITE.repairScheduleDays.join(', ') + ' days apart and cleared after the last return was answered right.');
   const missEng = [!SITE.xp && 'XP', !SITE.dailyStreak && 'a daily streak', !SITE.masteryRing && 'a mastery ring per topic'].filter(Boolean);
   if (missEng.length) L.push('- Engagement: ' + missEng.join(', ') + ' do not exist anywhere in the shell' + (missEng.length === 3 ? ', so every topic scores 0. The only part met is a question one tap away.' : '.'));
   if (!SITE.learnLinkedFromTopicRow) L.push('- Learn, one tap: the hub topic row has a Practice button only. No topic links its lesson, and there is no one-screen lesson per topic, so Learn tops out at 0.5 (a Retold night that covers the topic).');
   if (SITE.repair && !SITE.repairSchedule137) L.push('- Review loop, 1, 3, 7 days: Repair exists and takes every miss, but a miss returns after ' + SITE.repairScheduleDays.join(' or ') + ' days and clears after 2 wins on different days. Review tops out at 0.5.');
   L.push('- Explanation standard, served: of ' + totals.items + ' science and QR drill questions, ' + totals.served + ' are served with all four parts (answer line, steps, a trap per wrong choice, check question) and ' + totals.drafted + ' have a full walk-through written in a sidecar that is still review pending.', '');
-  L.push('The weakest check in each table below leaves out ' + summary.zeroSiteWide.map((c) => CHECK_NAME[c]).join(' and ') + ', which are 0 for every topic.', '');
+  if (summary.zeroSiteWide.length) L.push('The weakest check in each table below leaves out ' + summary.zeroSiteWide.map((c) => CHECK_NAME[c]).join(' and ') + ', which are 0 for every topic.', '');
   L.push('### How the phone point was measured', '', phone.measured ? `scripts/measure-phone.mjs at 390 px on ${phone.measured}: ${Object.keys(phone.pages).length} pages (hubs, Retold courses, every whiteboard, every board game, the arcade, the PAT and Reading tools). A topic gets the point when every page in its flow has no sideways scroll, no text under 13 px, no tap target under 44 px and no JavaScript error. Wrong keys and DAT scope are held by \`npm run test:gates\` and \`npm run test:banks\`; a topic also loses the point when the scope file lists it or one of its items.` : 'No phone run is stored. Run scripts/measure-phone.mjs with --out and pass the file with --phone.', '');
   for (const [sec, name] of SECTIONS) {
     const l = rows.filter((r) => r.section === sec).sort((a, b) => b.total - a.total || a.name.localeCompare(b.name));
@@ -379,11 +438,12 @@ function md() {
   lowest.forEach((r, i) => {
     L.push(`${i + 1}. **${r.name}** (${r.section}, \`${r.key}\`), ${r.total} of 10. ` + CHECKS.filter((c) => r.scores[c] < 1 && !summary.zeroSiteWide.includes(c)).map((c) => `${CHECK_NAME[c]} ${r.scores[c]}: ${r.needs[c]}`).join('. ') + '.');
   });
-  L.push('', 'Every topic above also needs ' + summary.zeroSiteWide.map((c) => CHECK_NAME[c]).join(' and ') + ', which do not exist site-wide.');
+  if (summary.zeroSiteWide.length) L.push('', 'Every topic above also needs ' + summary.zeroSiteWide.map((c) => CHECK_NAME[c]).join(' and ') + ', which do not exist site-wide.');
   L.push('', '## Notes on the topic list', '',
     '- data/topics.json keys that point at one canonical id are one topic (Biology: ' + Object.keys(TOPICS.bio).length + ' keys, ' + rows.filter((r) => r.section === 'bio').length + ' topics).',
     '- QR: ' + rows.filter((r) => r.notInTopicsJson).length + ' topic keys come from the QR drill bank (data/qr-climb.json) and are not in data/topics.json. They are kept as their own rows because the data does not say they are the same topics.',
     '- ' + rows.filter((r) => HUB[r.section] && r.drill.count === 0).length + ' science and QR topics have no question in their hub drill bank at all (' + rows.filter((r) => r.section === 'qr' && r.drill.count === 0).length + ' of them in QR); ' + rows.filter((r) => HUB[r.section] && r.drill.count === 0 && r.arcadeItems > 0).length + ' of those have questions under the same key in the arcade bank (games/), which the drill does not serve.',
+    '- Left out of the list: ' + (Object.entries(TOPICS.excluded || {}).map(([k, v]) => k.toUpperCase() + ' ' + v.map((x) => '`' + x + '`').join(', ')).join('; ') || 'nothing') + ' (scripts/bank/scope-topics.json: not named in the 2026 outline, removed from the topic list, the drills and the arcade).',
     '- Drill depth counts the public banks (data/*.json and the free samples). The arcade banks in games/ hold more questions per key and count toward the Game check only.');
   const scoped = rows.filter((r) => r.scopeNote);
   if (scoped.length) L.push('- Scope: ' + scoped.map((r) => '`' + r.key + '`').join(', ') + ' are listed by the scope audit as not named in the 2026 QR outline, yet they are still topic keys' + (scoped.some((r) => r.arcadeItems) ? ' and the QR arcade bank still carries questions under them' : '') + '. They score 0 on check 10 until they are dropped or confirmed.');
