@@ -111,6 +111,18 @@ body[data-page="test-week"]{background:linear-gradient(180deg,var(--al-bg) 0%,va
 }
 
 /* ===== STUCK BUTTON ===== */
+.tw-day{margin:0 0 36px;padding:26px 24px;border-radius:22px;background:#FCFAF6;border:1px solid rgba(27,58,45,.16);color:#0d2018;scroll-margin-top:80px}
+.tw-day-k{margin:0 0 6px;font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#7c6113}
+.tw-day h2{margin:0 0 16px;font-family:"Playfair Display",Georgia,serif;font-size:26px;line-height:1.2;color:#0d2018}
+.tw-day-grid{display:grid;gap:14px;grid-template-columns:repeat(2,minmax(0,1fr))}
+@media(max-width:760px){.tw-day-grid{grid-template-columns:1fr}.tw-day{padding:20px 16px}}
+.tw-day-card{padding:16px 18px;border-radius:16px;background:#fff;border:1px solid rgba(27,58,45,.12)}
+.tw-day-card h3{margin:0 0 10px;font-size:17px;font-weight:700;color:#1B3A2D}
+.tw-day-card ul,.tw-day-card ol{margin:0;padding-left:20px;display:grid;gap:8px;font-size:15.5px;line-height:1.5;color:#0d2018}
+.tw-day-card ol li span{display:block;font-weight:700}
+.tw-day-card ol li em{font-style:normal;color:#3a4a42}
+.tw-day-card p{margin:12px 0 0;font-size:15px;line-height:1.5;color:#3a4a42}
+.tw-day-note{margin:14px 0 0;font-size:15px;color:#3a4a42}
 .tw-stuck-wrap{margin-bottom:44px;display:flex;justify-content:flex-start;}
 .tw-stuck-trigger{
   display:inline-flex;align-items:center;gap:8px;
@@ -217,10 +229,10 @@ body[data-page="test-week"]{background:linear-gradient(180deg,var(--al-bg) 0%,va
     <span class="al-build">test-week mode</span>
   </div>
   <nav class="al-nav">
-    <a href="ace-labs.html" class="al-nav-link">Home</a>
+    <a href="/" class="al-nav-link">Home</a>
     <a href="test-week.html" class="al-nav-link active">Test week</a>
-    <a href="prometric-mock.html" class="al-nav-link">Prometric mocks</a>
-    <a href="test-day-readiness.html" class="al-nav-link">Test day</a>
+    <a href="/tests/" class="al-nav-link">Practice tests</a>
+    <a href="/test-week.html#test-day" class="al-nav-link">Test day</a>
   </nav>
 </header>
 
@@ -230,7 +242,7 @@ body[data-page="test-week"]{background:linear-gradient(180deg,var(--al-bg) 0%,va
   <h1 id="heroHeading">Test in <em id="daysLabel">N</em> days.<br/>Here's the plan.</h1>
   <p class="tw-hero-sub">Diagnostic. Cheat sheets. One mock. Calm calendar. That's it.</p>
 
-  <!-- Date picker — shown only if no test date is stored -->
+  <!-- Date picker: shown only if no test date is stored -->
   <div class="tw-date-prompt" id="datePrompt">
     <label for="testDateInput">When is your DAT? Enter the date and we will do the rest.</label>
     <div class="tw-date-row">
@@ -259,21 +271,50 @@ body[data-page="test-week"]{background:linear-gradient(180deg,var(--al-bg) 0%,va
       <div class="tw-tile-foot">Open cheat sheets</div>
     </a>
 
-    <a class="tw-tile tw-tile--mock" href="prometric-mock.html">
+    <a class="tw-tile tw-tile--mock" href="/tests/">
       <div class="tw-tile-tag">Step 3 · Pacing only</div>
       <h2 class="tw-tile-name">Pacing <em>mock</em></h2>
-      <p class="tw-tile-desc">140 questions, Prometric format. Do this once for pacing: not to chase a score. One run is enough.</p>
+      <p class="tw-tile-desc">One full-length test, timed, in test-day order. Do it once for pacing, not to chase a score. One run is enough.</p>
       <div class="tw-tile-foot">Open pacing mock</div>
     </a>
 
     <a class="tw-tile tw-tile--calendar" href="/">
       <div class="tw-tile-tag">Step 4 · Steady as you go</div>
       <h2 class="tw-tile-name">Daily <em>plan</em></h2>
-      <p class="tw-tile-desc">Your three steps for today, built from your test date, your misses and what you have walked. One tap from the Ace Labs home.</p>
+      <p class="tw-tile-desc">Today's tasks from your study plan, built from your test date and what your last report showed. One tap from the Ace Labs home.</p>
       <div class="tw-tile-foot">Open daily plan</div>
     </a>
 
   </div>
+</section>
+
+<!-- ========== TEST DAY ========== -->
+<section class="tw-day" id="test-day" aria-labelledby="tw-day-h">
+  <p class="tw-day-k">Test day</p>
+  <h2 id="tw-day-h">What to bring, and how the day runs</h2>
+  <div class="tw-day-grid">
+    <div class="tw-day-card">
+      <h3>Bring</h3>
+      <ul>
+        <li><b>Two forms of ID.</b> One must be a current government photo ID with your signature. The second needs your signature too.</li>
+        <li>The name on both must match your DAT application exactly.</li>
+        <li>Bring the IDs your Prometric confirmation lists. If anything is unclear, call your test center a few days before.</li>
+        <li>Arrive early. Check-in takes time and late arrivals can be turned away.</li>
+      </ul>
+    </div>
+    <div class="tw-day-card">
+      <h3>The order on screen</h3>
+      <ol>
+        <li><span>Survey of the Natural Sciences</span><em>100 questions, 90 min</em></li>
+        <li><span>Perceptual Ability</span><em>90 questions, 60 min</em></li>
+        <li><span>Optional break</span><em>up to 30 min</em></li>
+        <li><span>Reading Comprehension</span><em>50 questions, 60 min</em></li>
+        <li><span>Quantitative Reasoning</span><em>40 questions, 45 min</em></li>
+      </ol>
+      <p>The sciences are Biology (40), General Chemistry (30) and Organic Chemistry (30) in one sitting. A basic on-screen calculator is available in Quantitative Reasoning only. An optional tutorial comes first and a short survey comes last.</p>
+    </div>
+  </div>
+  <p class="tw-day-note">Test center rules can change. The ADA's DAT Candidate Guide and your Prometric confirmation are the final word.</p>
 </section>
 
 <!-- ========== STUCK BUTTON ========== -->
@@ -309,20 +350,20 @@ body[data-page="test-week"]{background:linear-gradient(180deg,var(--al-bg) 0%,va
 <div class="tw-quick">
   <span class="tw-quick-label">Drill specific topics</span>
   <div class="tw-quick-links">
-    <a class="tw-quick-link" href="tools/bio/index.html">Bio</a>
+    <a class="tw-quick-link" href="/bio/">Bio</a>
     <span class="tw-quick-sep">&#183;</span>
-    <a class="tw-quick-link" href="tools/qr/index.html">QR</a>
+    <a class="tw-quick-link" href="/qr/">QR</a>
     <span class="tw-quick-sep">&#183;</span>
-    <a class="tw-quick-link" href="tools/organic/">OChem</a>
+    <a class="tw-quick-link" href="/oc/">OChem</a>
     <span class="tw-quick-sep">&#183;</span>
-    <a class="tw-quick-link" href="tools/gc/index.html">GC</a>
+    <a class="tw-quick-link" href="/gc/">GC</a>
   </div>
 </div>
 
 <!-- ========== FOOTER ========== -->
 <footer class="tw-foot">
   <span>Ace Labs &middot; test-week mode</span>
-  <a class="tw-foot-link" href="ace-labs.html" id="longTermLink">Long-term prep mode &rarr;</a>
+  <a class="tw-foot-link" href="/" id="longTermLink">Long-term prep mode &rarr;</a>
 </footer>
 
 </div><!-- .al-app -->
@@ -400,7 +441,7 @@ body[data-page="test-week"]{background:linear-gradient(180deg,var(--al-bg) 0%,va
       if(d){
         renderHero(daysUntil(d));
       } else {
-        // Bad value — clear and prompt
+        // Bad value: clear and prompt
         localStorage.removeItem(STORAGE_KEY);
         mirrorOnboardingDate(null);
         showPrompt();
@@ -474,6 +515,6 @@ body[data-page="test-week"]{background:linear-gradient(180deg,var(--al-bg) 0%,va
 
 })();
 </script>
-  <script src="/shared/ace-shell.js?v=4" defer></script>
+  <script src="/shared/ace-shell.js?v=5" defer></script>
 </body>
 </html>

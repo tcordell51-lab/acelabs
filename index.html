@@ -3,163 +3,320 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Home · Ace Labs</title>
-<meta name="description" content="Ace Labs: DAT practice by section, with one question format and progress that carries from set to set.">
+<title>Today · Ace Labs</title>
+<meta name="description" content="Ace Labs: your DAT study plan for today, the week ahead, and one tap to each of the six sections.">
 <link rel="icon" type="image/svg+xml" href="/shared/ace-dat-mark.svg">
 <link rel="stylesheet" href="/shared/ace-ui.css?v=8">
 <link rel="stylesheet" href="/shared/ace-loop.css?v=4">
 <style>
-  .home-sections .aui-card { padding-bottom: var(--aui-4); }
-  .home-count { margin-top: var(--aui-2); }
-  .home-loop b { display: block; font-size: var(--aui-t-md); }
-  .home-loop .aui-num { font-size: var(--aui-t-xl); display: block; margin-top: var(--aui-2); }
+  .home { display: grid; gap: var(--aui-5); }
+  .home-head { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: var(--aui-3); }
+  .home-head .aui-h1 { margin: 0; font-size: clamp(32px, 5vw, 44px); line-height: 1.08; }
+  .home-pill { display: inline-flex; align-items: center; min-height: 32px; padding: 0 14px; border-radius: var(--aui-r-pill); background: var(--aui-gold-soft); color: var(--aui-gold-ink); font-weight: 700; font-size: var(--aui-t-sm); }
+  .home-top { display: grid; gap: var(--aui-4); align-items: start; }
+  @media (min-width: 900px) { .home-top { grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); } }
+  .home-side { display: grid; gap: var(--aui-4); }
+
+  /* Today card */
+  .today-card { background: var(--aui-forest); color: var(--aui-cream); border-radius: var(--aui-r-lg); padding: var(--aui-5); display: grid; gap: var(--aui-3); box-shadow: var(--aui-shadow); }
+  .today-card .k { margin: 0; font-size: var(--aui-t-xs); font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: #E2C97A; }
+  .today-card h2 { margin: 0; font-family: var(--aui-display); font-size: clamp(24px, 3.4vw, 30px); line-height: 1.15; color: var(--aui-cream); }
+  .today-card p { margin: 0; font-size: 15.5px; line-height: 1.5; color: #e9e3d6; max-width: 60ch; }
+  .today-card .focus { padding: 10px 14px; border-left: 3px solid var(--aui-gold); background: rgba(201,168,76,.14); border-radius: 0 12px 12px 0; }
+  .today-card .focus b { color: #E2C97A; }
+  .today-tasks { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+  .today-tasks li { display: grid; grid-template-columns: 44px minmax(0, 1fr); align-items: stretch; background: rgba(245,240,232,.07); border: 1px solid rgba(245,240,232,.16); border-radius: var(--aui-r); }
+  .today-tasks li.is-done { opacity: .62; }
+  .today-tasks li.is-done .tt b { text-decoration: line-through; }
+  .today-tasks .tick { appearance: none; border: 0; background: none; min-height: 56px; width: 44px; display: grid; place-items: center; cursor: pointer; padding: 0; }
+  .today-tasks .tick span { width: 24px; height: 24px; border-radius: 50%; border: 2px solid rgba(245,240,232,.6); display: grid; place-items: center; }
+  .today-tasks .tick[aria-pressed="true"] span { background: var(--aui-gold); border-color: var(--aui-gold); }
+  .today-tasks .tick svg { width: 14px; height: 14px; opacity: 0; }
+  .today-tasks .tick[aria-pressed="true"] svg { opacity: 1; }
+  .today-tasks .tick:focus-visible, .today-tasks a:focus-visible { outline: 3px solid var(--aui-gold); outline-offset: 2px; }
+  .today-tasks a { display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 56px; padding: 8px 14px 8px 2px; color: var(--aui-cream); text-decoration: none; }
+  .today-tasks .tt { display: grid; gap: 2px; min-width: 0; }
+  .today-tasks .tt b { font-size: 16px; line-height: 1.3; overflow-wrap: anywhere; }
+  .today-tasks .tt small { font-size: 13.5px; color: #d6cfbf; line-height: 1.4; }
+  .today-tasks .m { flex-shrink: 0; font-size: 13px; font-weight: 700; color: #E2C97A; white-space: nowrap; }
+  .today-foot { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 18px; }
+  .today-card .loop-go { flex: 1 1 260px; }
+  .today-card .total { font-size: var(--aui-t-sm); color: #d6cfbf; }
+  .today-card a.quiet { color: #E2C97A; font-weight: 700; font-size: 15px; display: inline-flex; align-items: center; min-height: 44px; }
+
+  /* Week strip */
+  .week { background: var(--aui-paper); border: 1px solid var(--aui-line); border-radius: var(--aui-r-lg); padding: var(--aui-4); display: grid; gap: var(--aui-3); }
+  .week-head { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+  .week-head h2 { margin: 0; font-family: var(--aui-display); font-size: 21px; }
+  .week-head a { font-weight: 700; font-size: 15px; min-height: 44px; display: inline-flex; align-items: center; }
+  .week-strip { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px; list-style: none; margin: 0; padding: 0; }
+  .week-strip li { display: grid; justify-items: center; gap: 4px; padding: 8px 2px; border-radius: 12px; border: 1px solid transparent; text-align: center; min-width: 0; }
+  .week-strip li.now { border-color: var(--aui-forest); background: #fff; box-shadow: var(--aui-shadow); }
+  .week-strip .d { font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--aui-ink-3); }
+  .week-strip .n { font-size: 17px; font-weight: 700; color: var(--aui-ink); }
+  .week-strip .dot { width: 100%; max-width: 34px; height: 8px; border-radius: 4px; background: #e6dccb; }
+  .week-strip li[data-kind="off"] .dot, .week-strip li[data-kind="blackout"] .dot, .week-strip li[data-kind="none"] .dot { background: transparent; border: 1px dashed var(--aui-line-2); }
+  .week-strip li[data-work="1"] .dot { background: var(--aui-forest-2); }
+  .week-strip li[data-kind="full"] .dot { background: var(--aui-gold); }
+  .week-strip li[data-kind="test"] .dot { background: var(--aui-miss); }
+  .week-strip li[data-done="1"] .dot { background: var(--aui-good); }
+  .week-strip .w { font-size: 12px; color: var(--aui-ink-3); line-height: 1.25; overflow-wrap: anywhere; }
+  .week-empty { margin: 0; font-size: 15px; color: var(--aui-ink-2); }
+
+  /* Repair + whiteboards */
+  .home-tile { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: var(--aui-4); padding: var(--aui-4); min-height: 72px; background: var(--aui-paper); border: 1px solid var(--aui-line); border-radius: var(--aui-r-lg); color: var(--aui-ink); text-decoration: none; }
+  .home-tile:hover { border-color: var(--aui-forest); }
+  .home-tile .big { font-family: var(--aui-font); font-variant-numeric: tabular-nums; font-size: 32px; font-weight: 700; line-height: 1; min-width: 44px; text-align: center; color: var(--aui-forest); }
+  .home-tile b { display: block; font-size: 17px; }
+  .home-tile small { display: block; font-size: 14.5px; color: var(--aui-ink-2); line-height: 1.4; }
+  .home-tile .go { font-weight: 700; color: var(--aui-forest); font-size: 15px; white-space: nowrap; }
+  .home-tile--see { background: #fffdf7; border-color: #e0d3b4; }
+  .home-tile--see svg { color: var(--aui-gold-ink); }
+
+  /* Six section bands */
+  .bands { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+  @media (min-width: 760px) { .bands { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  .bands a { display: grid; grid-template-columns: 6px minmax(0, 1fr) auto; gap: 14px; align-items: center; min-height: 68px; padding: 10px 16px 10px 0; background: var(--aui-paper); border: 1px solid var(--aui-line); border-radius: var(--aui-r); overflow: hidden; color: var(--aui-ink); text-decoration: none; }
+  .bands a:hover { border-color: var(--aui-forest); }
+  .bands .bar { align-self: stretch; margin: -10px 0; background: var(--sec, var(--aui-forest)); }
+  .bands b { display: block; font-size: 17px; }
+  .bands small { display: block; font-size: 14.5px; color: var(--aui-ink-2); line-height: 1.4; }
+  .bands .right { display: grid; justify-items: end; gap: 4px; }
+  .bands .band { min-width: 66px; }
+  .bands .word { font-size: 12.5px; color: var(--aui-ink-3); white-space: nowrap; }
+
   .plan-steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
-  .plan-step { display: flex; gap: 14px; align-items: flex-start; padding: 14px 16px; border-radius: 18px; border: 1px solid #e6dccb; background: #FCFAF6; color: #0d2018; text-decoration: none; }
-  .plan-step.first { background: #1B3A2D; border-color: #1B3A2D; color: #F5F0E8; }
-  .plan-step.quiet { background: transparent; }
+  .plan-step { display: flex; gap: 14px; align-items: flex-start; padding: 14px 16px; border-radius: 18px; border: 1px solid #e6dccb; background: #FCFAF6; color: #0d2018; text-decoration: none; min-height: 44px; }
   .plan-step .num { flex-shrink: 0; width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; font-weight: 700; background: #C9A84C; color: #0d2018; }
   .plan-step .tx { display: flex; flex-direction: column; gap: 3px; }
-  .plan-step .k { font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: #8a6d1f; }
-  .plan-step.first .k { color: #E2C97A; }
+  .plan-step .k { font-size: 12px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: #7c6113; }
   .plan-step .t1 { font-size: 17px; font-weight: 700; }
-  .plan-step .t2 { font-size: 13.5px; line-height: 1.45; }
+  .plan-step .t2 { font-size: 15px; line-height: 1.45; }
+  .home h2.sec-h { margin: 0 0 var(--aui-3); font-family: var(--aui-display); font-size: 24px; }
+  @media (max-width: 520px) { .today-card { padding: 18px; } .home-tile { gap: 12px; } .home-tile .go { display: none; } }
 </style>
 </head>
 <body class="aui">
-<main class="aui-wrap aui-stack" id="main">
-  <div class="loop loop--wide">
-    <header class="loop-head span2">
+<main class="aui-wrap home" id="main">
+  <header class="home-head">
+    <div>
       <p class="loop-date" id="t-date">Today</p>
-      <h1 class="aui-h1">Today's plan</h1>
-      <p class="aui-lede" id="t-lede">Start with the diagnostic. It fills Repair, Progress and this plan.</p>
-    </header>
-    <a class="loop-go span2" id="t-go" href="/diagnostic.html"><span id="t-go-label">Take the diagnostic</span> <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></a>
-    <h2 class="loop-h2 span2">Today, in this order <span id="t-nsteps"></span></h2>
-    <ol class="plan-steps span2" id="t-steps"></ol>
-    <p class="aui-small span2" id="t-counts" data-miss-open="0" data-miss-due="0"></p>
-    <section class="loop-panel" aria-labelledby="t-stand-h">
-      <h2 id="t-stand-h">Where you stand <a href="/progress/">Progress</a></h2>
-      <div class="band-grid" id="t-bands"></div>
-      <p class="aui-small">No score predictions. Bands move only on answers you give on your own, over different days. Under 100 answers a band is an early read.</p>
+      <h1 class="aui-h1">Today</h1>
+    </div>
+    <span class="home-pill" id="t-pill" hidden></span>
+  </header>
+
+  <div class="home-top">
+    <!-- (a) Today: the saved plan's tasks, or one step for a new student -->
+    <section class="today-card" id="today" aria-labelledby="t-h">
+      <p class="k" id="t-k">Start here</p>
+      <h2 id="t-h">Set your test date</h2>
+      <p id="t-lede">Two steps to start. First your test date and your week. Then a 60-question diagnostic in Biology, Gen Chem, OChem and QR. PAT and Reading are not in the diagnostic, so they start from your own rating.</p>
+      <p class="focus" id="t-focus" hidden></p>
+      <ul class="today-tasks" id="t-tasks" hidden></ul>
+      <div class="today-foot">
+        <a class="loop-go" id="t-go" href="/plan/" data-step="setup"><span id="t-go-label">Set your test date</span> <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></a>
+        <span class="total" id="t-total"></span>
+      </div>
+      <a class="quiet" id="t-behind" href="/plan/" hidden></a>
     </section>
-    <section class="coach">
-      <div class="av">TC</div>
-      <div><div class="who">A tip for today</div><p>Tag every miss with its reason. A trap you name is a trap you stop falling for.</p></div>
-    </section>
+
+    <div class="home-side">
+      <!-- (b) the week -->
+      <section class="week" aria-labelledby="w-h">
+        <div class="week-head"><h2 id="w-h">This week</h2><a href="/plan/" id="w-all">See the whole plan</a></div>
+        <ol class="week-strip" id="w-strip" hidden></ol>
+        <p class="week-empty" id="w-empty">Your week fills in once you set a test date. Every day gets its tasks, each linked to the exact page.</p>
+      </section>
+      <!-- (d) Repair -->
+      <a class="home-tile" href="/repair/" id="t-counts" data-miss-open="0" data-miss-due="0">
+        <span class="big" id="r-n">0</span>
+        <span><b>Repair</b><small id="r-line">Nothing to repair yet. Misses from any set or test land here.</small></span>
+        <span class="go" aria-hidden="true">Open</span>
+      </a>
+      <!-- (e) whiteboards -->
+      <a class="home-tile home-tile--see" href="/see/">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="12" rx="2"></rect><path d="M7 12l3-3 3 2 4-4M9 20l3-4 3 4"></path></svg>
+        <span><b>See it: whiteboards</b><small>Predict first, then watch it drawn. One board per idea, across all six sections.</small></span>
+        <span class="go" aria-hidden="true">Open</span>
+      </a>
+    </div>
   </div>
 
-  <section class="aui-stack" aria-labelledby="sec-title">
-    <h2 class="aui-h2" id="sec-title">Sections</h2>
-    <div class="aui-grid home-sections" id="sections"></div>
+  <!-- shown only to a student with answers on record and no plan yet -->
+  <section id="rec" hidden aria-labelledby="rec-h">
+    <h2 class="sec-h" id="rec-h">Or pick up from your record</h2>
+    <ol class="plan-steps" id="t-steps"></ol>
   </section>
 
-  <section class="aui-stack" aria-labelledby="labs-title">
-    <h2 class="aui-h2" id="labs-title">See it: predict, then reveal</h2>
-    <p class="aui-p">Short labs. You call it first; then the labels draw in or the model moves. <a href="/labs/">All the labs, by section</a></p>
-    <div class="aui-grid">
-      <a class="aui-card" href="/tools/ochem/#hubs"><h3 class="aui-h3">Reaction Maps and wheels</h3><p class="aui-small">Eighteen OChem hubs and twenty-three reaction wheels. See where each functional group goes, then fill the wheel from memory.</p></a>
-      <a class="aui-card" href="/bio/see/"><img class="aui-card__art" src="/shared/art/plates/brain.jpg" alt="" loading="lazy" width="900" height="506"><h3 class="aui-h3">Biology plates</h3><p class="aui-small">Fifteen unlabeled plates, from the eye to the chloroplast. Labels drawn in code after you answer.</p></a>
-      <a class="aui-card" href="/gc/galvanic/"><img class="aui-card__art" src="/shared/art/plates/galvanic.jpg" alt="" loading="lazy" width="900" height="506"><h3 class="aui-h3">Galvanic cell</h3><p class="aui-small">Nine half-cells. Call the electron flow, then watch it run.</p></a>
-      <a class="aui-card" href="/oc/3d/"><h3 class="aui-h3">3D beside the drawing</h3><p class="aui-small">Seven stereocenters and two chairs. The model, the DAT drawing and the written form, side by side.</p></a>
-      <a class="aui-card" href="/gc/vsepr/"><h3 class="aui-h3">VSEPR in 3D</h3><p class="aui-small">Thirteen molecules from CO2 to XeF4. Count domains, call the shape, then turn it.</p></a>
-      <a class="aui-card" href="/oc/chirality/"><h3 class="aui-h3">Chirality Bench</h3><p class="aui-small">Call R or S on the 3D model, beside the wedge-and-dash drawing.</p></a>
-      <a class="aui-card" href="/qr/worked/"><h3 class="aui-h3">Worked solutions you can see</h3><p class="aui-small">Six QR families: percent change, ratios, work rate, mixtures, probability trees, altitudes. Answer, then watch the method drawn.</p></a>
-      <a class="aui-card" href="/rc/map/"><h3 class="aui-h3">Map it, then find the line</h3><p class="aui-small">Name each paragraph's job first. Then every answer lights up its line in the passage.</p></a>
-      <a class="aui-card" href="/tools/pat/tfe.html"><h3 class="aui-h3">Top, front, end</h3><p class="aui-small">Solid means seen, dashed means hidden. Every answer computed from the geometry.</p></a>
-    </div>
+  <!-- (c) six sections, one tap each -->
+  <section aria-labelledby="sec-title">
+    <h2 class="sec-h" id="sec-title">The six sections</h2>
+    <ul class="bands" id="sections"></ul>
+    <p class="aui-small" style="margin-top:12px">Bars are bands, not score predictions. They move only on answers you give on your own, over different days. <a href="/progress/">Progress</a> has the detail. <a href="/scope.html">What Ace Labs covers</a></p>
   </section>
-
-  <section class="aui-stack" aria-labelledby="course-title">
-    <h2 class="aui-h2" id="course-title">Courses</h2>
-    <p class="aui-p">Each course teaches a whole section in short nights, with checks as you go.</p>
-    <div class="aui-grid">
-      <a class="aui-card aui-card--flat" href="/tools/bio-retold/"><h3 class="aui-h3">Bio, Retold</h3><p class="aui-small">14 nights</p></a>
-      <a class="aui-card aui-card--flat" href="/tools/gchem/"><h3 class="aui-h3">Gen Chem, Retold</h3><p class="aui-small">14 nights</p></a>
-      <a class="aui-card aui-card--flat" href="/tools/organic/"><h3 class="aui-h3">OChem, Retold</h3><p class="aui-small">13 nights</p></a>
-      <a class="aui-card aui-card--flat" href="/tools/pat-retold/"><h3 class="aui-h3">PAT, Retold</h3><p class="aui-small">10 nights</p></a>
-      <a class="aui-card aui-card--flat" href="/tools/rc-retold/"><h3 class="aui-h3">RC, Retold</h3><p class="aui-small">10 nights</p></a>
-      <a class="aui-card aui-card--flat" href="/tools/qr-retold/"><h3 class="aui-h3">QR, Retold</h3><p class="aui-small">14 nights</p></a>
-    </div>
-  </section>
-
-  <section class="aui-stack" aria-labelledby="test-title">
-    <h2 class="aui-h2" id="test-title">Practice tests</h2>
-    <div class="aui-grid">
-      <a class="aui-card aui-card--flat" href="/tools/mock/full.html"><h3 class="aui-h3">Full-length DAT</h3><p class="aui-small">Four tests, all four sections in test-day order.</p></a>
-      <a class="aui-card aui-card--flat" href="/tools/minitests/"><h3 class="aui-h3">The Climb</h3><p class="aui-small">Ten 39-question tests that get harder each rung.</p></a>
-      <a class="aui-card aui-card--flat" href="/diagnostic.html"><h3 class="aui-h3">Diagnostic</h3><p class="aui-small">Sixty questions: fifteen each in Biology, Gen Chem, OChem and QR.</p></a>
-      <a class="aui-card aui-card--flat" href="/review/"><h3 class="aui-h3">Review</h3><p class="aui-small">Every finished test, question by question, with the reason for each miss.</p></a>
-    </div>
-  </section>
-
-  <p class="aui-small">Ace Labs is practice, not a score prediction. <a href="/scope.html">What it covers</a></p>
 </main>
 
 <script src="/shared/ace-index.js?v=3"></script>
 <script src="/shared/ace-route.js?v=4"></script>
 <script src="/shared/ace-progress.js?v=6"></script>
 <script src="/shared/ace-record.js?v=6"></script>
-<script src="/shared/ace-visuals.js?v=3"></script>
 <script src="/shared/ace-plan.js?v=1"></script>
-<script src="/shared/ace-ui.js?v=4" defer></script>
+<script src="/plan/plan-core.js?v=2"></script>
+<script src="/shared/ace-ui.js?v=5" defer></script>
 <script>
 (function () {
   'use strict';
   var SECTIONS = [
-    { id: 'bio', name: 'Biology', href: '/bio/', art: '/shared/art/bio.webp', line: '157 cell and molecular questions, plus six labs and the course.' },
-    { id: 'gchem', name: 'General Chemistry', href: '/gc/', art: '/shared/art/gchem.webp', line: '517 questions across 42 topics, with spaced repeats.' },
-    { id: 'ochem', name: 'Organic Chemistry', href: '/oc/', art: '/shared/art/ochem.webp', line: '387 questions across 14 topics, plus Reaction Maps and 3D models.' },
-    { id: 'pat', name: 'Perceptual Ability', href: '/tools/pat/', art: '/shared/art/pat.svg', line: 'Six trainers and a ninety-question test, built from exact geometry.' },
-    { id: 'rc', name: 'Reading Comprehension', href: '/tools/rc/', art: '/shared/art/rc.webp', line: 'Timed science passages with search and flag tools.' },
-    { id: 'qr', name: 'Quantitative Reasoning', href: '/qr/drill/', art: '/shared/art/qr.webp', line: 'Ten topics from fractions to probability.' }
+    { id: 'bio', name: 'Biology', href: '/bio/', c: '#2f7d4f' },
+    { id: 'gchem', name: 'General Chemistry', href: '/gc/', c: '#2f5f9e' },
+    { id: 'ochem', name: 'Organic Chemistry', href: '/oc/', c: '#6b4fa0' },
+    { id: 'pat', name: 'Perceptual Ability', href: '/pat/', c: '#8a5a0b' },
+    { id: 'rc', name: 'Reading Comprehension', href: '/rc/', c: '#1f7a70' },
+    { id: 'qr', name: 'Quantitative Reasoning', href: '/qr/', c: '#a3405c' }
   ];
-  var rec = window.AceRecord;
+  var rec = window.AceRecord, B = window.AcePlanBuilder;
   rec.migrate();
+  var $ = function (id) { return document.getElementById(id); };
   function el(tag, cls, text) { var n = document.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; }
   function plural(n, one, many) { return n + ' ' + (n === 1 ? one : many); }
+  function ls(k) { try { return JSON.parse(localStorage.getItem(k) || 'null'); } catch (e) { return null; } }
+  var STUDENT = (function () { try { return new URLSearchParams(location.search).get('student'); } catch (e) { return null; } })();
+  function S(href) { if (!STUDENT || !href || href.charAt(0) !== '/') return href; return href + (href.indexOf('?') >= 0 ? '&' : '?') + 'student=' + encodeURIComponent(STUDENT); }
 
-  var host = document.getElementById('sections');
+  var DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'], DOW = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'], MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  var now = new Date(), TODAY = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-' + String(now.getDate()).padStart(2, '0');
+  $('t-date').textContent = DAYS[now.getDay()] + ', ' + MON[now.getMonth()] + ' ' + now.getDate();
+  function shortMin(m) { var h = Math.floor(m / 60), r = m % 60; return h ? h + 'h' + (r ? ' ' + r : '') : r + 'm'; }
+  function nice(s) { var p = s.split('-'); return DAYS[B.dow(s)] + ', ' + MON[+p[1] - 1] + ' ' + (+p[2]); }
+
+  /* ---- (c) six sections ---- */
+  var host = $('sections');
   SECTIONS.forEach(function (s) {
-    var a = el('a', 'aui-card'); a.href = s.href; a.setAttribute('data-section', s.id);
-    if (s.art) { var img = el('img', 'aui-card__art'); img.src = s.art; img.alt = ''; img.loading = 'lazy'; img.width = 900; img.height = 506; a.appendChild(img); }
-    a.appendChild(el('h3', 'aui-h3', s.name));
-    a.appendChild(el('p', 'aui-small', s.line));
-    var st = rec.stats({ section: s.id }), row = el('div', 'aui-row home-count');
-    row.appendChild(el('span', 'aui-chip aui-chip--plain', st.answers ? plural(st.answers, 'answer', 'answers') + ', ' + st.right + ' right' : 'Not started'));
-    if (st.due) row.appendChild(el('span', 'aui-chip', st.due + ' due'));
-    a.appendChild(row); host.appendChild(a);
+    var li = el('li'), a = el('a'); a.href = S(s.href); a.setAttribute('data-section', s.id); a.style.setProperty('--sec', s.c);
+    a.appendChild(el('span', 'bar'));
+    var st = rec.stats({ section: s.id }), mid = el('span');
+    mid.appendChild(el('b', null, s.name));
+    mid.appendChild(el('small', null, st.answers ? plural(st.answers, 'answer', 'answers') + ', ' + st.right + ' right' + (st.due ? ', ' + st.due + ' due back' : '') : 'Course, whiteboards and practice'));
+    a.appendChild(mid);
+    var b = window.AcePlan.band(s.id), right = el('span', 'right'), bar = el('span', 'band');
+    bar.setAttribute('data-band', String(b.band)); bar.setAttribute('data-section', s.id); for (var q = 0; q < 3; q++) bar.appendChild(el('span'));
+    right.appendChild(bar); right.appendChild(el('span', 'word', b.word + (b.n && b.early ? ', early read' : '')));
+    a.appendChild(right); li.appendChild(a); host.appendChild(li);
   });
 
-  // Today: one plan, read from the record (shared/ace-plan.js). One primary button: the first step.
-  var DAYS = ['SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'], MON = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
-  var now = new Date(); document.getElementById('t-date').textContent = DAYS[now.getDay()] + ', ' + MON[now.getMonth()] + ' ' + now.getDate();
-  var P = window.AcePlan.plan(), go = document.getElementById('t-go'), lede = document.getElementById('t-lede');
-  if (P.primary) { go.href = P.primary.href; document.getElementById('t-go-label').textContent = P.primary.id === 'diagnostic' ? 'Take the diagnostic' : P.primary.id === 'repair' ? 'Start with Repair' : 'Start: ' + P.primary.title; go.setAttribute('data-step', P.primary.id); }
-  var c = P.counts;
-  lede.textContent = !rec.attempts().length ? 'Start with the diagnostic. It fills Repair, Progress and this plan.'
-    : c.due ? 'Misses that are due back come first, then your weakest topic.' : 'Nothing is due back today. Your weakest topic comes first.';
-  var ol = document.getElementById('t-steps');
-  P.steps.forEach(function (st, i) {
-    var li = el('li'), a = el('a', 'plan-step' + (i === 0 ? ' first' : '') + (st.quiet ? ' quiet' : '')); a.href = st.href; a.setAttribute('data-step', st.id);
-    if (st.topic) a.setAttribute('data-topic', st.section + '|' + st.topic);
-    a.appendChild(el('span', 'num', String(i + 1)));
-    var tx = el('span', 'tx'); tx.appendChild(el('span', 'k', st.k)); tx.appendChild(el('span', 't1', st.title)); tx.appendChild(el('span', 't2', st.line));
-    a.appendChild(tx); li.appendChild(a); ol.appendChild(li);
-  });
-  document.getElementById('t-nsteps').textContent = plural(P.steps.length, 'step', 'steps');
-  var cn = document.getElementById('t-counts');
+  /* ---- (d) Repair: the same count Repair and Progress show ---- */
+  var P = window.AcePlan.plan(), c = P.counts, cn = $('t-counts');
   cn.setAttribute('data-miss-open', String(c.open)); cn.setAttribute('data-miss-due', String(c.due));
-  cn.textContent = c.open ? 'In Repair: ' + plural(c.open, 'miss', 'misses') + ' open, ' + c.due + ' due back today.' : 'Repair is empty. Misses from any set or test land there.';
-  // where you stand: the same bands as Progress
-  var bands = document.getElementById('t-bands');
-  [['bio', 'Biology'], ['gchem', 'Gen Chem'], ['ochem', 'OChem'], ['pat', 'PAT'], ['rc', 'Reading'], ['qr', 'QR']].forEach(function (s) {
-    var b = window.AcePlan.band(s[0]);
-    bands.appendChild(el('span', 'band-name', s[1]));
-    var bar = el('span', 'band'); bar.setAttribute('data-band', String(b.band)); bar.setAttribute('data-section', s[0]); for (var q = 0; q < 3; q++) bar.appendChild(el('span')); bands.appendChild(bar);
-    bands.appendChild(el('span', 'band-word', b.word + (b.n && b.early ? ', early read' : '')));
+  $('r-n').textContent = String(c.open);
+  if (c.open) $('r-line').textContent = plural(c.open, 'miss', 'misses') + ' open, ' + c.due + ' due back today.';
+
+  /* ---- (a) Today and (b) the week, from the saved plan ---- */
+  var state = ls('acelabs_plan_v1'); if (!state || !state.input) state = null;
+  var diag = ls('acelabs_diagnostic_v1');
+  if (state) {
+    var r = B.syncState(state, { today: TODAY, diagnostic: diag, report: ls('acelabs_last_report') });
+    if (r.changed) { state = r.state; state.savedAt = Date.now(); try { localStorage.setItem('acelabs_plan_v1', JSON.stringify(state)); } catch (e) {} }
+  }
+  var plan = state ? B.generate(Object.assign({ nights: window.AceIndex && window.AceIndex.nights }, state.input)) : null;
+  var go = $('t-go'), label = $('t-go-label');
+
+  function recordSteps() {
+    // A student with answers but no plan still sees what the record points to.
+    if (!rec.attempts().length) return;
+    var ol = $('t-steps');
+    P.steps.forEach(function (st, i) {
+      var li = el('li'), a = el('a', 'plan-step'); a.href = S(st.href); a.setAttribute('data-step', st.id);
+      if (st.topic) a.setAttribute('data-topic', st.section + '|' + st.topic);
+      a.appendChild(el('span', 'num', String(i + 1)));
+      var tx = el('span', 'tx'); tx.appendChild(el('span', 'k', st.k)); tx.appendChild(el('span', 't1', st.title)); tx.appendChild(el('span', 't2', st.line));
+      a.appendChild(tx); li.appendChild(a); ol.appendChild(li);
+    });
+    $('rec').hidden = !P.steps.length;
+  }
+
+  if (!plan || !plan.ok) {
+    if (diag) $('t-lede').textContent = 'Your diagnostic is in. Set your test date and your week, and the plan lays out every day from today to the test, starting with what the diagnostic showed.';
+    go.href = S('/plan/');
+    recordSteps();
+    return;
+  }
+
+  function render() {
+    var v = B.todayView(plan, TODAY, state.done || {}, { diagnostic: !!diag });
+    var tasks = $('t-tasks'), pill = $('t-pill');
+    tasks.innerHTML = ''; tasks.hidden = true; $('t-focus').hidden = true; $('t-behind').hidden = true; $('t-total').textContent = '';
+    if (v.state === 'past') {
+      $('t-k').textContent = 'Your plan';
+      $('t-h').textContent = 'Your test date has passed';
+      $('t-lede').textContent = 'Going again? Set your next date and choose Retake. The plan rebuilds around your real attempt.';
+      go.href = S('/plan/'); go.setAttribute('data-step', 'setup'); label.textContent = 'Set a new test date';
+      return;
+    }
+    pill.hidden = false; pill.textContent = v.left === 0 ? 'Test day' : v.left === 1 ? '1 day to test' : v.left + ' days to test';
+    var phase = (plan.phases.filter(function (p) { return p.id === v.day.phase; })[0] || {}).name || '';
+    $('t-k').textContent = phase ? 'Today, ' + phase.toLowerCase() : 'Today';
+    if (v.focus) {
+      var f = $('t-focus'); f.hidden = false; f.textContent = '';
+      f.appendChild(el('b', null, 'Focus from your ' + (v.focus.src === 'diagnostic' ? 'diagnostic' : (v.focus.title || 'last test')) + ': '));
+      f.appendChild(document.createTextNode(v.focus.areas.map(function (a) { return a.label; }).join(', ') + '. The same focus your report gave.'));
+    }
+    var list = v.tasks, lead = false;
+    if (v.state === 'off') {
+      $('t-h').textContent = v.day.kind === 'blackout' ? 'Blocked off today' : 'A day off';
+      $('t-lede').textContent = v.next ? 'Rest counts. Next up, ' + nice(v.next.date) + ': ' + v.next.title + '.' : 'Rest counts.';
+      list = v.next ? v.next.tasks.map(function (t) { return { task: t, done: false }; }) : []; lead = true;
+      go.href = S('/plan/'); go.setAttribute('data-step', 'plan'); label.textContent = 'See the whole plan';
+    } else {
+      $('t-h').textContent = v.day.title;
+      $('t-lede').textContent = v.allDone ? 'Everything for today is done. Rest, or get ahead with a whiteboard.' : v.state === 'test' ? 'Nothing new today. You have done the work.' : 'In this order. Tick each one as you finish; the plan keeps the marks.';
+      var first = v.first || v.day.tasks[0];
+      go.href = S(v.allDone ? '/see/' : first.href); go.setAttribute('data-step', v.allDone ? 'see' : first.kind || 'task');
+      label.textContent = v.allDone ? 'Open a whiteboard' : (v.tasks[0].task === first ? 'Start: ' : 'Next: ') + first.title;
+      if (v.day.minutes && v.state !== 'test') $('t-total').textContent = 'About ' + B.fmtMinutes(v.day.minutes) + ' today';
+    }
+    list.forEach(function (x) {
+      var t = x.task, li = el('li', x.done ? 'is-done' : '');
+      if (lead || v.state === 'test') li.appendChild(el('span'));
+      else {
+        var b = el('button', 'tick'); b.type = 'button'; b.setAttribute('data-task', t.id); b.setAttribute('aria-pressed', String(x.done)); b.setAttribute('aria-label', 'Mark done: ' + t.title);
+        b.innerHTML = '<span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3 3 7-7" fill="none" stroke="#0d2018" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>';
+        li.appendChild(b);
+      }
+      var a = el('a'); a.href = S(t.href); a.setAttribute('data-kind', t.kind || '');
+      var tt = el('span', 'tt'); tt.appendChild(el('b', null, t.title)); if (t.detail) tt.appendChild(el('small', null, t.detail));
+      a.appendChild(tt); if (t.minutes) a.appendChild(el('span', 'm', B.fmtMinutes(t.minutes)));
+      li.appendChild(a); tasks.appendChild(li);
+    });
+    tasks.hidden = !list.length;
+    if (v.missed) { var bh = $('t-behind'); bh.hidden = false; bh.href = S('/plan/'); bh.textContent = v.missed + (v.missed === 1 ? ' earlier day is' : ' earlier days are') + ' not marked done. Rebuild from today on the plan.'; }
+
+    // the week strip
+    var strip = $('w-strip'); strip.innerHTML = ''; strip.hidden = false; $('w-empty').hidden = true;
+    v.week.forEach(function (w) {
+      var li = el('li', w.today ? 'now' : ''); li.setAttribute('data-kind', w.kind); li.setAttribute('data-work', w.work ? '1' : '0'); li.setAttribute('data-done', w.done ? '1' : '0');
+      if (w.today) li.setAttribute('aria-current', 'date');
+      li.appendChild(el('span', 'd', DOW[w.dow])); li.appendChild(el('span', 'n', String(+w.date.slice(8))));
+      li.appendChild(el('span', 'dot'));
+      var word = !w.inPlan ? '' : w.kind === 'test' ? 'Test' : w.kind === 'eve' ? 'Rest' : w.kind === 'full' ? 'Full test' : w.done ? 'Done' : w.work ? shortMin(w.minutes) : 'Off';
+      li.appendChild(el('span', 'w', word));
+      li.title = w.inPlan ? nice(w.date) + ': ' + (w.title || 'Off') : nice(w.date);
+      strip.appendChild(li);
+    });
+  }
+  $('t-tasks').addEventListener('click', function (e) {
+    var b = e.target.closest('[data-task]'); if (!b) return;
+    var id = b.getAttribute('data-task'), day = id.slice(0, 10);
+    state.done = state.done || {};
+    if (state.done[id]) delete state.done[id]; else state.done[id] = 1;
+    var d = plan.days.filter(function (x) { return x.date === day; })[0];
+    if (d && !d.tasks.every(function (k) { return state.done[k.id] || (k.kind === 'diagnostic' && !!diag); })) delete state.done[day];
+    state.savedAt = Date.now(); try { localStorage.setItem('acelabs_plan_v1', JSON.stringify(state)); } catch (err) {}
+    render();
   });
+  render();
 })();
 </script>
-<script src="/shared/ace-tabs.js?v=3" defer></script>
+<script src="/shared/ace-tabs.js?v=4" defer></script>
 </body>
 </html>

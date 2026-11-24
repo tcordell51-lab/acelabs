@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reading Comprehension · Ace Labs</title>
+<meta name="description" content="Reading Comprehension on Ace Labs: the course, passage mapping and timed reading sections.">
+<link rel="icon" type="image/svg+xml" href="/shared/ace-dat-mark.svg">
+<link rel="stylesheet" href="/shared/ace-ui.css?v=8">
+</head>
+<body class="aui">
+<main class="aui-wrap aui-stack" id="main">
+  <header class="aui-hubhead">
+    <div class="aui-stack">
+      <p class="aui-kicker">Section</p>
+      <h1 class="aui-h1">Reading Comprehension</h1>
+      <p class="aui-lede">Fifty questions on three science passages in sixty minutes. Map the passage first, then find each answer in the text.</p>
+      <div class="aui-row">
+        <a class="aui-btn" href="/tools/rc/">Start a reading section</a>
+        <a class="aui-btn aui-btn--quiet" href="/repair/">Repair</a>
+      </div>
+    </div>
+    <img src="/shared/art/rc.webp" alt="" width="900" height="678">
+  </header>
+
+  <section class="aui-card aui-card--flat" aria-label="Your Reading numbers">
+    <div class="aui-stats">
+      <div class="aui-stat"><b id="s-answers">0</b><span>answers</span></div>
+      <div class="aui-stat"><b id="s-right">0</b><span>right</span></div>
+      <div class="aui-stat"><b id="s-due">0</b><span>open in Repair</span></div>
+      <div class="aui-stat"><b id="s-miss">0</b><span>due back today</span></div>
+    </div>
+  </section>
+
+  <section class="aui-stack" aria-labelledby="c-title">
+    <h2 class="aui-h2" id="c-title">Course</h2>
+    <div class="aui-grid">
+    <a class="aui-card aui-card--flat" href="/tools/rc-retold/"><h3 class="aui-h3">RC, Retold</h3><p class="aui-small">The course: ten nights, each with checks.</p></a>
+    </div>
+  </section>
+
+  <section class="aui-stack" aria-labelledby="m-title">
+    <h2 class="aui-h2" id="m-title">See it</h2>
+    <div class="aui-grid">
+    <a class="aui-card aui-card--flat" href="/see/"><h3 class="aui-h3">Whiteboards</h3><p class="aui-small">Reading drawn big: predict first, then reveal.</p></a>
+    <a class="aui-card aui-card--flat" href="/rc/map/"><h3 class="aui-h3">Map it, then find the line</h3><p class="aui-small">Name each paragraph's job. Then every answer lights up its line.</p></a>
+    </div>
+  </section>
+
+  <section class="aui-stack" aria-labelledby="t-title">
+    <h2 class="aui-h2" id="t-title">Practice</h2>
+    <div class="aui-grid">
+    <a class="aui-card aui-card--flat" href="/tools/rc/"><h3 class="aui-h3">Reading sections</h3><p class="aui-small">Timed science passages with search and mark tools. Misses come back by question type.</p></a>
+    </div>
+  </section>
+</main>
+<script src="/shared/ace-record.js?v=6"></script>
+<script src="/shared/ace-ui.js?v=5" defer></script>
+<script>
+(function () {
+  var R = window.AceRecord; if (!R) return;
+  try { R.migrate(); } catch (e) { /* fresh browser */ }
+  var st = R.stats({ section: 'rc' }), L = R.repairList({ now: Date.now() });
+  function mine(e) { return e.section === 'rc'; }
+  function set(id, v) { document.getElementById(id).textContent = String(v || 0); }
+  set('s-answers', st.answers); set('s-right', st.right); set('s-due', L.open.filter(mine).length); set('s-miss', L.due.filter(mine).length);
+})();
+</script>
+<script src="/shared/ace-tabs.js?v=4" defer></script>
+</body>
+</html>

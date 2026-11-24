@@ -19,3 +19,20 @@ test('the brand links to the hub in both bars', () => {
   assert.match(read('ace-ui.js'), /class="aui-bar__brand" href="' \+ withStudent\('\/'\)/);
   assert.match(read('ace-shell.js'), /class="brand" href="' \+ esc\(withStudent\('\/'\)\)/);
 });
+
+// 2026-11-24: the study plan (and the old setup addresses that now forward to it) belongs to Today;
+// the whiteboards at /see/ belong to Labs. All three bars must agree.
+test('the plan lights Today and the whiteboards light Labs in every bar', () => {
+  const vm = require('node:vm');
+  const rx = (src, id) => {
+    const m = src.match(new RegExp("(?:id: '" + id + "'[^\\n]*?match: |\\['" + id + "', )(/\\^.*?/)(?=[,\\] ])"));
+    assert.ok(m, 'found the ' + id + ' rule');
+    return vm.runInNewContext(m[1]);
+  };
+  for (const f of ['ace-ui.js', 'ace-shell.js', 'ace-tabs.js']) {
+    const today = rx(read(f), 'today'), labs = rx(read(f), 'labs');
+    for (const p of ['/', '/plan', '/onboarding', '/for-retakers']) assert.ok(today.test(p), f + ': ' + p + ' is Today');
+    for (const p of ['/see', '/see/cell', '/qr', '/pat', '/rc']) assert.ok(labs.test(p), f + ': ' + p + ' is Labs');
+    assert.ok(!today.test('/planner') && !today.test('/tests'), f + ': Today is not greedy');
+  }
+});
