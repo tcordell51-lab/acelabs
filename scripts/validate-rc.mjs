@@ -92,11 +92,8 @@ export function validatePassage(p, file = p && p.id) {
       if (new Set(q.choices.map((c) => String(c).trim().toLowerCase())).size !== 5) err(`${at} has duplicate choices`);
       if (Number.isInteger(q.key) && q.key >= 0 && q.key < 5) {
         keyCount[q.key]++;
-        const kl = q.choices[q.key].length;
-        const maxOther = Math.max(...q.choices.filter((_, i) => i !== q.key).map((c) => c.length));
-        // Strictly longest is always an error. A tie for longest is an error too, except
-        // among short labels (20 chars or fewer, e.g. "Paragraph 12"), where length carries no tell.
-        if (kl > maxOther || (kl === maxOther && kl > 20)) err(`${at} keyed choice ${'ABCDE'[q.key]} is the longest choice (${kl} vs ${maxOther} chars)`);
+        // Key length is checked per section by scripts/check-key-length.mjs: no length rank may hold more
+        // than 35 percent of a section's keys. ("Never the longest" made the key the second longest far too often.)
       }
     }
     if (!Number.isInteger(q.key) || q.key < 0 || q.key > 4) err(`${at} key must be an integer 0 to 4`);

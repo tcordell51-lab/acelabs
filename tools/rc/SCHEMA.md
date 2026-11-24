@@ -72,8 +72,8 @@ Migrated items keep their original label in `subtype` (`locate`, `purpose`, `str
 ## Rules the validator enforces
 
 - Exactly five distinct choices; `key` 0 to 4.
-- The keyed choice is never the longest choice: strictly shorter than the longest, except
-  that short labels of 20 characters or fewer ("Paragraph 12") may tie.
+- Key length carries no tell: within a 50-question section no length rank (shortest to longest)
+  holds more than 35 percent of the keys. `node scripts/check-key-length.mjs` reports and enforces it.
 - Every proof line exists and its quote is found in it.
 - `type` is one of the eight above; EXCEPT items carry EXCEPT, NOT or LEAST in capitals.
 - No em dashes, en dashes, or emoji anywhere in the text.

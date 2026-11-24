@@ -93,7 +93,7 @@
       return { tag: 'Trap', tone: 'trap', text: (t.count === miss ? 'All ' + miss + ' of your misses' : t.count + ' of your ' + miss + ' misses') + ' picked the same trap: ' + String(t.label).toLowerCase() + '. Learn what that wrong answer looks like and it stops working on you.' };
     }
     if (avg && a.paceSec && avg < a.paceSec * 0.5) {
-      return { tag: 'Rushed', tone: 'clock', text: 'You spent about ' + secs(avg) + ' on each miss here, against a pace of about ' + secs(a.paceSec) + '. These went by too fast: slow down on the read and name what the question asks.' };
+      return { tag: 'Rushed', tone: 'clock', text: 'You spent ' + (avg < 5 ? 'only a few seconds' : 'about ' + secs(avg)) + ' on each miss here, against a pace of about ' + secs(a.paceSec) + '. These went by too fast: slow down on the read and name what the question asks.' };
     }
     if (avg && a.paceSec && avg > a.paceSec * 1.5) {
       return { tag: 'Slow method', tone: 'clock', text: 'Each miss took about ' + secs(avg) + ', against a pace of about ' + secs(a.paceSec) + '. The method is not automatic yet, so it costs time and still slips.' };
@@ -101,7 +101,7 @@
     if (t) {
       return { tag: 'Trap', tone: 'trap', text: 'You missed ' + miss + ' of ' + a.total + '. One pick fell for ' + String(t.label).toLowerCase() + '; the rest point to the concept itself. Rebuild it, then drill.' };
     }
-    return { tag: 'Concept', tone: 'concept', text: 'You missed ' + miss + ' of ' + a.total + (avg && a.paceSec ? ', at about ' + secs(avg) + ' a question, so the clock was not the problem' : '') + '. The concept itself needs a rebuild: learn it once properly, then drill it.' };
+    return { tag: 'Concept', tone: 'concept', text: 'You missed ' + miss + ' of ' + a.total + (avg >= 5 && a.paceSec ? ', at about ' + secs(avg) + ' a question, so the clock was not the problem' : '') + '. The concept itself needs a rebuild: learn it once properly, then drill it.' };
   }
 
   function ring(a, color) {
@@ -120,7 +120,7 @@
     if (a.drill && a.drill.href) links += '<a class="anx-link" href="' + esc(a.drill.href) + '"><span class="anx-link__k">Drill it</span><span class="anx-link__t">' + esc(a.drill.label) + '</span></a>';
     return '<li class="anx-area" style="--anx-c:' + s.c + '" data-section="' + esc(a.section) + '">' +
       '<div class="anx-area__top"><span class="anx-rank" aria-hidden="true">' + (i + 1) + '</span>' +
-      '<div class="anx-area__name"><span class="anx-area__sec">' + esc(s.name) + '</span><b>' + esc(a.label) + '</b></div>' + ring(a, s.c) + '</div>' +
+      '<div class="anx-area__name"><span class="anx-area__sec">' + esc(s.name) + '</span><b>' + esc(a.label) + '</b>' + (a.nick ? '<span class="anx-area__nick">In the course: ' + esc(a.nick) + '</span>' : '') + '</div>' + ring(a, s.c) + '</div>' +
       '<p class="anx-why"><span class="anx-tag anx-tag--' + w.tone + '">' + esc(w.tag) + '</span>' + esc(w.text) + '</p>' +
       (links ? '<div class="anx-links">' + links + '</div>' : '') + '</li>';
   }
@@ -186,6 +186,17 @@
     '.anx-rank{flex:none;width:30px;height:30px;border-radius:50%;background:var(--anx-c);color:#fff;font-weight:800;font-size:15px;display:flex;align-items:center;justify-content:center}',
     '.anx-area__name{flex:1;min-width:0;display:flex;flex-direction:column}',
     '.anx-area__name b{font-size:17px;line-height:1.3;overflow-wrap:anywhere}',
+    '.anx-area__nick{font-size:13px;color:var(--anx-ink3)}',
+    '.anx-score{background:var(--anx-paper);border:1px solid var(--anx-line);border-radius:14px;padding:14px 16px;margin:0 0 22px}',
+    '.anx-score__big{font-family:"Playfair Display",Georgia,serif;font-size:26px;font-weight:700;line-height:1.2;margin:0}',
+    '.anx-score__big span{font-family:"DM Sans",system-ui,sans-serif;font-size:16px;font-weight:600;color:var(--anx-ink2)}',
+    '.anx-score ul{list-style:none;margin:12px 0 0;padding:0;display:grid;gap:8px;grid-template-columns:1fr}',
+    '.anx-score li{display:grid;grid-template-columns:1fr auto;gap:2px 12px;align-items:center;font-size:15px}',
+    '.anx-score li b{font-variant-numeric:tabular-nums}',
+    '.anx-score__bar{grid-column:1 / -1;height:6px;border-radius:999px;background:rgba(27,58,45,.12);overflow:hidden}',
+    '.anx-score__bar i{display:block;height:100%;background:var(--anx-forest);border-radius:999px}',
+    '.anx-score__note{margin:12px 0 0;font-size:14px;color:var(--anx-ink3)}',
+    '@container (min-width:600px){.anx-score ul{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 24px}}',
     '.anx-area__sec{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--anx-ink3);font-weight:700}',
     '.anx-ring{flex:none}',
     '.anx-why{margin:0;color:var(--anx-ink2);font-size:15px}',
@@ -250,7 +261,7 @@
   function link(l) { return l && l.href ? { href: String(l.href), label: String(l.label || '') } : null; }
   function remember(o, top) {
     var focus = { src: o.src || 'test', title: o.title || '', date: localDate(), at: Date.now(), pct: o.pct == null ? null : Math.round(o.pct * 100) / 100,
-      areas: top.map(function (a) { return { section: a.section, label: a.label, correct: a.correct, total: a.total, learn: link(a.learn), drill: link(a.drill) }; }) };
+      areas: top.map(function (a) { return { section: a.section, label: a.label, nick: a.nick || '', correct: a.correct, total: a.total, learn: link(a.learn), drill: link(a.drill) }; }) };
     var inPlan = false;
     try { localStorage.setItem(K_LAST, JSON.stringify(focus)); } catch (e) { /* cache only */ }
     try {
@@ -265,13 +276,23 @@
     return inPlan;
   }
 
+  /* Percent correct, overall and per section. No scaled score: the ADA publishes no raw-to-scaled table. */
+  function scoreCard(sc) {
+    if (!sc || !sc.total) return '';
+    var p = function (c, n) { return n ? Math.round(100 * c / n) : 0; };
+    return '<div class="anx-score" data-anx-score><p class="anx-kicker">Your score</p>' +
+      '<p class="anx-score__big">' + p(sc.correct, sc.total) + '% correct <span>' + sc.correct + ' of ' + sc.total + ' overall</span></p>' +
+      '<ul>' + (sc.sections || []).map(function (s) { var q = p(s.correct, s.total); return '<li><span>' + esc(s.name) + '</span><b>' + q + '% <span style="font-weight:400;color:var(--anx-ink3)">(' + s.correct + ' of ' + s.total + ')</span></b><span class="anx-score__bar"><i style="width:' + q + '%"></i></span></li>'; }).join('') + '</ul>' +
+      '<p class="anx-score__note">The real DAT reports scaled scores from 200 to 600. A scaled score cannot be computed from a raw count, so this report shows percent correct only.</p></div>';
+  }
+
   function render(host, o) {
     if (!host) return null;
     o = o || {};
     css();
     var top = rank(o.areas), days = daysToTest();
     var inPlan = remember(o, top);
-    var h = '<section class="anx' + (top.length === 1 ? ' anx--one' : '') + '" aria-labelledby="anx-h">';
+    var h = '<section class="anx' + (top.length === 1 ? ' anx--one' : '') + '" aria-labelledby="anx-h">' + scoreCard(o.score);
     if (!top.length) {
       h += '<div class="anx-head"><p class="anx-kicker">What to do next</p><h2 id="anx-h">Nothing missed. Keep it warm.</h2><p>No weak area showed up on this one. Keep each section warm with one short set a week, and take the next test under the clock.</p></div>';
       if (o.retest && o.retest.href) h += '<p><a class="anx-btn anx-btn--forest" href="' + esc(o.retest.href) + '">' + esc(o.retest.label) + '</a></p>';
@@ -280,7 +301,7 @@
       return { top: top, days: days };
     }
     h += '<div class="anx-head"><p class="anx-kicker">What to do next</p><h2 id="anx-h">Your ' + (top.length === 1 ? 'weakest area' : ['', '', 'two', 'three'][top.length] + ' weakest areas') + ', and the fix</h2>' +
-      '<p>Ranked from this test\'s raw counts. Each one says why the points went and opens the exact page that fixes it.' +
+      '<p>Ranked from this test\'s raw counts. Each one says why the points went and links the lesson that teaches it and the practice that drills it.' +
       (top.every(function (a) { return a.total <= 2; }) ? ' Each rests on one or two questions, so the drill doubles as a check.' : '') + '</p></div>';
     h += '<ol class="anx-areas">' + top.map(areaCard).join('') + '</ol>';
     var steps = week(top, o, days), coach = coachCard(top, o, days), light = /anx-coach--light/.test(coach);
@@ -298,5 +319,5 @@
     return { top: top, days: days };
   }
 
-  window.AceNextSteps = { version: 1, render: render, rank: rank, why: why, daysToTest: daysToTest, fromPortal: fromPortal, CONTACT: CONTACT, PORTAL_MSG: PORTAL_MSG };
+  window.AceNextSteps = { version: 2, render: render, rank: rank, why: why, daysToTest: daysToTest, fromPortal: fromPortal, CONTACT: CONTACT, PORTAL_MSG: PORTAL_MSG };
 })();

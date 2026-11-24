@@ -378,7 +378,7 @@
     var h = '<div class="pm-subject">' + subj + '</div><div class="pm-stem">' + esc(it.q) + '</div>';
     if (it.qs) h += '<div class="pm-mol pm-stem-mol"><canvas data-smiles="' + esc(it.qs) + '" width="380" height="170"></canvas></div>';
     if (it.img) h += '<div class="pm-fig"><img src="' + esc(it.img) + '" alt="' + esc(it.imgAlt || '') + '" style="display:block;max-width:100%;height:auto;margin:6px 0 10px;background:#fff"></div>';
-    h += '<div class="pm-opts" role="radiogroup">' + it.opts.map(function (o, i) {
+    h += '<div class="pm-opts' + (it.os ? ' pm-opts--mol' : '') + '" role="radiogroup">' + it.opts.map(function (o, i) {
       var inner = it.os ? '<span class="pm-mol"><canvas data-smiles="' + esc(o) + '" width="300" height="140"></canvas></span>' : esc(o);
       return optRow(i, inner, a === i);
     }).join('') + '</div>';
@@ -406,7 +406,7 @@
     if (!cs.length) return;
     if (R.smi === null) {
       try {
-        R.smi = typeof window.SmiDrawer === 'function' ? new window.SmiDrawer({ width: 300, height: 140, padding: 6, bondThickness: 1.2, bondLength: 18, shortBondLength: 0.85, compactDrawing: true, explicitHydrogens: false, fontSizeLarge: 11, fontSizeSmall: 8, themes: { light: { C: '#1a1d20', O: '#cf3b3b', N: '#3a78c4', Cl: '#2e8a3e', Br: '#8a4a2a', F: '#3aa83a', I: '#7a3a8a', S: '#a08a1a', P: '#c06a1a', H: '#1a1d20', BACKGROUND: '#fff' } } }) : false;
+        R.smi = typeof window.SmiDrawer === 'function' ? new window.SmiDrawer({ width: 300, height: 140, padding: 6, bondThickness: 2, bondLength: 18, shortBondLength: 0.85, compactDrawing: true, explicitHydrogens: false, fontSizeLarge: 12, fontSizeSmall: 8, themes: { light: { C: '#0b0d0f', O: '#b3261e', N: '#1f5fae', Cl: '#2e8a3e', Br: '#8a4a2a', F: '#3aa83a', I: '#7a3a8a', S: '#a08a1a', P: '#c06a1a', H: '#1a1d20', BACKGROUND: '#fff' } } }) : false;
       } catch (e) { R.smi = false; }
     }
     Array.prototype.forEach.call(cs, function (c) {
@@ -547,6 +547,10 @@
       w = makeWin('pmCalc', 'pm-calc', 'Calculator', '<div class="disp" id="calcDisp">0</div><div class="memf" id="calcMem"></div><div class="keys">' +
         keys.map(function (k) { return '<button type="button" class="' + (k[1] || '') + '" data-k="' + k[0] + '">' + k[0] + '</button>'; }).join('') + '</div>');
       w.querySelector('[data-close]').addEventListener('click', toggleCalc);
+      // phone: the calculator docks under the top bar (full.css); this button folds the keys away
+      var fold = document.createElement('button'); fold.type = 'button'; fold.className = 'pm-calc-fold'; fold.textContent = 'Hide keys'; fold.setAttribute('aria-expanded', 'true');
+      fold.addEventListener('click', function () { var min = w.classList.toggle('min'); fold.textContent = min ? 'Show keys' : 'Hide keys'; fold.setAttribute('aria-expanded', String(!min)); });
+      w.querySelector('.bar').insertBefore(fold, w.querySelector('[data-close]'));
       Array.prototype.forEach.call(w.querySelectorAll('[data-k]'), function (b) { b.addEventListener('click', function () { calcKey(b.dataset.k); }); });
     }
     if (w) w.classList.toggle('hidden', !R.calcOpen);
@@ -656,20 +660,21 @@
      review on /review/ (shared/ace-test-review.js). PAT and Reading rows repair by skill. */
   function toSharedRecord(st, rec) {
     if (!window.AceTestReview || !window.AceRecord) return;
-    var rows = [], SUBSEC = { 'Biology': 'bio', 'Gen Chem': 'gchem', 'OChem': 'ochem', 'QR': 'qr' };
+    var EX = window.AceMockExplain, rows = [], SUBSEC = { 'Biology': 'bio', 'Gen Chem': 'gchem', 'OChem': 'ochem', 'QR': 'qr' };
     SECTION_KEYS.forEach(function (sk) {
       items(sk).forEach(function (x, i) {
         var picked = st.answers[sk][i];
         // topic: the course stop (tests 1 to 4) so shared/ace-skills.js can tag it; the new forms carry their skill
-        if (x.kind === 'mc') rows.push({ item: Object.assign({}, x.it, { section: SUBSEC[x.sub] || x.it.section, topic: x.it.stop || x.it.topic, topicName: x.it.topic }), picked: picked == null ? null : picked });
+        if (x.kind === 'mc') rows.push({ item: Object.assign({}, x.it, { section: SUBSEC[x.sub] || x.it.section, topic: x.it.stop || x.it.topic, topicName: x.it.topic, why: EX ? EX.text(x.it, picked) : x.it.why }), picked: picked == null ? null : picked });
         else if (x.kind === 'pat') {
           var name = (PAT.SECTIONS.filter(function (s) { return s.type === x.it.type; })[0] || {}).name || x.it.type;
           rows.push({ item: { id: 'pat:' + st.mockId + ':' + (i + 1), section: 'pat', topic: x.it.type, topicName: name, answer: x.it.answer, note: 'PAT, ' + name + ', question ' + (i + 1) + '. The figure is in this test\u2019s report.' }, picked: picked == null ? null : picked });
-        } else if (x.kind === 'rc') rows.push({ item: { id: x.q.id, section: 'rc', topic: x.q.type, topicName: (RC.types && RC.types[x.q.type]) || x.q.type, stem: x.q.stem, choices: x.q.choices, answer: x.q.key, why: x.q.why || '' }, picked: picked == null ? null : picked });
+        } else if (x.kind === 'rc') rows.push({ item: { id: x.q.id, section: 'rc', topic: x.q.type, topicName: (RC.types && RC.types[x.q.type]) || x.q.type, stem: x.q.stem, choices: x.q.choices, answer: x.q.key, why: EX ? EX.rcText(x.q, picked) : (x.q.why || '') }, picked: picked == null ? null : picked });
       });
     });
     window.AceTestReview.finish({ src: 'full-length', title: rec.testName || 'Full-length test', rows: rows, back: '/tools/mock/full.html' }).then(function (id) {
       ['rvLink', 'rvTop'].forEach(function (k) { var a = document.getElementById(k); if (a) { a.href = '/review/?run=' + encodeURIComponent(id); a.hidden = false; } });
+      var t = document.getElementById('rvTop'); if (t) t.textContent = 'Review every question';
       var b = document.getElementById('rvLink'); if (b) b.hidden = true;   // one primary button: the one at the top
     });
   }
@@ -700,7 +705,7 @@
     }).join('');
     var tps = Object.keys(res.topics).map(function (k) { var r = res.topics[k], parts = k.split('|'); return { sub: parts[0], topic: parts[1], c: r.correct, n: r.total, p: pct(r.correct, r.total) }; })
       .filter(function (t) { return t.n >= 2 && t.c < t.n; }).sort(function (a, b) { return a.p - b.p || b.n - a.n; }).slice(0, 12);
-    var topicRows = tps.map(function (t) { return '<tr><td><b>' + esc(t.topic) + '</b><br><span style="font-size:12px;color:var(--muted)">' + esc(subjName(t.sub)) + '</span></td><td class="r">' + t.c + ' / ' + t.n + '</td><td class="r hide-sm">' + meter(t.p) + '</td><td class="r"><a href="' + STUDY[t.sub].review + '">' + STUDY[t.sub].engine + '</a></td></tr>'; }).join('');
+    var topicRows = tps.map(function (t) { var tm = topicMeta(t.sub, t.topic), dr = drillFor(t.sub, tm.stop); return '<tr><td><b>' + esc(t.topic) + '</b><br><span style="font-size:13px;color:var(--muted)">' + esc(subjName(t.sub)) + (tm.nick ? ', in the course as "' + esc(tm.nick) + '"' : '') + '</span></td><td class="r">' + t.c + ' / ' + t.n + '</td><td class="r hide-sm">' + meter(t.p) + '</td><td class="r"><a href="' + dr.href + '">' + esc(dr.label) + '</a></td></tr>'; }).join('');
     var bySec = {}; res.misses.forEach(function (ms) { (bySec[ms.sec] = bySec[ms.sec] || []).push(ms); });
     var missHTML = SECTION_KEYS.map(function (k) {
       var list = bySec[k] || [];
@@ -721,6 +726,7 @@
       '<div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:24px"><a class="btn gold" href="/review/" id="rvLink" hidden>Review question by question, then Repair</a><a class="btn" href="#" id="toList2">Back to full-length tests</a><a class="btn" href="/">Back to Today</a></div></div>';
     if (window.AceNextSteps) {
       window.AceNextSteps.render($('nextSteps'), { src: 'full-length', title: m ? m.name : 'Full-length test', pct: rec.totalQs ? rec.totalCorrect / rec.totalQs : null, areas: nextAreas(st),
+        score: { correct: rec.totalCorrect, total: rec.totalQs, sections: [['sons', 'Natural Sciences'], ['pat', 'Perceptual Ability'], ['rc', 'Reading Comprehension'], ['qr', 'Quantitative Reasoning']].map(function (p) { return { name: p[0] === 'sons' ? 'Survey of the Natural Sciences' : p[1], correct: sec[p[0]].correct, total: sec[p[0]].total }; }) },
         retest: { href: '/tools/minitests/', label: 'Check the fixes on The Climb', detail: 'One 40-question rung under the clock. Save the next full-length for next week.', cta: 'Open The Climb' } });
     }
     var back = function (e) { e.preventDefault(); renderLanding(); window.scrollTo(0, 0); };
@@ -744,6 +750,17 @@
   var PAT_NIGHT = { keyholes: 2, tfe: 3, angles: 4, holepunch: 5, patternfold: 6, cubes: 7 };
   var RC_NIGHT = { detail: 4, vocab: 4, except: 4, mainidea: 5, 'function': 5, inference: 6, application: 6, tone: 7 };
   function nightName(sec, n, fallback) { var t = window.AceRoute && window.AceRoute.nightTitle ? window.AceRoute.nightTitle(sec, n) : ''; return 'Night ' + n + ': ' + (t || fallback); }
+  /* A topic's course stop and nickname, and the practice set that drills it (tools/mock/explain.js).
+     A topic with no set of its own links the section's practice page and says so. */
+  function topicMeta(sub, topic) {
+    var hit = null;
+    SECTION_KEYS.forEach(function (sk) { if (!hit) items(sk).forEach(function (x) { if (!hit && x.kind === 'mc' && x.sub === sub && x.it.topic === topic) hit = x.it; }); });
+    return hit ? { stop: hit.stop, nick: hit.nick && hit.nick !== topic ? hit.nick : '' } : {};
+  }
+  function drillFor(sub, stop) {
+    var d = window.AceMockExplain && stop ? window.AceMockExplain.drill(sub, stop) : null;
+    return d || { href: STUDY[sub].review, label: 'All topics in the ' + STUDY[sub].engine };
+  }
   function nextAreas(st) {
     var map = {}, out = [];
     SECTION_KEYS.forEach(function (sk) {
@@ -752,7 +769,7 @@
         if (x.kind === 'mc') { key = x.sub + '|' + x.it.topic; label = x.it.topic; }
         else if (x.kind === 'pat') { type = x.it.type; key = 'PAT|' + type; label = (PAT.SECTIONS.filter(function (s) { return s.type === type; })[0] || {}).name || type; pace = PAT_PACE[type]; }
         else { type = x.q.type; key = 'RC|' + type; label = ((RC && RC.types && RC.types[type]) || type) + ' questions'; }
-        var r = map[key] || (map[key] = { section: sec, label: label, correct: 0, total: 0, blank: 0, missSec: [], paceSec: pace, trapN: {}, nightN: {}, sub: x.sub, type: type });
+        var r = map[key] || (map[key] = { section: sec, label: label, correct: 0, total: 0, blank: 0, missSec: [], paceSec: pace, trapN: {}, nightN: {}, sub: x.sub, type: type, stop: x.kind === 'mc' ? x.it.stop : null, nick: x.kind === 'mc' && x.it.nick && x.it.nick !== x.it.topic ? x.it.nick : '' });
         r.total++;
         if (ok) { r.correct++; return; }
         if (a == null) r.blank++;
@@ -775,7 +792,7 @@
       } else {
         var best = Object.keys(r.nightN).sort(function (a, b) { return r.nightN[b] - r.nightN[a]; })[0];
         r.learn = best ? { href: st2.learn + '?night=' + best, label: nightName(r.section, +best, r.label) } : { href: st2.learn, label: subjName(r.sub) + ', Retold' };
-        r.drill = { href: st2.review, label: r.label + ' in the ' + st2.engine };
+        r.drill = drillFor(r.sub, r.stop);
       }
       out.push(r);
     });
@@ -793,7 +810,7 @@
       if (it.qs) h += '<span class="pm-mol" style="display:block;max-width:300px"><canvas data-smiles="' + esc(it.qs) + '" width="300" height="140"></canvas></span>';
       if (it.img) h += '<img src="' + esc(it.img) + '" alt="' + esc(it.imgAlt || '') + '" style="display:block;max-width:100%;height:auto;margin:6px 0;background:#fff">';
       h += '<div class="a">Your answer: <b>' + (ms.ans == null ? 'left open' : L[ms.ans] + '. ' + show(ms.ans)) + '</b><br>Correct: <b>' + L[it.correct] + '. ' + show(it.correct) + '</b></div>';
-      h += '<div class="why">' + esc(it.why) + (ms.ans != null && it.traps && it.traps[ms.ans] ? '<br><br><b>About your pick:</b> ' + esc(it.traps[ms.ans]) : '') + '</div>';
+      h += '<div class="why">' + (window.AceMockExplain ? window.AceMockExplain.html(it, ms.ans) : esc(it.why)) + '</div>';
       var night = it.nights && it.nights[0];
       h += seeChip({ section: x.sub, topic: it.stop || it.topic, topicName: it.topic, stem: it.q });
       h += '<div class="links"><a href="' + st.learn + (night ? '?night=' + night : '') + '">' + (night ? 'Retold night ' + night + ': ' : 'Retold: ') + esc(it.topic) + '</a><a href="' + st.review + '">' + st.engine + '</a></div>';
@@ -809,7 +826,7 @@
     } else {
       var q = x.q, pr = (q.proof || [])[0];
       h += '<div class="q">' + esc(q.stem) + '</div><div class="a">Your answer: <b>' + (ms.ans == null ? 'left open' : L[ms.ans] + '. ' + esc(q.choices[ms.ans])) + '</b><br>Correct: <b>' + L[q.key] + '. ' + esc(q.choices[q.key]) + '</b></div>' +
-        '<div class="why">' + (pr ? '<b>Proof line, paragraph ' + pr.paragraph + ':</b> "' + esc(pr.quote) + '"<br><br>' : '') + esc(q.why) + '</div>' + seeChip({ section: 'rc', topic: q.type, topicName: (RC && RC.types && RC.types[q.type]) || q.type }) +
+        '<div class="why">' + (window.AceMockExplain ? window.AceMockExplain.rcHtml(q, ms.ans) : (pr ? '<b>Proof line, paragraph ' + pr.paragraph + ':</b> "' + esc(pr.quote) + '"<br><br>' : '') + esc(q.why)) + '</div>' + seeChip({ section: 'rc', topic: q.type, topicName: (RC && RC.types && RC.types[q.type]) || q.type }) +
         '<div class="links"><a href="/tools/rc/">Practice this passage in the RC player</a><a href="' + st.learn + '">Reading, Retold</a></div>';
     }
     return h + '</div>';
