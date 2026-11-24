@@ -257,6 +257,8 @@ body[data-page="onboarding"]{
   min-height:16px;
 }
 .ob-note.ob-error{color:var(--al-trap);font-style:normal;font-weight:600;}
+.ob-plan-link{margin-top:14px;}
+.ob-plan-link .ob-btn{min-height:44px;}
 </style>
 </head>
 <body data-page="onboarding">
@@ -386,6 +388,7 @@ body[data-page="onboarding"]{
     <button class="ob-btn ob-btn-back" onclick="goToStep(2)">Back</button>
     <button class="ob-btn ob-btn-primary" id="btn3Submit" onclick="submitOnboarding()">Go to my path</button>
   </div>
+  <p class="ob-plan-link"><button type="button" class="ob-btn ob-btn-back" id="btn3Plan" onclick="submitOnboarding('plan')">Build my day-by-day plan</button></p>
 </div>
 
 <!-- FOOT -->
@@ -472,7 +475,7 @@ body[data-page="onboarding"]{
     }, 0);
   };
 
-  window.submitOnboarding = function(){
+  window.submitOnboarding = function(dest){
     // Gather data
     var testDate  = document.getElementById('testDateInput').value;
     var attempt   = attemptVal || 'first';
@@ -490,6 +493,8 @@ body[data-page="onboarding"]{
       if(testDate) localStorage.setItem('acelabs_test_date', testDate);
       else localStorage.removeItem('acelabs_test_date');
     } catch(e){}
+
+    if(dest === 'plan'){ window.location.href = '/plan/'; return; }
 
     // Route decision
     var today = new Date();

@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Your study plan | Ace Labs</title>
+<meta name="description" content="Ace Labs study plan: every day from today to your DAT, built from your test date, your hours and how each section feels, with a link to the exact page for each task.">
+<link rel="icon" type="image/svg+xml" href="/shared/ace-dat-mark-reversed.svg">
+<link rel="stylesheet" href="/shared/ace-pages.css?v=4">
+<style>
+  /* Study plan builder (2026-11-24). Cream paper, forest and gold, Playfair headings, DM Sans body.
+     Phases each have one colour, used on the timeline, the at-a-glance grid and the day rows. */
+  :root {
+    --ph-learn: #2f5f9e; --ph-drill: #2f7d4f; --ph-testing: #9a6b12; --ph-final: #6b4fa0; --ph-eve: #3a4a42; --ph-test: #0d2018;
+    --full: #a3352b; --line: rgba(27, 58, 45, 0.14); --paper: #FCFAF6; --forest: #1B3A2D;
+  }
+  [hidden] { display: none !important; }
+  .plan { padding-bottom: 10px; }
+  .has-plan .page-head .lede { display: none; }
+  .page-head { padding: 34px 0 18px; }
+  @media (max-width: 720px) { .page-head { padding: 22px 0 12px; } }
+  .page-head h1 { max-width: 16ch; }
+  .page-head .lede { margin-top: 10px; }
+  .k { margin: 0 0 6px; font-size: 12px; font-weight: 750; letter-spacing: 0.16em; text-transform: uppercase; color: var(--gold-text); }
+  .pill { display: inline-flex; align-items: center; min-height: 30px; padding: 0 12px; border: 1px solid var(--gold-border); border-radius: 999px; font-size: 12px; font-weight: 750; letter-spacing: 0.08em; text-transform: uppercase; color: var(--gold-light); white-space: nowrap; font-variant-numeric: lining-nums tabular-nums; background: var(--gold-bg); }
+  .ph-chip { display: inline-flex; align-items: center; gap: 7px; font-size: 12px; font-weight: 750; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-mid); }
+  .ph-chip::before { content: ""; width: 10px; height: 10px; border-radius: 3px; background: var(--ph, var(--gold)); }
+  [data-phase="learn"] { --ph: var(--ph-learn); } [data-phase="drill"] { --ph: var(--ph-drill); } [data-phase="testing"] { --ph: var(--ph-testing); }
+  [data-phase="final"] { --ph: var(--ph-final); } [data-phase="eve"] { --ph: var(--ph-eve); } [data-phase="test"] { --ph: var(--ph-test); }
+  .num { font-variant-numeric: lining-nums tabular-nums; }
+
+  /* ---------- today ---------- */
+  .today { position: relative; overflow: hidden; padding: 20px 18px 18px; border: 1px solid var(--gold-border); border-radius: 18px; background: linear-gradient(160deg, #F3E9CF 0%, var(--paper) 58%); box-shadow: 0 2px 6px rgba(13,32,24,.06), 0 16px 40px rgba(13,32,24,.05); }
+  @media (min-width: 900px) { .today { padding: 28px 32px 26px; } }
+  .today::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 5px; background: var(--ph, var(--gold)); }
+  .today-top { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 12px; margin-bottom: 10px; }
+  .today h2 { font-size: clamp(26px, 4.4vw, 40px); line-height: 1.08; margin: 4px 0 6px; }
+  .today .why { margin: 0 0 14px; color: var(--text-mid); font-size: 15px; max-width: 62ch; }
+  .tasks { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); }
+  .tasks li { display: grid; grid-template-columns: 44px minmax(0, 1fr); gap: 4px 12px; align-items: start; padding: 12px 0; border-bottom: 1px solid var(--line); }
+  @media (min-width: 640px) { .tasks li { grid-template-columns: 44px minmax(0, 1fr) auto; align-items: center; } }
+  .tick { width: 44px; height: 44px; display: grid; place-items: center; border: 0; background: none; padding: 0; cursor: pointer; border-radius: 12px; }
+  .tick span { width: 26px; height: 26px; border-radius: 8px; border: 2px solid var(--gold-dim); display: grid; place-items: center; background: #fff; transition: background .15s ease, border-color .15s ease; }
+  .tick svg { width: 16px; height: 16px; opacity: 0; }
+  .tick[aria-pressed="true"] span { background: var(--forest); border-color: var(--forest); }
+  .tick[aria-pressed="true"] svg { opacity: 1; }
+  .tasks .t { min-width: 0; }
+  .tasks .t b { display: block; font-weight: 650; font-size: 16px; line-height: 1.3; color: var(--text-hi); }
+  .tasks .t small { display: block; margin-top: 3px; color: var(--text-mid); font-size: 14px; line-height: 1.45; }
+  .tasks .t .meta { display: inline-flex; flex-wrap: wrap; gap: 6px 10px; margin-top: 6px; font-size: 12.5px; font-weight: 700; color: var(--text-lo); letter-spacing: 0.04em; }
+  .tasks .t .meta i { font-style: normal; display: inline-flex; align-items: center; gap: 6px; }
+  .tasks .t .meta i[data-section]::before { content: ""; width: 8px; height: 8px; border-radius: 2px; background: var(--rail); }
+  .tasks li.is-done .t b { color: var(--text-lo); text-decoration: line-through; text-decoration-color: rgba(27,58,45,.35); }
+  .tasks .go { grid-column: 2; justify-self: start; }
+  @media (min-width: 640px) { .tasks .go { grid-column: auto; } }
+  .open { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 0 18px; border-radius: 999px; border: 1px solid var(--gold-border); background: #fff; color: var(--text-hi); font-weight: 700; font-size: 14px; text-decoration: none; white-space: nowrap; }
+  .open:hover { border-color: var(--gold); }
+  .open.primary { background: var(--forest); border-color: var(--forest); color: #F5F0E8; }
+  .today-foot { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; margin-top: 14px; }
+  .today-foot .total { color: var(--text-mid); font-size: 14px; }
+  .behind { margin: 12px 0 0; padding: 10px 14px; border-radius: 10px; border: 1px solid rgba(155, 69, 0, .28); background: rgba(213, 94, 0, .06); color: var(--text-hi); font-size: 14.5px; }
+  .behind button { background: none; border: 0; padding: 0 2px; min-height: 44px; color: var(--trap-ink); font-weight: 750; text-decoration: underline; cursor: pointer; }
+
+  /* ---------- overview ---------- */
+  .panel { min-width: 0; padding: 18px 18px 18px; border: 1px solid var(--line); border-radius: 16px; background: var(--paper); }
+  @media (min-width: 900px) { .panel { padding: 22px 24px; } }
+  .overview { display: grid; gap: 12px; margin-top: 12px; grid-template-columns: minmax(0, 1fr); }
+  @media (min-width: 960px) { .overview { grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr); } }
+  .panel h2 { font-size: 22px; }
+  .stats { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin: 14px 0 0; }
+  @media (min-width: 640px) { .stats { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+  .stat { padding: 10px 12px; border-radius: 12px; background: var(--bg-base); border: 1px solid var(--line); }
+  .stat b { display: block; font-family: var(--display); font-size: 28px; line-height: 1.05; color: var(--text-hi); font-variant-numeric: lining-nums tabular-nums; }
+  .stat span { display: block; margin-top: 3px; font-size: 12.5px; color: var(--text-mid); line-height: 1.3; }
+
+  .timeline { margin: 40px 0 0; }
+  .tl-bar { position: relative; display: flex; height: 18px; border-radius: 99px; overflow: visible; background: var(--bg-deep); }
+  .tl-seg { height: 100%; background: var(--ph); min-width: 4px; }
+  .tl-seg:first-child { border-radius: 99px 0 0 99px; } .tl-seg:last-child { border-radius: 0 99px 99px 0; }
+  .tl-fl { position: absolute; top: -7px; width: 4px; height: 32px; margin-left: -2px; border-radius: 2px; background: var(--full); box-shadow: 0 0 0 2px var(--paper); }
+  .tl-now { position: absolute; top: -10px; width: 0; height: 38px; margin-left: -1px; border-left: 2px dashed var(--text-hi); }
+  .tl-now::after { content: "Today"; position: absolute; top: -20px; left: -4px; font-size: 11px; font-weight: 750; letter-spacing: .08em; text-transform: uppercase; color: var(--text-hi); }
+  .tl-legend { display: flex; flex-wrap: wrap; gap: 8px 16px; margin: 14px 0 0; padding: 0; list-style: none; }
+  .tl-legend li { font-size: 13px; color: var(--text-mid); }
+  .tl-legend li b { display: block; color: var(--text-hi); font-weight: 700; font-size: 13.5px; }
+  .tl-legend li.fl-key .ph-chip::before { background: var(--full); width: 4px; height: 14px; border-radius: 2px; }
+
+  .glance { margin-top: 18px; }
+  .glance-grid { display: grid; grid-auto-flow: column; grid-template-rows: repeat(7, auto); gap: 3px; justify-content: start; }
+  .glance-grid i { display: block; width: var(--cell); height: var(--cell); border-radius: 3px; background: var(--ph); }
+  .glance-grid i.off { background: transparent; box-shadow: inset 0 0 0 1px var(--line); }
+  .glance-grid i.blk { background: repeating-linear-gradient(45deg, #d9d2c2 0 3px, transparent 3px 6px); box-shadow: inset 0 0 0 1px var(--line); }
+  .glance-grid i.fl { background: var(--full); }
+  .glance-grid i.done { opacity: .35; }
+  .glance-grid i.now { outline: 2px solid var(--gold); outline-offset: 1px; }
+  .glance-grid i.test { background: var(--gold); box-shadow: inset 0 0 0 2px var(--ph-test); }
+  .glance-grid i.pad { visibility: hidden; }
+  .glance-wrap { display: flex; gap: 6px; align-items: flex-start; }
+  .glance-days { display: grid; grid-template-rows: repeat(7, var(--cell)); gap: 3px; font-size: 10px; font-weight: 700; color: var(--text-lo); line-height: var(--cell); }
+
+  .split { list-style: none; margin: 14px 0 0; padding: 0; display: grid; gap: 10px; }
+  .split li { display: grid; grid-template-columns: 74px minmax(0, 1fr) 84px; gap: 10px; align-items: center; font-size: 14px; }
+  .split .nm { display: inline-flex; align-items: center; gap: 7px; font-weight: 650; white-space: nowrap; }
+  .split .nm::before { content: ""; width: 9px; height: 9px; border-radius: 2px; background: var(--rail); }
+  .split .bar { height: 10px; border-radius: 99px; background: var(--bg-deep); overflow: hidden; }
+  .split .bar i { display: block; height: 100%; border-radius: 99px; background: var(--rail); }
+  .split .v { text-align: right; color: var(--text-hi); font-variant-numeric: lining-nums tabular-nums; white-space: nowrap; font-size: 13.5px; }
+  .split-note { margin: 12px 0 0; font-size: 13.5px; color: var(--text-mid); }
+  .notes { list-style: none; margin: 14px 0 0; padding: 0; display: grid; gap: 8px; }
+  .notes li { padding: 10px 14px; border-left: 3px solid var(--gold); border-radius: 0 10px 10px 0; background: var(--gold-bg); font-size: 14.5px; color: var(--text-hi); }
+  [data-section="bio"] { --rail: var(--sec-bio); } [data-section="gchem"] { --rail: var(--sec-gchem); } [data-section="ochem"] { --rail: var(--sec-ochem); }
+  [data-section="pat"] { --rail: var(--sec-pat); } [data-section="rc"] { --rail: var(--sec-rc); } [data-section="qr"] { --rail: var(--sec-qr); }
+
+  /* ---------- builder form ---------- */
+  .builder { margin-top: 22px; }
+  .builder > summary { list-style: none; cursor: pointer; display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 52px; }
+  .builder > summary::-webkit-details-marker { display: none; }
+  .builder > summary .chev { flex: 0 0 auto; width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--gold-border); display: grid; place-items: center; transition: transform .15s ease; }
+  .builder[open] > summary .chev { transform: rotate(180deg); }
+  .form-grid { display: grid; gap: 14px; margin-top: 14px; grid-template-columns: minmax(0, 1fr); }
+  @media (min-width: 900px) { .form-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .form-grid .wide { grid-column: 1 / -1; } }
+  fieldset { margin: 0; padding: 16px 16px 16px; border: 1px solid var(--line); border-radius: 14px; background: #fff; min-width: 0; }
+  legend { padding: 0 6px; font-family: var(--display); font-size: 19px; font-weight: 700; color: var(--text-hi); }
+  .hint { margin: 2px 0 12px; font-size: 14px; color: var(--text-mid); }
+  label.lab { display: block; margin: 0 0 6px; font-size: 13px; font-weight: 750; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-mid); }
+  input[type="date"], select { width: 100%; min-height: 48px; padding: 10px 14px; border: 1.5px solid var(--rule); border-radius: 10px; background: var(--paper); color: var(--text-hi); font: inherit; font-size: 16px; font-weight: 600; }
+  input[type="date"]:focus, select:focus { outline: 2px solid var(--focus); outline-offset: 1px; border-color: var(--gold); }
+  .row2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+  .seg { display: flex; flex-wrap: wrap; gap: 8px; }
+  .seg label { position: relative; flex: 1 1 0; min-width: 0; }
+  .seg input { position: absolute; opacity: 0; inset: 0; width: 100%; height: 100%; margin: 0; cursor: pointer; }
+  .seg span { display: flex; align-items: center; justify-content: center; min-height: 48px; padding: 6px 10px; border: 1.5px solid var(--rule); border-radius: 12px; background: var(--paper); font-weight: 700; font-size: 15px; text-align: center; line-height: 1.2; color: var(--text-hi); }
+  .seg input:checked + span { background: var(--forest); border-color: var(--forest); color: #F5F0E8; }
+  .seg input:focus-visible + span { outline: 2px solid var(--focus); outline-offset: 2px; }
+  .seg.days { flex-wrap: nowrap; gap: 5px; }
+  .seg.days label { flex: 1 1 0; min-width: 0; }
+  .seg.days span { padding: 6px 2px; font-size: 14px; }
+  .conf { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+  .conf li { display: grid; gap: 6px; }
+  .conf .head { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
+  .conf .head b { display: inline-flex; align-items: center; gap: 8px; font-weight: 700; }
+  .conf .head b::before { content: ""; width: 10px; height: 10px; border-radius: 3px; background: var(--rail); }
+  .conf .src { font-size: 12px; color: var(--text-lo); font-weight: 650; text-align: right; }
+  .conf .seg { gap: 5px; flex-wrap: nowrap; }
+  .conf .seg span { min-height: 44px; font-size: 14px; padding: 4px 2px; border-radius: 10px; }
+  .conf-scale { display: flex; justify-content: space-between; font-size: 12px; color: var(--text-lo); margin-top: -2px; }
+  .blk-add { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0 0; padding: 0; list-style: none; }
+  .chips li button { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 14px; border-radius: 999px; border: 1px solid var(--rule); background: var(--paper); font-weight: 650; font-size: 14px; cursor: pointer; color: var(--text-hi); }
+  .chips li button span { color: var(--trap-ink); font-weight: 750; font-size: 12px; letter-spacing: .06em; text-transform: uppercase; }
+  .form-foot { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 16px; margin-top: 16px; }
+  .err { margin: 0; color: var(--trap-ink); font-weight: 650; font-size: 15px; }
+  @media (max-width: 520px) { .form-foot .btn { width: 100%; } }
+
+  /* ---------- weeks ---------- */
+  .days-head { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px; margin: 30px 0 12px; }
+  .days-head .actions .btn { min-height: 44px; }
+  .week { margin-top: 10px; border: 1px solid var(--line); border-radius: 14px; background: var(--paper); overflow: hidden; }
+  .week > summary { list-style: none; cursor: pointer; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 12px; align-items: center; min-height: 56px; padding: 10px 16px; }
+  .week > summary::-webkit-details-marker { display: none; }
+  .week > summary b { font-family: var(--display); font-size: 18px; font-weight: 700; }
+  .week > summary small { display: block; font-size: 13px; color: var(--text-mid); }
+  .week > summary .wk-r { text-align: right; font-size: 13px; color: var(--text-mid); font-variant-numeric: lining-nums tabular-nums; }
+  .week > summary .bars { display: flex; gap: 3px; margin-top: 6px; }
+  .week > summary .bars i { width: 22px; height: 6px; border-radius: 3px; background: var(--ph); }
+  .week > summary .bars i.off { background: var(--bg-deep); }
+  .week > summary .bars i.fl { background: var(--full); }
+  .week.current { border-color: var(--gold-border); }
+  .day { display: grid; grid-template-columns: 52px minmax(0, 1fr); gap: 10px 12px; padding: 12px 16px; border-top: 1px solid var(--line); }
+  @media (min-width: 720px) { .day { grid-template-columns: 70px minmax(0, 1fr) auto; } }
+  .day .dt { font-variant-numeric: lining-nums tabular-nums; }
+  .day .dt b { display: block; font-size: 12px; font-weight: 750; letter-spacing: .12em; text-transform: uppercase; color: var(--text-lo); }
+  .day .dt span { display: block; font-family: var(--display); font-size: 24px; font-weight: 700; line-height: 1; color: var(--text-hi); }
+  .day .dt em { display: block; font-style: normal; font-size: 11.5px; color: var(--text-lo); margin-top: 2px; }
+  .day .body { min-width: 0; border-left: 3px solid var(--ph, var(--line)); padding-left: 12px; }
+  .day .ttl { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; }
+  .day .ttl b { font-weight: 700; font-size: 16px; }
+  .day .ttl .m { font-size: 13px; color: var(--text-lo); font-weight: 650; font-variant-numeric: lining-nums tabular-nums; }
+  .day ol { margin: 2px 0 0; padding: 0; list-style: none; display: grid; gap: 0; }
+  .day ol li { display: flex; gap: 10px; align-items: baseline; justify-content: space-between; font-size: 14.5px; line-height: 1.4; }
+  .day ol li a { display: inline-flex; align-items: center; min-height: 44px; color: var(--text-hi); text-decoration: none; border-bottom: 1px solid transparent; }
+  .day ol li a:hover { color: var(--gold-light); }
+  .day ol li a::before { content: ""; flex: 0 0 auto; width: 7px; height: 7px; margin-right: 9px; border-radius: 2px; background: var(--rail, var(--gold-dim)); }
+  .day ol li .m { flex: 0 0 auto; font-size: 13px; color: var(--text-lo); font-variant-numeric: lining-nums tabular-nums; }
+  .day.off { padding-top: 8px; padding-bottom: 8px; }
+  .day.off .body { border-left-color: var(--line); color: var(--text-lo); font-size: 14px; }
+  .day.full .body { border-left-color: var(--full); }
+  .day.full .ttl b { color: var(--full); }
+  .day.today-row { background: var(--gold-bg); }
+  .day .mark { grid-column: 2; justify-self: start; }
+  @media (min-width: 720px) { .day .mark { grid-column: auto; align-self: center; } }
+  .mark-btn { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 14px; border-radius: 999px; border: 1px solid var(--rule); background: #fff; font: inherit; font-size: 13.5px; font-weight: 700; color: var(--text-mid); cursor: pointer; }
+  .mark-btn[aria-pressed="true"] { background: var(--forest); border-color: var(--forest); color: #F5F0E8; }
+  .day.is-done .ttl b { color: var(--text-lo); }
+  .past-toggle { margin-top: 8px; }
+
+  .coach-line { margin: 26px 0 0; padding: 14px 16px; border-radius: 12px; border: 1px solid var(--line); background: var(--paper); color: var(--text-mid); font-size: 15px; }
+  .coach-line a { color: var(--gold-light); font-weight: 700; text-decoration: none; display: inline-flex; align-items: center; min-height: 44px; }
+  .coach-line a:hover { text-decoration: underline; }
+  .empty-plan { margin-top: 14px; }
+
+  @media print {
+    html[data-ace-shell], body { background: #fff !important; }
+    .builder, .days-head .actions, .past-toggle, .mark, .tick, .behind, .foot nav, #alScopeStrip, #alDisclaimer, .today-foot .btn, .tasks .go { display: none !important; }
+    .today, .panel, .week { box-shadow: none !important; background: #fff !important; border-color: #bbb !important; break-inside: avoid; }
+    .week { break-inside: auto; } .day { break-inside: avoid; }
+    .day ol li a { min-height: 0; }
+    .today::before { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+    .glance-grid i, .tl-seg, .tl-fl, .split .bar i { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+    a[href^="/"]::after { content: ""; }
+  }
+  @media (prefers-reduced-motion: reduce) { .tick span, .builder > summary .chev { transition: none; } }
+</style>
+</head>
+<body>
+<main class="wrap plan" id="main">
+
+  <header class="page-head">
+    <p class="eyebrow">Your study plan</p>
+    <h1>Every day to test day, <em>planned.</em></h1>
+    <p class="lede" id="lede">Give it your test date, the days and hours you have, and how each section feels. It lays out every day from today to the test, with a link to the exact Ace Labs page for each task.</p>
+  </header>
+
+  <!-- TODAY: filled once a plan exists -->
+  <section class="today" id="today" aria-labelledby="today-h" hidden>
+    <div class="today-top">
+      <p class="k" id="today-date">Today</p>
+      <span class="pill" id="today-pill"></span>
+    </div>
+    <span class="ph-chip" id="today-phase"></span>
+    <h2 id="today-h">What to do today</h2>
+    <p class="why" id="today-why"></p>
+    <ul class="tasks" id="today-tasks"></ul>
+    <div class="today-foot">
+      <a class="btn primary big" id="today-go" href="/">Start the first task</a>
+      <span class="total" id="today-total"></span>
+    </div>
+    <div id="behind"></div>
+  </section>
+
+  <!-- OVERVIEW -->
+  <div class="overview" id="overview" hidden>
+    <section class="panel" aria-labelledby="ov-h">
+      <p class="k">The plan at a glance</p>
+      <h2 id="ov-h">From today to test day</h2>
+      <div class="stats" id="stats"></div>
+      <div class="timeline" id="timeline"></div>
+      <ul class="tl-legend" id="legend"></ul>
+      <div class="glance" id="glance"></div>
+    </section>
+    <section class="panel" aria-labelledby="split-h">
+      <p class="k">Where the time goes</p>
+      <h2 id="split-h">Hours by section</h2>
+      <ul class="split" id="split"></ul>
+      <p class="split-note">Split by the DAT's question counts (Bio 40, Gen Chem 30, OChem 30, PAT 90, Reading 50, QR 40), weighted toward the sections you marked shaky. Full-length tests are counted apart.</p>
+      <ul class="notes" id="notes"></ul>
+    </section>
+  </div>
+
+  <!-- BUILDER -->
+  <details class="builder" id="builder" open>
+    <summary><span><span class="k" id="builder-k">Step 1</span><h2 id="builder-h" style="font-size:clamp(22px,3vw,28px)">Build your plan</h2></span><span class="chev" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 14 14"><path d="M2 5l5 5 5-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></summary>
+    <form id="form" novalidate>
+      <div class="form-grid">
+        <fieldset>
+          <legend>Your test</legend>
+          <p class="hint" id="prefill-hint">The date on your Prometric confirmation.</p>
+          <label class="lab" for="f-date">DAT test date</label>
+          <input type="date" id="f-date" name="testDate" required>
+          <p class="lab" style="margin-top:14px" id="att-lab">This attempt</p>
+          <div class="seg" role="radiogroup" aria-labelledby="att-lab">
+            <label><input type="radio" name="attempt" value="first" checked><span>First attempt</span></label>
+            <label><input type="radio" name="attempt" value="retake"><span>Retake</span></label>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Your week</legend>
+          <p class="hint">Which days you can study, and about how long.</p>
+          <p class="lab" id="days-lab">Study days</p>
+          <div class="seg days" role="group" aria-labelledby="days-lab" id="f-days"></div>
+          <div class="row2" style="margin-top:14px">
+            <div><label class="lab" for="f-hwk">Weekday hours</label><select id="f-hwk"></select></div>
+            <div><label class="lab" for="f-hwe">Weekend hours</label><select id="f-hwe"></select></div>
+          </div>
+        </fieldset>
+
+        <fieldset class="wide">
+          <legend>How each section feels</legend>
+          <p class="hint" id="conf-hint">1 is shaky, 5 is strong. Shaky sections get more time.</p>
+          <ul class="conf" id="f-conf"></ul>
+        </fieldset>
+
+        <fieldset class="wide">
+          <legend>Days you cannot study</legend>
+          <p class="hint">Trips, exams, a wedding. Optional.</p>
+          <div class="blk-add">
+            <div><label class="lab" for="f-blk">Add a date</label><input type="date" id="f-blk"></div>
+            <button type="button" class="btn" id="f-blk-add" style="align-self:end;min-height:48px">Add</button>
+          </div>
+          <ul class="chips" id="f-blk-list" aria-label="Blocked dates"></ul>
+        </fieldset>
+      </div>
+      <div class="form-foot">
+        <button type="submit" class="btn primary big" id="f-go">Build my plan</button>
+        <p class="err" id="f-err" role="alert"></p>
+      </div>
+    </form>
+  </details>
+
+  <!-- DAY BY DAY -->
+  <section id="days" aria-labelledby="days-h" hidden>
+    <div class="days-head">
+      <div>
+        <p class="k">Day by day</p>
+        <h2 id="days-h">Your weeks</h2>
+      </div>
+      <div class="actions">
+        <button type="button" class="btn" id="a-ics">Download calendar (.ics)</button>
+        <button type="button" class="btn" id="a-print">Print</button>
+        <button type="button" class="btn" id="a-rebuild">Rebuild from today</button>
+      </div>
+    </div>
+    <button type="button" class="btn small past-toggle" id="a-past" hidden>Show earlier weeks</button>
+    <div id="weeks"></div>
+  </section>
+
+  <p class="coach-line">Want a coach to tune this plan with you, week by week? <a href="https://acethedat.com/contact.html" target="_blank" rel="noopener">Ask about 1:1 coaching</a></p>
+
+  <noscript><p class="lede">The plan builder needs JavaScript. Every Ace Labs tool still opens from the home page.</p></noscript>
+</main>
+
+<footer class="foot">
+  <div class="wrap">
+    <nav aria-label="More">
+      <a href="/ace-labs.html">Ace Labs home</a>
+      <a href="/test-week.html">Test-week mode</a>
+      <a href="/scope.html">Scope and evidence</a>
+    </nav>
+    <p>Ace Labs is not affiliated with the American Dental Association or Prometric. The plan makes no score predictions.</p>
+  </div>
+</footer>
+
+<script src="/shared/ace-index.js?v=3"></script>
+<script src="/plan/plan-core.js"></script>
+<script src="/plan/plan-page.js"></script>
+<script src="/shared/ace-shell.js?v=4" defer></script>
+</body>
+</html>
