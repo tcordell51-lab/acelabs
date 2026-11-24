@@ -187,7 +187,7 @@ test('analyzer: per-section scores, time, patterns, and 2-3 next steps for weak 
 });
 
 test('student-facing text: no em dashes, no emojis, no predictions, no pace-shaming', () => {
-  const files = ENGINE_FILES.map((n) => 'engine/pat-' + n + '.js').concat(['engine/pat-core.js', 'test.html', 'pat-test.css']);
+  const files = ENGINE_FILES.map((n) => 'engine/pat-' + n + '.js').concat(['engine/pat-core.js', 'test.html', 'pat-test.css', 'pat-explain.css']);
   const dir = path.join(__dirname, '..', '..', 'tools', 'pat');
   files.forEach((f) => {
     const src = fs.readFileSync(path.join(dir, f), 'utf8');

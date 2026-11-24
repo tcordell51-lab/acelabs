@@ -127,8 +127,8 @@
     tfe: { mirror: 'Front and back (or left and right) swapped', 'dash-as-solid': 'Hidden edge drawn solid', 'solid-as-dash': 'Visible edge drawn dashed', profile: 'A step in the wrong place', feature: 'A feature changed (shape, size or place)', dropped: 'A feature left out' },
     angles: { swap: 'Swapped a close pair', double: 'Swapped two pairs', shift: 'Misplaced one angle by two spots' },
     holepunch: { 'missed-unfold': 'Skipped one unfold', 'wrong-line': 'Mirrored across the wrong line', flipped: 'Read the sheet flipped', shifted: 'One hole off by a cell', dropped: 'One hole missing' },
-    cubes: {},
-    patternfold: { mirror: 'Mirror image cube', rotation: 'A face turned the wrong way', neighbor: 'Two faces traded places', opposite: 'Opposite faces shown side by side', shade: 'Shading on the wrong face', hidden: 'A face from the far side shown' }
+    cubes: { hidden: 'Missed a hidden cube', fewer: 'Count for one fewer painted side', more: 'Count for one more painted side', bottom: 'Painted the bottom face', seen: 'Counted only the sides in view', off: 'Off by one cube', otherk: 'Count for another number of sides', atleast: 'Counted "or more" for "exactly"', far: 'Lost count' },
+    patternfold: { mirror: 'Mirror image', rotation: 'A face turned the wrong way', neighbor: 'Two faces traded places', opposite: 'Opposite faces shown side by side', shade: 'Shading on the wrong face', hidden: 'A face from the far side shown' }
   };
 
   function bucketRows(items, attempt, keyFn, labels) {
@@ -146,6 +146,8 @@
       var a = attempt.answers[it.n - 1];
       if (a == null || a === it.answer) return;
       var trap = it.options[a] && it.options[a].trap;
+      // cube-counting choices carry no tag from the generator: the family is computed from the figure
+      if (!trap && PAT.explain && PAT.explain.trapOf) trap = PAT.explain.trapOf(it, a);
       if (!trap) return;
       t[trap] = (t[trap] || 0) + 1;
     });
@@ -223,7 +225,7 @@
       s.push({ text: 'Remember the bottom face on the floor is never painted. One clean sweep per figure answers all of its questions.', href: L.canon });
     } else if (type === 'patternfold') {
       if (wr) s.push({ text: wr.label + 's were the toughest. Do not fold the whole net: find the odd face, then check the two faces that touch it.', href: studio() });
-      if (topTrap && topTrap.key === 'mirror') s.push({ text: 'You chose a mirror-image cube. Faces fold INTO the page; a correct cube never flips how a half-shade leans.', href: studio() });
+      if (topTrap && topTrap.key === 'mirror') s.push({ text: 'You chose a mirror image. Faces fold INTO the page, so a correct answer never flips the way a mark leans.', href: studio() });
       else if (topTrap) s.push({ text: 'Most misses were "' + topTrap.label.toLowerCase() + '". Pair the answer choices that look alike and compare those two first.', href: studio() });
       s.push({ text: 'Run the pattern-folding sheet, then a timed set of 15 at about 50 seconds each.', href: L.canon });
     }

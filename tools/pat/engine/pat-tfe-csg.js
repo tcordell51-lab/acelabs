@@ -252,6 +252,6 @@
   }
   function renderOption(item, i) { return '<div class="pat-paper pat-small">' + viewSVG(item.options[i].prims, item.figure.windows[item.figure.missing]) + '</div>'; }
 
-  PAT.tfeCSG = { generate: generate, renderFigure: renderFigure, renderOption: renderOption, FAMILY: FAMILY, build: build, solidOf: solidOf, windowOf: windowOf, pkey: pkey, groups: groups, R_FINE: R_FINE, K_DIFF: K_DIFF, ROT: ROT };
+  PAT.tfeCSG = { generate: generate, renderFigure: renderFigure, renderOption: renderOption, FAMILY: FAMILY, build: build, solidOf: solidOf, windowOf: windowOf, pkey: pkey, groups: groups, R_FINE: R_FINE, K_DIFF: K_DIFF, ROT: ROT, EDGES: EDGES, TOPS: TOPS, SIDES: SIDES, XS: XS, compatible: compatible };
   if (typeof module === 'object' && module.exports) module.exports = PAT;
 })(typeof self !== 'undefined' ? self : globalThis);

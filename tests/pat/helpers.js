@@ -3,7 +3,7 @@
 const path = require('path');
 const ENGINE = path.join(__dirname, '..', '..', 'tools', 'pat', 'engine');
 /* same order as the <script> tags in tools/pat/test.html */
-const ENGINE_FILES = ['solid', 'keyholes', 'keyholes-csg', 'tfe', 'tfe-csg', 'angles', 'holepunch', 'cubes', 'patternfold', 'patternfold-poly', 'test', 'store'];
+const ENGINE_FILES = ['solid', 'keyholes', 'keyholes-csg', 'tfe', 'tfe-csg', 'angles', 'holepunch', 'cubes', 'patternfold', 'patternfold-poly', 'test', 'store', 'explain'];
 function loadEngine() {
   const PAT = require(path.join(ENGINE, 'pat-core.js'));
   ENGINE_FILES.forEach((n) => require(path.join(ENGINE, 'pat-' + n + '.js')));
