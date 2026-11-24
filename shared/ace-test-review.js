@@ -126,7 +126,7 @@
       } else {
         li.appendChild(el('p', 'aui-small', 'Your answer: ' + (r.picked == null ? 'blank' : LETTERS[r.picked] || r.picked) + '. Right answer: ' + (LETTERS[r.answer] || r.answer) + '.'));
       }
-      if (r.why) { var w = el('dl', 'rv-why'); w.appendChild(el('dt', null, 'Why')); w.appendChild(el('dd', null, r.why)); li.appendChild(w); }
+      if (r.why) { var w = el('dl', 'rv-why'); w.appendChild(el('dt', null, 'Why')); var wd = el('dd', null, r.why); wd.style.whiteSpace = 'pre-line'; w.appendChild(wd); li.appendChild(w); }
       if (!r.ok) {
         var rid = repairIdFor(r), entry = rec.repairEntry(rid);
         var why = el('div', 'rv-reason'); why.setAttribute('role', 'group'); why.setAttribute('aria-label', 'Why did you miss it?');

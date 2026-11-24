@@ -238,6 +238,23 @@ details.sec summary{cursor:pointer;font-weight:700;font-size:15px;padding:4px 0}
 details.sec[open] summary{margin-bottom:12px}
 
 /* ---------------- phone ---------------- */
+/* structure choices: a two-column grid, so five drawings fit without a long scroll */
+.pm-opts--mol{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.pm-opts--mol .pm-opt{padding:8px 10px;gap:6px;height:100%}
+.pm-opts--mol .pm-mol{margin:0;max-width:100%;border:none;padding:0}
+/* an explanation in the report: answer, steps, about your pick, the other choices, check yourself */
+.miss .why p{margin:0 0 8px}
+.miss .why .ex-steps{margin:0 0 10px;padding-left:20px}
+.miss .why .ex-steps li{margin:2px 0}
+.miss .why .ex-pick{background:#fbf3e3;border-radius:6px;padding:8px 10px}
+.miss .why details{margin:0 0 8px}
+.miss .why summary{cursor:pointer;min-height:44px;display:flex;align-items:center;font-weight:600;color:var(--ink)}
+.miss .why .ex-check summary{font-weight:400}
+.miss .why details ul{margin:0;padding-left:18px}
+.miss .why details li{margin:4px 0}
+.miss .why .ex-opt{font-weight:700}
+.miss .why .ex-opt::after{content:':'}
+.pm-calc-fold{display:none}
 @media (max-width:860px){
   .flow{grid-template-columns:repeat(2,1fr)}
   .tests{grid-template-columns:repeat(2,1fr)}
@@ -263,9 +280,16 @@ details.sec[open] summary{margin-bottom:12px}
   .pm-card{margin:0;border:none;padding:16px 14px 24px}
   .pm-stem{font-size:15px}
   .pm-opt{font-size:14.5px;padding:10px 10px}
-  .pm-foot{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;padding:8px}
-  .pm-btn{min-width:0;padding:8px 4px;font-size:12px;letter-spacing:.04em}
-  .pm-btn.end{grid-column:1/-1;min-height:32px;padding:4px}
+  /* one slim row: every control 44px tall, the question keeps the rest of the screen */
+  .pm-foot{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);gap:4px;padding:6px 6px calc(6px + env(safe-area-inset-bottom))}
+  .pm-btn{min-width:0;min-height:44px;padding:2px;letter-spacing:0;line-height:1.15;white-space:normal}
+  .pm-btn{font-size:10.5px}
+  .pm-btn.end{font-size:10.5px}
+  table.tbl td,table.tbl th{overflow-wrap:anywhere;word-break:normal}
+  table.tbl td a{display:inline-block;min-height:44px}
+  .miss .why{font-size:15px}
+  .pm-opts--mol .pm-opt{flex-wrap:wrap}
+  .pm-opts--mol .pm-opt .txt{flex:1 0 100%}
   .rc-pass,.rc-q{padding:14px}
   .pat-area .opts.cols-5,.pat-area .opts.cols-4,.pat-area .opts.text{grid-template-columns:repeat(2,minmax(0,1fr))}
   .pat-angles{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
@@ -277,7 +301,20 @@ details.sec[open] summary{margin-bottom:12px}
   .pm-stat .num{font-size:20px}
   .pm-grid{grid-template-columns:repeat(6,1fr)}
   .pm-pt{left:0;top:56px;max-width:100vw}
-  .pm-calc{right:8px;top:70px}
+  /* the calculator docks under the top bar and the question scrolls beneath it, so it never
+     covers the stem or the choices; Hide keys folds it down to the display */
+  .pm-calc{left:0!important;right:0!important;top:52px!important;width:auto;border-radius:0;border-left:none;border-right:none;box-shadow:0 4px 12px rgba(0,0,0,.25)}
+  .pm-calc .bar{cursor:default;padding:2px 8px}
+  .pm-calc .bar button{min-height:40px;min-width:64px;font-size:12px}
+  .pm-calc-fold{display:inline-block;margin-left:auto}
+  .pm-calc .disp{margin:4px 6px;min-height:34px;font-size:20px;padding:4px 8px}
+  .pm-calc .memf{display:none}
+  .pm-calc .keys{padding:0 6px 6px;gap:4px}
+  .pm-calc .keys button{height:34px;font-size:13px}
+  .pm-calc.min .keys{display:none}
+  body:has(#pmCalc:not(.hidden)) .pm-body{padding-top:272px}
+  body:has(#pmCalc.min:not(.hidden)) .pm-body{padding-top:64px}
+  #calcBtn{font-size:9px}
   .sec-grid{grid-template-columns:1fr 1fr;gap:8px}
   .sec-card .v{font-size:26px}
   .meter{width:56px}
