@@ -91,6 +91,19 @@
     renderTest();
   }
 
+  /* The passage with the most questions of one type, passing over passages already attempted here
+     when a fresh one exists. Used by the full-length report's drill links (#start/type/<type>). */
+  function typePassage(type) {
+    var seen = {}, best = null, bestN = 0, bestSeen = true;
+    Store.attempts().forEach(function (a) { (a.order || []).forEach(function (o) { seen[o.pid] = true; }); });
+    (BANK.order || Object.keys(BANK.passages)).forEach(function (pid) {
+      var p = BANK.passages[pid]; if (!p) return;
+      var n = p.questions.filter(function (q) { return q.type === type; }).length, sn = !!seen[pid];
+      if (n && ((bestSeen && !sn) || (sn === bestSeen && n > bestN))) { best = pid; bestN = n; bestSeen = sn; }
+    });
+    return best;
+  }
+
   function resume() {
     var a = Store.active();
     if (!a) return renderHome();
@@ -802,6 +815,7 @@
     if ((m = /^#review\/(.+)$/.exec(h)) && Store.attempt(m[1])) return openReview(Store.attempt(m[1]), 'all');
     if ((m = /^#results\/(.+)$/.exec(h)) && Store.attempt(m[1])) return renderResults(Store.attempt(m[1]));
     if ((m = /^#start\/(section|passage)\/(.+)$/.exec(h))) return start(m[1], m[2]);
+    if ((m = /^#start\/type\/(.+)$/.exec(h)) && typePassage(decodeURIComponent(m[1]))) return start('passage', typePassage(decodeURIComponent(m[1])));
     renderHome();
   }
 

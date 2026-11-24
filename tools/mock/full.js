@@ -705,7 +705,7 @@
     }).join('');
     var tps = Object.keys(res.topics).map(function (k) { var r = res.topics[k], parts = k.split('|'); return { sub: parts[0], topic: parts[1], c: r.correct, n: r.total, p: pct(r.correct, r.total) }; })
       .filter(function (t) { return t.n >= 2 && t.c < t.n; }).sort(function (a, b) { return a.p - b.p || b.n - a.n; }).slice(0, 12);
-    var topicRows = tps.map(function (t) { var tm = topicMeta(t.sub, t.topic), dr = drillFor(t.sub, tm.stop); return '<tr><td><b>' + esc(t.topic) + '</b><br><span style="font-size:13px;color:var(--muted)">' + esc(subjName(t.sub)) + (tm.nick ? ', in the course as "' + esc(tm.nick) + '"' : '') + '</span></td><td class="r">' + t.c + ' / ' + t.n + '</td><td class="r hide-sm">' + meter(t.p) + '</td><td class="r"><a href="' + dr.href + '">' + esc(dr.label) + '</a></td></tr>'; }).join('');
+    var topicRows = tps.map(function (t) { var tm = topicMeta(t.sub, t.topic), dr = drillFor(t.sub, tm.stop, t.sub === 'RC' ? rcType(t.topic) : null); return '<tr><td><b>' + esc(t.topic) + '</b><br><span style="font-size:13px;color:var(--muted)">' + esc(subjName(t.sub)) + (tm.nick ? ', in the course as "' + esc(tm.nick) + '"' : '') + '</span></td><td class="r">' + t.c + ' / ' + t.n + '</td><td class="r hide-sm">' + meter(t.p) + '</td><td class="r"><a href="' + dr.href + '">' + esc(dr.label) + '</a></td></tr>'; }).join('');
     var bySec = {}; res.misses.forEach(function (ms) { (bySec[ms.sec] = bySec[ms.sec] || []).push(ms); });
     var missHTML = SECTION_KEYS.map(function (k) {
       var list = bySec[k] || [];
@@ -757,8 +757,9 @@
     SECTION_KEYS.forEach(function (sk) { if (!hit) items(sk).forEach(function (x) { if (!hit && x.kind === 'mc' && x.sub === sub && x.it.topic === topic) hit = x.it; }); });
     return hit ? { stop: hit.stop, nick: hit.nick && hit.nick !== topic ? hit.nick : '' } : {};
   }
-  function drillFor(sub, stop) {
-    var d = window.AceMockExplain && stop ? window.AceMockExplain.drill(sub, stop) : null;
+  function rcType(label) { var id = null; if (RC && RC.types) Object.keys(RC.types).forEach(function (k) { if (RC.types[k] === label) id = k; }); return id; }
+  function drillFor(sub, stop, type) {
+    var d = window.AceMockExplain && (stop || type) ? window.AceMockExplain.drill(sub, stop, type) : null;
     return d || { href: STUDY[sub].review, label: 'All topics in the ' + STUDY[sub].engine };
   }
   function nextAreas(st) {
@@ -792,7 +793,7 @@
       } else {
         var best = Object.keys(r.nightN).sort(function (a, b) { return r.nightN[b] - r.nightN[a]; })[0];
         r.learn = best ? { href: st2.learn + '?night=' + best, label: nightName(r.section, +best, r.label) } : { href: st2.learn, label: subjName(r.sub) + ', Retold' };
-        r.drill = drillFor(r.sub, r.stop);
+        r.drill = drillFor(r.sub, r.stop, r.type);
       }
       out.push(r);
     });

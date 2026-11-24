@@ -75,6 +75,30 @@ for (const mk of data.mocks) for (const [sec, list] of Object.entries(mk.section
     }
   });
 }
+// Drill links: every science and QR stop used in Tests 1 to 4 has a target, and the target exists
+// (a hub topic with questions in that hub's bank, or a page on disk).
+{
+  const win = {};
+  new Function('window', fs.readFileSync(path.join(ROOT, 'tools/mock/explain.js'), 'utf8'))(win);
+  const EX = win.AceMockExplain;
+  const SUB = { bio: ['Biology', 'data/bio.json'], gc: ['Gen Chem', 'data/gchem.json'], ochem: ['OChem', 'data/ochem.json'], qr: ['QR', 'data/qr-dat.json', 'data/qr-climb.json'] };
+  const topicsOf = {};
+  const seen = new Set();
+  for (const mk of data.mocks) for (const [sec, list] of Object.entries(mk.sections)) {
+    if (!SUB[sec]) continue;
+    for (const it of list) {
+      if (seen.has(sec + it.stop)) continue; seen.add(sec + it.stop);
+      const d = EX.drill(SUB[sec][0], it.stop);
+      if (!d) { errors.push(`drill: ${sec} stop ${it.stop} has no drill link`); continue; }
+      const m = /^([^?#]+)\?topic=(.+)$/.exec(d.href);
+      if (m) {
+        const t = topicsOf[sec] || (topicsOf[sec] = new Set(SUB[sec].slice(1).flatMap((f) => JSON.parse(fs.readFileSync(path.join(ROOT, f), 'utf8')).items.map((x) => x.topic))));
+        if (!t.has(decodeURIComponent(m[2]))) errors.push(`drill: ${sec} stop ${it.stop} links topic ${m[2]}, which has no questions in that hub's bank`);
+      } else if (!fs.existsSync(path.join(ROOT, d.href.replace(/[?#].*$/, '')))) errors.push(`drill: ${sec} stop ${it.stop} links ${d.href}, which is not on disk`);
+    }
+  }
+  if (!/#start\\\/type\\\//.test(fs.readFileSync(path.join(ROOT, 'tools/rc/rc.js'), 'utf8'))) errors.push('drill: tools/rc/rc.js no longer opens #start/type/<type>');
+}
 if (REPORT) {
   console.log('section'.padEnd(16), 'items steps traps check  full');
   for (const [k, r] of Object.entries(table)) console.log(k.padEnd(16), String(r.n).padStart(5), String(r.steps).padStart(5), String(r.traps).padStart(5), String(r.check).padStart(5), String(r.full).padStart(5));
