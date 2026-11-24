@@ -163,6 +163,6 @@
     return hl;
   }
 
-  PAT.cubes = { generate: generate, generateSet: generateSet, renderFigure: renderFigure, renderOption: renderOption, figureSVG: figureSVG, kCubes: kCubes, painted: painted };
+  PAT.cubes = { generate: generate, generateSet: generateSet, renderFigure: renderFigure, renderOption: renderOption, figureSVG: figureSVG, kCubes: kCubes, painted: painted, faceVisible: faceVisible };
   if (typeof module === 'object' && module.exports) module.exports = PAT;
 })(typeof self !== 'undefined' ? self : globalThis);

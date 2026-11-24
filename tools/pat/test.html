@@ -6,6 +6,7 @@
 <title>PAT Full Test</title>
 <meta name="description" content="AceTheDAT full Perceptual Ability Test: 90 questions, six sections, 60 minutes, with a section-by-section review."/>
 <link rel="stylesheet" href="pat-test.css"/>
+<link rel="stylesheet" href="pat-explain.css"/>
 <link rel="stylesheet" href="/shared/ace-cream.css?v=3">
 </head>
 <body>
@@ -185,6 +186,7 @@
 <script src="engine/pat-patternfold-poly.js"></script>
 <script src="engine/pat-test.js"></script>
 <script src="engine/pat-store.js"></script>
+<script src="engine/pat-explain.js"></script>
 <script src="/shared/ace-skills.js?v=2"></script>
 <script src="/shared/ace-record.js?v=6"></script>
 <script src="/shared/ace-test-review.js?v=3"></script>
@@ -516,48 +518,26 @@
   }
 
   /* ---------------- item review ---------------- */
-  var SIZE_NOTE = 'Right outline, wrong size. Openings are drawn to the same scale as the object, so an opening can match the shape and still be too big or too small.';
-  var TFE_WHY = { mirror: 'This one is the view with front and back (or left and right) swapped. On the end view, end-left is the FRONT of the object.', 'dash-as-solid': 'A hidden edge is drawn solid here. If you cannot see an edge from this side, it must be dashed.', 'solid-as-dash': 'A visible edge is drawn dashed here. Any edge you can see from this side is solid.', profile: 'A step sits in the wrong place. Heights must match the front, depths must match the top.', feature: 'A feature has the wrong shape, size or place here. Line up every circle, slant and edge with the matching edge in the other two views.', dropped: 'A feature is missing from this view. Every hole, boss and cut shows in all three views, dashed when it is hidden.' };
-  var HP_WHY = { 'missed-unfold': 'This choice skips one unfold. Undo every fold in reverse, one crease at a time.', 'wrong-line': 'This choice mirrors a hole across the wrong line. Each hole reflects across the crease it was folded over.', flipped: 'This is the right pattern read upside down or mirrored. Keep the grid in the same orientation as the paper.', shifted: 'One hole is off by a cell. Mark the punch in the exact cell before unfolding.', dropped: 'One hole is missing. Count your grid marks against the choice.' };
-  var PF_WHY = { mirror: 'This is the mirror image of the folded cube. Folding never flips which way a half-shade leans.', rotation: 'One face is turned the wrong way. Check what that face touches along its shared edge.', neighbor: 'Two faces traded places. They are on the cube, but not next to each other like that.', opposite: 'This shows two faces that are opposite each other on the cube, and opposite faces can never be seen at the same time.', shade: 'The shading sits on the wrong face. Find each shaded face in the pattern and check which faces it touches.', hidden: 'This face shows a marking from a face that cannot be in view here. Check what touches each visible face along its shared edges.' };
-  function explain(it, chosen) {
-    var t = it.type, parts = [];
-    if (t === 'keyholes') {
-      parts.push('The correct opening is the object\'s ' + ['end', 'front', 'top'][it.meta.keyAxis] + ' outline, turned to fit.');
-      if (chosen != null && chosen !== it.answer) { var tr = it.options[chosen].trap; parts.push(tr === 'SIZE' ? SIZE_NOTE : ((PAT.keyholes.TRAPS[tr] || {}).note || '')); }
-    } else if (t === 'tfe') {
-      parts.push('The ' + it.meta.missing + ' view has ' + it.meta.hiddenLines + ' hidden line' + (it.meta.hiddenLines === 1 ? '' : 's') + '.');
-      if (chosen != null && chosen !== it.answer) parts.push(TFE_WHY[it.options[chosen].trap] || '');
-    } else if (t === 'angles') {
-      var d = it.figure.degs;
-      parts.push('True sizes: ' + d.map(function (x, i) { return (i + 1) + ' is ' + x + ' degrees'; }).join(', ') + '.');
-      if (chosen != null && chosen !== it.answer) { var g = PAT.angles.missedGap(it, chosen); if (g != null) parts.push('Your order swapped two angles ' + g + ' degrees apart. Lock the clear smallest and largest first, then compare only the close pair.'); }
-    } else if (t === 'holepunch') {
-      parts.push(it.meta.folds + ' fold' + (it.meta.folds === 1 ? '' : 's') + (it.meta.diagonal ? ', including a diagonal one' : '') + '. Unfolded, the paper has ' + it.meta.holes + ' holes.');
-      if (it.meta.halfHoles) parts.push('One punch sits right on a fold edge: only half of it cuts paper, and unfolding joins the two halves into one full hole.');
-      if (chosen != null && chosen !== it.answer) parts.push(HP_WHY[it.options[chosen].trap] || '');
-    } else if (t === 'cubes') {
-      parts.push('Highlighted: the cubes with exactly ' + it.meta.k + ' painted side' + (it.meta.k === 1 ? '' : 's') + '.' + (it.meta.hiddenInAnswer ? ' ' + it.meta.hiddenInAnswer + ' of them cannot be seen; they hold up the cubes above.' : ''));
-    } else if (t === 'patternfold') {
-      parts.push(it.figure.kind === 'poly' ? 'This pattern folds into a ' + it.meta.netType + '.' : 'Pattern type: ' + it.meta.netType + ' net.');
-      if (chosen != null && chosen !== it.answer) parts.push(PF_WHY[it.options[chosen].trap] || '');
-    }
-    if (chosen == null) parts.push('This one was left open. On test day, a guess is always worth putting down.');
-    return parts.filter(Boolean).join(' ');
+  /* worked explanations: tools/pat/engine/pat-explain.js computes every line from the item itself */
+  function trapTag(it, i) {
+    if (i === it.answer) return 'Correct';
+    var k = PAT.explain.trapOf(it, i);
+    return k ? ((PAT.test.TRAP_NAMES[it.type] || {})[k] || (k === 'SIZE' ? 'Right shape, wrong size' : '')) : '';
   }
   function openItem(n) {
     ui.irIndex = n;
     var it = ui.test.items[n - 1], a = ui.attempt, chosen = a.answers[n - 1], sec = secOf(n);
-    var fig = it.type === 'angles' ? PAT.angles.renderTruth(it) : it.type === 'cubes' ? PAT.cubes.renderFigure(it, { highlight: PAT.cubes.kCubes(it) }) : PAT[it.type].renderFigure(it);
+    var ex = PAT.explain(it, chosen);
+    var fig = it.type === 'angles' ? PAT.angles.renderTruth(it) : it.type === 'cubes' ? PAT.cubes.renderFigure(it, { highlight: PAT.cubes.kCubes(it) }) : it.type === 'patternfold' ? PAT.explain.figure(it, ex) : PAT[it.type].renderFigure(it);
     var h = '<div class="kicker">' + sec.name + '</div><h2 style="font-size:24px;margin:6px 0 4px">Question ' + n + '</h2>' +
       '<p class="note" style="margin:0 0 12px">' + (chosen == null ? 'Left open' : chosen === it.answer ? 'Correct' : 'You chose ' + PAT.LETTERS[chosen] + '; the answer is ' + PAT.LETTERS[it.answer]) + ' &middot; ' + Math.round(a.timeSpent[n - 1] || 0) + ' seconds</p>' +
       '<div class="prompt">' + esc(it.prompt) + '</div><div class="stem">' + fig + '</div><div class="' + optClass(it.type) + '">';
     it.options.forEach(function (op, i) {
       var cls = i === it.answer ? ' is-key' : (i === chosen ? ' is-miss' : '');
-      var tag = i === it.answer ? 'Correct' : (op.trap ? ((PAT.test.TRAP_NAMES[it.type] || {})[op.trap] || (op.trap === 'SIZE' ? 'Right shape, wrong size' : '')) : '');
+      var tag = trapTag(it, i);
       h += '<div class="opt' + cls + '"><span class="let"><i></i>' + PAT.LETTERS[i] + (i === chosen ? ' (your choice)' : '') + '</span>' + PAT[it.type].renderOption(it, i) + (tag ? '<span class="tag">' + esc(tag) + '</span>' : '') + '</div>';
     });
-    h += '</div><div class="explain">' + esc(explain(it, chosen)) + '</div>';
+    h += '</div>' + PAT.explain.html(ex, { chosen: chosen, note: it.type === 'cubes' ? 'Highlighted in the figure: the cubes with exactly ' + it.meta.k + ' painted side' + (it.meta.k === 1 ? '' : 's') + '.' : null });
     h += '<div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:18px"><button class="btn" type="button" id="irPrev"' + (n === 1 ? ' disabled' : '') + '>Previous question</button><button class="btn" type="button" id="irNext"' + (n === 90 ? ' disabled' : '') + '>Next question</button><button class="btn ghost" type="button" id="irNextMiss">Next one to revisit</button></div>';
     $('irWrap').innerHTML = h;
     $('irPrev').addEventListener('click', function () { openItem(n - 1); });

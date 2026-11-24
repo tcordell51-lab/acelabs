@@ -8,6 +8,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="pat-cream.css">
+<link rel="stylesheet" href="pat-explain.css">
 <style>
   /* module-specific layout only — palette + chrome come from pat-cream.css */
   h1.title{font-size:30px;margin:2px 0 6px}
@@ -60,6 +61,7 @@
       <svg id="chart" viewBox="0 0 460 330"></svg>
       <div id="drill"></div>
       <div class="coach" id="coach"></div>
+      <div id="pexBox" aria-live="polite"></div>
     </div>
   </div>
 
@@ -228,7 +230,7 @@ function renderChart(){
 }
 function renderDrill(){
   var d=document.getElementById('drill');
-  if(MODE!=='drill'){d.innerHTML='';renderCoach();return}
+  if(MODE!=='drill'){d.innerHTML='';renderCoach();showExplain(null);return}
   var h='<div class="choices">';
   [1,2,3,4,5].forEach(function(n){h+='<button class="choice" data-n="'+n+'">'+n+' cube'+(n>1?'s':'')+'</button>'});
   h+='</div>';
@@ -247,10 +249,17 @@ function renderDrill(){
         if(parseInt(x.dataset.n,10)===P.question.answer)x.classList.add('right');
       });
       if(parseInt(b.dataset.n,10)!==P.question.answer)b.classList.add('wrong');
-      renderChart(); renderCoach(); renderStats();
+      renderChart(); renderCoach(); renderStats(); showExplain(parseInt(b.dataset.n,10));
     });
   });
-  renderCoach();
+  renderCoach(); showExplain(null);
+}
+/* worked explanation: the same per-item explainer as the PAT test review (engine/pat-explain.js) */
+function showExplain(n){
+  var box=document.getElementById('pexBox'); if(!box) return;
+  if(n==null||MODE!=='drill'||!window.PAT||!PAT.explain||!PAT.cubes){ box.innerHTML=''; return; }
+  var item={type:'cubes',figure:{cubes:P.cubes},options:[1,2,3,4,5].map(function(c){return {count:c};}),answer:P.question.answer-1,meta:{k:P.question.n}};
+  box.innerHTML=PAT.explain.html(PAT.explain(item,n-1));
 }
 function renderCoach(){
   var c=document.getElementById('coach');
@@ -300,6 +309,9 @@ if(MODE==='drill')startTimer();
 <script src="/shared/ace-skills.js?v=2"></script>
 <script src="/shared/ace-record.js?v=6"></script>
 <script src="pat-ledger.js"></script>
+<script src="engine/pat-core.js"></script>
+<script src="engine/pat-cubes.js"></script>
+<script src="engine/pat-explain.js"></script>
   <script src="/shared/ace-shell.js?v=4" defer></script>
 <script src="/shared/ace-tabs.js?v=3" defer></script>
 <script src="/shared/ace-wrap.js?v=2" defer></script>

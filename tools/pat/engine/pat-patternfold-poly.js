@@ -284,6 +284,6 @@
   function renderFigure(item) { return '<figure class="pat-panel pat-wide"><div class="pat-paper">' + netSVG(item.figure) + '</div><figcaption>Pattern</figcaption></figure>'; }
   function renderOption(item, i) { return '<div class="pat-paper pat-small">' + solidSVG(item.options[i]) + '</div>'; }
 
-  PAT.patternfoldPoly = { generate: generate, renderFigure: renderFigure, renderOption: renderOption, solid: solid, markPolys: markPolys, KINDS: KINDS, _internal: { drawPose: drawPose, sig: sig, symmetries: symmetries, ROTS: ROTS } };
+  PAT.patternfoldPoly = { generate: generate, renderFigure: renderFigure, renderOption: renderOption, solid: solid, markPolys: markPolys, KINDS: KINDS, _internal: { drawPose: drawPose, sig: sig, symmetries: symmetries, ROTS: ROTS, centered: centered, faceNormal: faceNormal, mm: mm, mv: mv, VIEWV: VIEWV, adjacency: adjacency } };
   if (typeof module === 'object' && module.exports) module.exports = PAT;
 })(typeof self !== 'undefined' ? self : globalThis);

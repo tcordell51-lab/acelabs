@@ -305,7 +305,7 @@
 
   PAT.patternfold = {
     generate: generate, renderFigure: renderFigure, renderOption: renderOption, NETS: NETS, MARKS: MARKS, netType: netType,
-    _internal: { foldFrames: foldFrames, cubeFaces: cubeFaces, rotFaces: rotFaces, drawingOf: drawingOf, sig: sig, ROTS: ROTS }
+    _internal: { foldFrames: foldFrames, cubeFaces: cubeFaces, rotFaces: rotFaces, drawingOf: drawingOf, sig: sig, ROTS: ROTS, visible: visible, spinFace: spinFace, moveFace: moveFace, cloneFaces: cloneFaces, neg: neg }
   };
   if (typeof module === 'object' && module.exports) module.exports = PAT;
 })(typeof self !== 'undefined' ? self : globalThis);

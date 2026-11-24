@@ -915,7 +915,8 @@ function trueOutlines(item) {
 
 PAT.keyholes = {
   generate, renderFigure, renderOption, outlineEvidence, symmetryOrder, mirrorCloseness, trueOutlines, openingSVG, objectSVG,
-  TRAPS, _legacy: { buildItem, silhouette, canonical, trim, makeRng, genSolid, randomlyOrient, DIFFICULTY }
+  TRAPS, _legacy: { buildItem, silhouette, canonical, trim, makeRng, genSolid, randomlyOrient, DIFFICULTY },
+  _grid: { trim, rot90, flipH, canonical, area, hasEnclosedHole, tracePolygons }
 };
 if (typeof module === 'object' && module.exports) module.exports = PAT;
 

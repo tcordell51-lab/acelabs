@@ -8,6 +8,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="pat-cream.css">
+<link rel="stylesheet" href="pat-explain.css">
 <style>
   /* module-specific layout only — palette + chrome come from pat-cream.css */
   .dialrow{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
@@ -55,6 +56,7 @@
     </div>
     <div class="meta" id="meta"></div>
     <div class="coach" id="coach"><b>Read the answers first</b>, they anchor smallest and largest. Then move. When you sit and decipher between the final two is when you trip yourself up.</div>
+    <div id="pexBox" aria-live="polite"></div>
   </div>
 
   <div class="card">
@@ -202,7 +204,7 @@ function renderTeach(){
   document.getElementById('tnext').textContent=TSTEP===NSTEP-1?'New example':'Next step';
 }
 function setMode(m){
-  MODE=m; var teach=m==='teach';
+  MODE=m; var teach=m==='teach'; showExplain(null);
   document.getElementById('choices').style.display=teach?'none':'';
   document.getElementById('teachctl').style.display=teach?'flex':'none';
   document.getElementById('mode').textContent='Mode: '+(teach?'Teach: the mechanics':'Drill');
@@ -240,7 +242,15 @@ function answer(op,btn){
   document.getElementById('coach').innerHTML='<b>'+(ok?'Bank it, move.':'No sweat: toss-ups are the deal here.')+'</b> '+COACH[ri(COACH.length)]
     +' <button class="ghost" id="nextq" style="margin-left:12px">Next question</button>';
   document.getElementById('nextq').addEventListener('click',next);
+  showExplain(op);
   renderStats();
+}
+/* worked explanation: the same per-item explainer as the PAT test review (engine/pat-explain.js) */
+function showExplain(op){
+  var box=document.getElementById('pexBox'); if(!box) return;
+  if(!window.PAT||!PAT.explain||op==null){ box.innerHTML=''; return; }
+  var item={type:'angles',figure:{degs:Q.degs,arms:Q.arms,rots:Q.rots},options:Q.opts.map(function(t){return {text:t};}),answer:Q.opts.indexOf(Q.correct)};
+  box.innerHTML=PAT.explain.html(PAT.explain(item,Q.opts.indexOf(op)));
 }
 function renderStats(){
   var tot={n:0,ok:0,ms:0}; Object.keys(stats).forEach(function(g){var s=stats[g];tot.n+=s.n;tot.ok+=s.ok;tot.ms+=s.ms;});
@@ -257,7 +267,7 @@ function renderStats(){
   });
   el.innerHTML=h;
 }
-function next(){ seed++; revealed=false; Q=gen();
+function next(){ seed++; revealed=false; Q=gen(); showExplain(null);
   document.getElementById('seedTag').textContent='seed '+seed+' · gap '+GAP;
   if(MODE==='teach'){ TSTEP=0; renderTeach(); return; }
   renderStage(); renderChoices(); startTimer();
@@ -303,6 +313,8 @@ if(q.get('mode')==='teach') setMode('teach');
 <script src="/shared/ace-skills.js?v=2"></script>
 <script src="/shared/ace-record.js?v=6"></script>
 <script src="pat-ledger.js"></script>
+<script src="engine/pat-core.js"></script>
+<script src="engine/pat-explain.js"></script>
   <script src="/shared/ace-shell.js?v=4" defer></script>
 <script src="/shared/ace-tabs.js?v=3" defer></script>
 <script src="/shared/ace-wrap.js?v=2" defer></script>

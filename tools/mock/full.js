@@ -731,10 +731,12 @@
       var night = it.nights && it.nights[0];
       h += '<div class="links"><a href="' + st.learn + (night ? '?night=' + night : '') + '">' + (night ? 'Retold night ' + night + ': ' : 'Retold: ') + esc(it.topic) + '</a><a href="' + st.review + '">' + st.engine + '</a></div>';
     } else if (x.kind === 'pat') {
-      var p = x.it, P = PAT[p.type];
-      h += '<div class="q">' + esc(p.prompt) + '</div><div class="pat-area" style="margin-top:8px"><div class="pat-paper" style="max-width:520px">' + P.renderFigure(p) + '</div></div>';
+      var p = x.it, P = PAT[p.type], ex = PAT.explain ? PAT.explain(p, ms.ans) : null;
+      var fig = p.type === 'angles' ? PAT.angles.renderTruth(p) : p.type === 'cubes' ? PAT.cubes.renderFigure(p, { highlight: PAT.cubes.kCubes(p) }) : p.type === 'patternfold' && ex ? PAT.explain.figure(p, ex) : P.renderFigure(p);
+      h += '<div class="q">' + esc(p.prompt) + '</div><div class="pat-area" style="margin-top:8px"><div class="pat-paper" style="max-width:520px">' + fig + '</div></div>';
       h += '<div class="a">Your answer: <b>' + you + '</b>. Correct: <b>' + L[p.answer] + '</b>.</div><div class="pat-area" style="display:flex;gap:10px;flex-wrap:wrap;margin-top:8px">' +
         (ms.ans != null ? '<div style="max-width:160px"><div class="note">Your pick</div>' + P.renderOption(p, ms.ans) + '</div>' : '') + '<div style="max-width:160px"><div class="note">Correct</div>' + P.renderOption(p, p.answer) + '</div></div>';
+      if (ex) h += PAT.explain.html(ex, { chosen: ms.ans, note: p.type === 'cubes' ? 'Highlighted in the figure: the cubes with exactly ' + p.meta.k + ' painted side' + (p.meta.k === 1 ? '' : 's') + '.' : null });
       h += '<div class="links"><a href="/tools/pat/' + PAT_PAGE[p.type] + '">Practice ' + esc((PAT.SECTIONS.filter(function (s) { return s.type === p.type; })[0] || {}).name || 'this subtest') + '</a><a href="' + st.learn + '">PAT, Retold</a></div>';
     } else {
       var q = x.q, pr = (q.proof || [])[0];

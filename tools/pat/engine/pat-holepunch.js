@@ -311,7 +311,7 @@
 
   PAT.holepunch = {
     generate: generate, renderFigure: renderFigure, renderOption: renderOption, sheetSVG: sheetSVG,
-    _internal: { triangleHoles: triangleHoles, candidateFolds: candidateFolds, reflectP: reflectP, sdist: sdist, fullSheet: fullSheet }
+    _internal: { triangleHoles: triangleHoles, candidateFolds: candidateFolds, reflectP: reflectP, sdist: sdist, fullSheet: fullSheet, unfoldLoose: unfoldLoose }
   };
   if (typeof module === 'object' && module.exports) module.exports = PAT;
 })(typeof self !== 'undefined' ? self : globalThis);

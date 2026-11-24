@@ -354,6 +354,6 @@
   function renderOption(item, i) { var o = item.options[i]; return '<div class="pat-paper pat-small pat-hole">' + openingSVG(o.loops, o.scale, optionBox(item)) + '</div>'; }
 
   if (PAT.keyholes && PAT.keyholes.TRAPS && !PAT.keyholes.TRAPS.CURVE) PAT.keyholes.TRAPS.CURVE = { label: 'Curve and slant swapped', note: 'The right outline with one curved edge drawn as a slant or square corner (or the other way round). Arcs stay arcs and slants stay slants in every view.' };
-  PAT.keyholesCSG = { generate: generate, renderFigure: renderFigure, renderOption: renderOption, build: build, orient: orient, outline: outline, TURNS: TURNS, SHOWN: SHOWN, TRAPS: TRAPS2, featureEvidence: featureEvidence };
+  PAT.keyholesCSG = { generate: generate, renderFigure: renderFigure, renderOption: renderOption, build: build, orient: orient, outline: outline, TURNS: TURNS, SHOWN: SHOWN, TRAPS: TRAPS2, featureEvidence: featureEvidence, variants: variants, legal: legal, d4: d4 };
   if (typeof module === 'object' && module.exports) module.exports = PAT;
 })(typeof self !== 'undefined' ? self : globalThis);
