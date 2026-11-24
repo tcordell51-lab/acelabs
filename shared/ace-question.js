@@ -49,8 +49,8 @@
   function reasonLine(id, item, change) {
     var topic = (item.topicName || item.topic || 'this topic').toLowerCase();
     if (id === 'know') return 'Got it. A short lesson on ' + topic + ' goes into tomorrow, then this comes back as a new version.';
-    if (id === 'trap') return 'Got it. This comes back in 2 days as a new version, with the same trap waiting for you.';
-    if (id === 'misread') return 'Got it. It comes back in 2 days. Say the ask in your own words before you look at the choices.';
+    if (id === 'trap') return 'Got it. This comes back tomorrow as a new version, with the same trap waiting for you.';
+    if (id === 'misread') return 'Got it. It comes back tomorrow. Say the ask in your own words before you look at the choices.';
     if (id === 'time') return 'Got it. It comes back untimed first, then timed, so you know which one it was.';
     return (change === 'r2w' ? 'Your first pick was right. ' : '') + 'Every switch is logged, so you can see whether second-guessing costs you.';
   }
@@ -76,7 +76,8 @@
 
   function mount(host, item, opts) {
     opts = opts || {};
-    if (!item || !Array.isArray(item.choices) || item.choices.length !== 5) throw new Error('AceQuestion: an item needs exactly five choices');
+    var N = item && Array.isArray(item.choices) ? item.choices.length : 0;
+    if (N !== 4 && N !== 5) throw new Error('AceQuestion: an item needs four or five choices');
     var picked = -1, revealed = false, t0 = Date.now(), picks = [], conf = null;
     var fig = opts.figure || item.figure || null;
     host.textContent = '';
@@ -203,9 +204,10 @@
         var k = e.key;
         if (!revealed) {
           var i = LETTERS.indexOf(String(k).toUpperCase()); if (i < 0 && /^[1-5]$/.test(k)) i = Number(k) - 1;
+          if (i >= N) return;
           if (i >= 0) { pick(i); e.preventDefault(); return; }
-          if (k === 'ArrowDown' || k === 'ArrowRight') { pick(picked < 0 ? 0 : (picked + 1) % 5); e.preventDefault(); return; }
-          if (k === 'ArrowUp' || k === 'ArrowLeft') { pick(picked < 0 ? 4 : (picked + 4) % 5); e.preventDefault(); return; }
+          if (k === 'ArrowDown' || k === 'ArrowRight') { pick(picked < 0 ? 0 : (picked + 1) % N); e.preventDefault(); return; }
+          if (k === 'ArrowUp' || k === 'ArrowLeft') { pick(picked < 0 ? N - 1 : (picked + N - 1) % N); e.preventDefault(); return; }
           if (k === 'Enter' && picked >= 0) { reveal(); e.preventDefault(); }
         } else {
           if (tag === 'BUTTON' && k === 'Enter') return;   // let the focused button act

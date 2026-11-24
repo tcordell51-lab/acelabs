@@ -6,6 +6,7 @@
 //
 // Item format (see shared/ace-question.js):
 //   { id, section, topic, topicName, stem, choices[5], answer (0-4), why,
+//     (data/qr-topics.json alone may carry four choices: the arcade's QR items, served as written)
 //     traps?: [5] (reason each wrong choice is wrong; null at the answer),
 //     trick?: one line }
 // Nothing is written here that the source bank does not contain: no trap or
@@ -135,6 +136,29 @@ function qrDat() {
   }
   return { name: 'qr-dat', source: 'scripts/dat-mock-bank.json (QR, five choices with a worked reason)', items: out, skipped };
 }
+// QR by topic, from the arcade bank (games/qr.json): the topics the two banks above do not
+// cover. Only items whose answer key scripts/bank/verify-qr-arcade.mjs worked out again from the
+// question and matched are served (scripts/bank/qr-arcade-verified.json). Four or five choices,
+// as written: nothing is added to an item.
+const QR_TOPIC_NAMES = (await import('./bank/verify-qr-arcade.mjs')).TOPIC_NAMES;
+Object.assign(QR_NAMES, QR_TOPIC_NAMES);
+function qrTopics(taken) {
+  const src = JSON.parse(read('games/qr.json')), verified = JSON.parse(read('scripts/bank/qr-arcade-verified.json')).verified;
+  const out = [], skipped = [];
+  for (const q of src) {
+    if (!QR_TOPIC_NAMES[q.topic]) continue;
+    if (!verified[q.id] || taken.has('qr:' + q.id)) { skipped.push(q.id); continue; }
+    out.push({ id: 'qr:' + q.id, section: 'qr', topic: q.topic, topicName: QR_TOPIC_NAMES[q.topic], difficulty: q.difficulty || 1,
+      stem: clean(q.q), choices: q.opts.map(clean), answer: q.correct, why: clean(q.why),
+      ...(Array.isArray(q.traps) && q.traps.length === q.opts.length ? { traps: q.traps.map((t) => (t == null ? null : clean(t))) } : {}),
+      ...(q.trick ? { trick: clean(q.trick) } : {}) });
+  }
+  return { name: 'qr-topics', source: 'games/qr.json (QR by topic, answer keys verified by scripts/bank/verify-qr-arcade.mjs)', items: out, skipped, choices: [4, 5] };
+}
+// Topic keys outside the 2026 DAT outline (scripts/bank/scope-topics.json): never in a served
+// bank, and listed in data/topics.json so the arcade and the hubs leave them out too.
+const SCOPE_TOPICS = JSON.parse(read('scripts/bank/scope-topics.json'));
+const EXCLUDED_TOPICS = {}; for (const [sec, group] of Object.entries(SCOPE_TOPICS)) if (group && typeof group === 'object') EXCLUDED_TOPICS[sec] = Object.keys(group);
 // The browser normalizes a test question's raw topic with this map (shared/ace-test-review.js),
 // so a diagnostic or full-length miss lands under the same topic as the practice bank.
 function topicsMap() {
@@ -144,7 +168,8 @@ function topicsMap() {
   const qr = {}; for (const q of DAT.qr || []) qr[q.topic] = [q.topic, QR_NAMES[q.topic] || q.topic.replace(/-/g, ' ')];
   // keep the map stable for older stored misses whose topic no live item uses any more
   for (const k of ['logarithms']) if (!qr[k]) qr[k] = [k, QR_NAMES[k]];
-  return { format: 1, gchem: gc, bio, ochem: oc, qr };
+  for (const [k, name] of Object.entries(QR_TOPIC_NAMES)) qr[k] = [k, name];
+  return { format: 1, gchem: gc, bio, ochem: oc, qr, excluded: EXCLUDED_TOPICS };
 }
 
 const problems = [];
@@ -153,9 +178,10 @@ function validate(bank) {
   for (const it of bank.items) {
     const where = bank.name + ' ' + it.id;
     if (ids.has(it.id)) problems.push(where + ': duplicate id'); ids.add(it.id);
-    if (it.choices.length !== 5) problems.push(where + ': not five choices');
-    if (new Set(it.choices).size !== 5) problems.push(where + ': two identical choices');
-    if (!(Number.isInteger(it.answer) && it.answer >= 0 && it.answer < 5)) problems.push(where + ': answer out of range');
+    if (!(bank.choices || [5]).includes(it.choices.length)) problems.push(where + ': not ' + (bank.choices || [5]).join(' or ') + ' choices');
+    if (new Set(it.choices).size !== it.choices.length) problems.push(where + ': two identical choices');
+    if (!(Number.isInteger(it.answer) && it.answer >= 0 && it.answer < it.choices.length)) problems.push(where + ': answer out of range');
+    if (it.traps && (it.traps.length !== it.choices.length || it.traps[it.answer] != null)) problems.push(where + ': traps do not line up with the choices');
     if (!it.stem || !it.why || !it.topic || !it.topicName) problems.push(where + ': missing stem, why or topic');
     if (/—/.test(JSON.stringify(it))) problems.push(where + ': em dash');
     if (!it.skill || !it.skillName) problems.push(where + ': no skill tag');
@@ -168,8 +194,9 @@ let stale = 0;
 const { exclusionSet, isExcluded } = await import('../netlify/lib/ace-exclusions.mjs');
 const EXCLUDED = exclusionSet(JSON.parse(read('scripts/bank/scope-exclusions.json')));
 const BANKS = [gchem(), qrClimb(), bio(), ochem(), qrDat()];
+BANKS.push(qrTopics(new Set(BANKS.flatMap((b) => b.items.map((it) => it.id)))));
 for (const bank of BANKS) {
-  bank.items = bank.items.filter((it) => { if (!isExcluded(it.id, EXCLUDED)) return true; bank.skipped.push(it.id); return false; });
+  bank.items = bank.items.filter((it) => { if (!isExcluded(it.id, EXCLUDED) && !(EXCLUDED_TOPICS[it.section] || []).includes(it.topic)) return true; bank.skipped.push(it.id); return false; });
   bank.items.forEach(withSkill);
   validate(bank);
   const file = path.join(ROOT, 'data', bank.name + '.json');

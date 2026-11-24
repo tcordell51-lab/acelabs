@@ -329,7 +329,7 @@
   }
   /* "Why did you miss it?" (2026-11-16). Stored with the miss; it sets the first return:
      know -> a short lesson first, back tomorrow; time -> untimed first, back tomorrow;
-     trap, misread, changed -> back in 2 days. */
+     trap, misread, changed -> back tomorrow too (the 1, 3, 7 day schedule, 2026-11-24). */
   var REASONS = ['know', 'trap', 'misread', 'time', 'changed'];
   function reason(id, why) {
     if (REASONS.indexOf(why) < 0) throw new Error('unknown reason ' + why);
@@ -337,7 +337,7 @@
     r.reason = why; r.reasonAt = Date.now();
     r.lessonFirst = why === 'know'; r.untimedFirst = why === 'time';
     var d0 = new Date(); d0.setHours(1, 0, 0, 0);
-    r.due = d0.getTime() + ((why === 'know' || why === 'time') ? 1 : 2) * DAY;
+    r.due = d0.getTime() + LEITNER[0] * DAY;
     rs[id] = r; set('review', rs);
     return r;
   }

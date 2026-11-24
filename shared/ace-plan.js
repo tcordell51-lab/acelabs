@@ -68,7 +68,7 @@
     if (!all.length) {
       steps.push({ id: 'diagnostic', k: 'Start here', title: 'Take the diagnostic', line: '60 questions across Biology, Gen Chem, OChem and QR. It fills Repair, Progress and this plan.', href: '/diagnostic.html' });
     }
-    if (counts.due) steps.push({ id: 'repair', k: 'Repair first', title: counts.due + (counts.due === 1 ? ' miss is back' : ' misses are back'), line: 'Each returns as a new version. Beat it twice, on different days, and it clears.', href: '/repair/' });
+    if (counts.due) steps.push({ id: 'repair', k: 'Repair first', title: counts.due + (counts.due === 1 ? ' miss is back' : ' misses are back'), line: 'Each returns as a new version after 1, 3 and 7 days. Get the 7-day one right and it clears.', href: '/repair/' });
     var weak = weakest(3);
     var w = weak[0];
     if (w) {

@@ -6,10 +6,12 @@
                      learner model in ace-record.js), weakest topics first, spread across topics.
                      Misses are not repeated here: they come back as new versions in Repair.
      mode 'topic'  : one topic, unseen items nearest the student's level first, so the set
-                     steps harder after wins and easier after misses
+                     steps harder after wins and easier after misses. The first time a student
+                     opens a topic, its easiest question leads, so a first win comes early.
      mode 'misses' : items whose most recent answer was wrong
      mode 'due'    : spaced repeats that are due
-   AceSet.run(host, items, { mode, section, topic, size, src, onDone, homeHref, homeLabel })
+   AceSet.run(host, items, { mode, section, topic, size, src, onDone, homeHref, homeLabel,
+                             checkHref })   checkHref: the topic's quick check, offered when the set ends
    AceSet.load(url) -> Promise of a bank ({ items: [...] }) */
 (function () {
   'use strict';
@@ -31,6 +33,11 @@
     // new items, ordered nearest the student's level (rec.pickNear), one topic at a time so a
     // set is spread, not clumped; in daily mode the weakest topics lead
     var near = rec && rec.pickNear ? rec.pickNear(pool.filter(function (it) { return !rec.item(it.id); })) : shuffle(pool);
+    if (o.mode === 'topic' && rec && near.length > 1 && !pool.some(function (it) { return rec.item(it.id); })) {
+      // first visit to this topic: the easiest question leads (a first win inside the first minute)
+      var easy = near.reduce(function (a, b) { return (b.difficulty || 1) < (a.difficulty || 1) ? b : a; });
+      near = [easy].concat(near.filter(function (it) { return it !== easy; }));
+    }
     var unseen = {}, order = [];
     near.forEach(function (it) { if (used[it.id]) return; if (!unseen[it.topic]) { unseen[it.topic] = []; order.push(it.topic); } unseen[it.topic].push(it); });
     if (o.mode !== 'topic') {
@@ -100,13 +107,18 @@
       if (R() && R().saveRun) R().saveRun({ id: setId, src: o.src || 'set', title: (o.title || 'Practice set'), at: Date.now(), right: right, total: answered, back: o.homeHref || '/',
         rows: rows.map(function (r, k) { return { n: k + 1, id: r.item.id, section: r.item.section, topic: r.item.topic, topicName: r.item.topicName, skill: r.item.skill, skillName: r.item.skillName, stem: r.item.stem, choices: r.item.choices, answer: r.item.answer, why: r.item.why, picked: r.picked, ok: r.ok, blank: false }; }) });
       if (names.length) {
-        card.appendChild(el('p', 'aui-p', 'Every miss is in Repair now. It comes back as a new version, starting tomorrow, until you beat it twice on different days.'));
+        card.appendChild(el('p', 'aui-p', 'Every miss is in Repair now. It comes back as a new version tomorrow, then 3 days later, then 7 days later. Get the 7-day one right and it clears.'));
         var ul = el('ul', 'aui-list');
         names.sort(function (a, b) { return wrongTopics[b] - wrongTopics[a]; }).forEach(function (n) { var li = el('li'); li.appendChild(el('span', null, n)); li.appendChild(el('span', 'aui-chip aui-chip--miss', wrongTopics[n] + (wrongTopics[n] === 1 ? ' miss' : ' misses'))); ul.appendChild(li); });
         card.appendChild(ul);
       } else card.appendChild(el('p', 'aui-p', 'No misses in this set. The next set picks a little harder, because your level went up.'));
       var row = el('div', 'aui-row');
-      var home = el('a', 'aui-btn', 'Back to Today'); home.href = '/'; home.setAttribute('data-act', 'today'); row.appendChild(home);
+      if (o.checkHref) {
+        var done = window.AceMastery && o.topic ? window.AceMastery.topic(o.section, o.topic).mastered : 0;
+        card.appendChild(el('p', 'aui-p', done ? 'You have mastered this topic on the quick check.' : 'Ready to prove it? The quick check is 5 questions, and 4 right masters the topic.'));
+        var qc = el('a', 'aui-btn' + (done ? ' aui-btn--quiet' : ''), done ? 'Take the quick check again' : 'Quick check: 5 questions'); qc.href = o.checkHref; qc.setAttribute('data-act', 'quick-check'); row.appendChild(qc);
+      }
+      var home = el('a', 'aui-btn' + (o.checkHref ? ' aui-btn--quiet' : ''), 'Back to Today'); home.href = '/'; home.setAttribute('data-act', 'today'); row.appendChild(home);
       var rv = el('a', 'aui-btn aui-btn--quiet', 'Review question by question'); rv.href = '/review/?run=' + encodeURIComponent(setId); row.appendChild(rv);
       var back = el('a', 'aui-btn aui-btn--quiet', o.homeLabel || 'Back'); back.href = o.homeHref || '/'; row.appendChild(back);
       card.appendChild(row); slot.appendChild(card);

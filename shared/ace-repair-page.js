@@ -1,6 +1,6 @@
 /* ace-repair-page.js : the Repair page (/repair/). One queue for every miss; each comes back as a
-   new version (a twin: same section and skill, another stem) until it is beaten twice on different
-   days, answered unassisted. The rules live in shared/ace-record.js (repair*); this file only shows
+   new version (a twin: same section and skill, another stem) after 1, 3 and 7 days,
+   answered unassisted. The rules live in shared/ace-record.js (repair*); this file only shows
    them. Banks: the built banks under /data/, plus the private-bank items Thomas has approved
    (/.netlify/functions/ace-bank-pool, empty until he approves). PAT and Reading misses repair by skill: the new
    version is the next item of that skill in its trainer (any unassisted answer there counts). */
@@ -9,7 +9,7 @@
   var R = window.AceRecord;
   var $ = function (id) { return document.getElementById(id); };
   var SECTION = { bio: 'Biology', gchem: 'Gen Chem', ochem: 'OChem', qr: 'QR', pat: 'PAT', rc: 'Reading' };
-  var BANKS = ['/data/gchem.json', '/data/bio.json', '/data/qr-climb.json', '/data/qr-dat.json', '/data/ochem.json'];
+  var BANKS = ['/data/gchem.json', '/data/bio.json', '/data/qr-climb.json', '/data/qr-dat.json', '/data/qr-topics.json', '/data/ochem.json'];
   var bank = [], byId = {}, sameItemServed = 0;
   var DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'], MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
   function fmt(t) { var d = new Date(t); return DAYS[d.getDay()] + ', ' + MONTHS[d.getMonth()] + ' ' + d.getDate(); }
@@ -38,12 +38,13 @@
 
   function track(e) {
     var host = $('track'); host.textContent = '';
-    if (!e) { host.innerHTML = '<div><span class="node later"></span><b>Missed</b><span>in a set</span></div><div><span class="node later"></span><b>Win 1</b><span>another day</span></div><div><span class="node later"></span><b>Win 2</b><span>another day</span></div>'; return; }
+    if (!e) { host.innerHTML = '<div><span class="node later"></span><b>Missed</b><span>in a set</span></div><div><span class="node later"></span><b>Win 1</b><span>1 day later</span></div><div><span class="node later"></span><b>Win 2</b><span>3 days later</span></div><div><span class="node later"></span><b>Win 3</b><span>7 days later</span></div>'; return; }
     var w = e.wins || [];
     var cells = [
       '<div><span class="node miss">' + ICON_X + '</span><b>' + fmt(e.lastMiss || e.missedAt) + '</b><span>' + (e.resets ? 'Missed again' : 'Missed in a set') + '</span></div>',
       w[0] ? '<div><span class="node win">' + ICON_OK + '</span><b>' + fmt(w[0]) + '</b><span>Win 1</span></div>' : '<div><span class="node next"></span><b>' + (e.due ? fmt(e.due) : 'Next') + '</b><span>Win 1</span></div>',
-      w[1] ? '<div><span class="node win">' + ICON_OK + '</span><b>' + fmt(w[1]) + '</b><span>Win 2</span></div>' : '<div><span class="node later"></span><b>' + (w[0] ? fmt(e.due) : 'A later day') + '</b><span>Win 2</span></div>'
+      w[1] ? '<div><span class="node win">' + ICON_OK + '</span><b>' + fmt(w[1]) + '</b><span>Win 2</span></div>' : '<div><span class="node later"></span><b>' + (w[0] ? fmt(e.due) : '3 days later') + '</b><span>Win 2</span></div>',
+      w[2] ? '<div><span class="node win">' + ICON_OK + '</span><b>' + fmt(w[2]) + '</b><span>Win 3</span></div>' : '<div><span class="node later"></span><b>' + (w[1] ? fmt(e.due) : '7 days later') + '</b><span>Win 3</span></div>'
     ];
     host.innerHTML = cells.join('');
   }
@@ -60,8 +61,8 @@
       var left = el('span'); left.appendChild(el('b', null, SECTION[e.section] + ': ' + e.topicName));
       left.appendChild(el('small', null, (e.due <= Date.now() || sameDay(e.due, Date.now()) ? 'Due today' : 'Back ' + fmt(e.due)) + (e.skillName ? ' · ' + e.skillName : '') + (e.reason ? ' · ' + R.REASONS[e.reason] : '')));
       li.setAttribute('data-repair', e.id);
-      var wins = el('span', 'wins'); wins.setAttribute('aria-label', (e.wins || []).length + ' of 2 wins');
-      for (var k = 0; k < 2; k++) wins.appendChild(el('i', (e.wins || [])[k] ? 'on' : ''));
+      var wins = el('span', 'wins'); wins.setAttribute('aria-label', (e.wins || []).length + ' of 3 wins');
+      for (var k = 0; k < 3; k++) wins.appendChild(el('i', (e.wins || [])[k] ? 'on' : ''));
       var right = el('span', 'q-r');
       // opened from the list before answering today: that day's answer is assisted
       var see = seeIt(e, function () { R.event('repair-see', { id: e.id }); if (e.due < Date.now() + 864e5 && !answeredToday(e)) R.repairLesson(e.id); });

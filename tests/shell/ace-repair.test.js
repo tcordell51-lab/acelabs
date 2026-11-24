@@ -1,4 +1,5 @@
-// Repair queue (2026-11-16): one queue, twin versions, 2 unassisted wins on different days.
+// Repair queue (2026-11-16): one queue, twin versions. 2026-11-24: returns after 1, 3 and 7 days,
+// cleared by 3 unassisted wins on different days (tests/shell/ace-review-schedule.test.js).
 // node --test tests/shell/ace-repair.test.js
 const test = require('node:test');
 const assert = require('node:assert');
@@ -42,7 +43,7 @@ test('the return is a twin: same section and skill, a different stem', () => {
   assert.strictEqual(lone.sameItem, true, 'falls back to the same item only when no twin exists');
 });
 
-test('clears after 2 unassisted wins on different days; same-day wins count once', () => {
+test('clears after 3 unassisted wins on different days; same-day wins count once', () => {
   const R = boot();
   R.record({ item: it('m1'), picked: 2, answer: 0, ok: false, at: T0 });
   R.repairAnswer('m1', { servedId: 't1', ok: true, at: T0 + DAY });
@@ -53,8 +54,11 @@ test('clears after 2 unassisted wins on different days; same-day wins count once
   e = j(R.repairEntry('m1')); assert.strictEqual(e.wins.length, 1, 'an assisted answer is not a win');
   R.repairAnswer('m1', { servedId: 't1', ok: true, at: T0 + 4 * DAY });
   e = j(R.repairEntry('m1'));
+  assert.strictEqual(e.wins.length, 2); assert.strictEqual(e.cleared, 0, 'two wins no longer clear it');
+  R.repairAnswer('m1', { servedId: 't2', ok: true, at: T0 + 11 * DAY });
+  e = j(R.repairEntry('m1'));
   assert.ok(e.cleared > 0);
-  assert.strictEqual(j(R.repairList({ now: T0 + 4 * DAY })).clearedThisWeek.length, 1);
+  assert.strictEqual(j(R.repairList({ now: T0 + 11 * DAY })).clearedThisWeek.length, 1);
 });
 
 test('a wrong answer resets the wins and brings it back the next day', () => {
@@ -67,14 +71,14 @@ test('a wrong answer resets the wins and brings it back the next day', () => {
   assert.strictEqual(new Date(e.due).getDate(), new Date(T0 + 4 * DAY).getDate());
 });
 
-test('the reason sets the first return', () => {
+test('the reason sets what comes with the first return; every first return is the next day', () => {
   const R = boot();
   ['know', 'trap', 'time'].forEach((r, k) => R.record({ item: it('r' + k), picked: 2, answer: 0, ok: false, at: T0 }));
   const know = j(R.repairReason('r0', 'know', T0)), trap = j(R.repairReason('r1', 'trap', T0)), time = j(R.repairReason('r2', 'time', T0));
   assert.strictEqual(know.lessonFirst, true);
   assert.strictEqual(time.untimedFirst, true);
   assert.strictEqual(new Date(know.due).getDate(), new Date(T0 + DAY).getDate());
-  assert.strictEqual(new Date(trap.due).getDate(), new Date(T0 + 2 * DAY).getDate(), 'trap, misread and changed return in 2 days');
+  assert.strictEqual(new Date(trap.due).getDate(), new Date(T0 + DAY).getDate(), 'trap, misread and changed also return the next day');
   assert.throws(() => R.repairReason('r0', 'bored', T0));
 });
 
@@ -118,7 +122,7 @@ test('the rating falls after misses and rises after wins; picks follow it', () =
   assert.strictEqual(R.pickNear(pool, { random: () => 0 })[0].difficulty, 3, 'after wins a hard item comes first');
 });
 
-test('PAT misses repair by skill: two practice wins on different days clear it', () => {
+test('PAT misses repair by skill: practice wins on the 1, 3 and 7 day returns clear it', () => {
   const R = boot();
   const pat = (n) => ({ id: 'pat:holepunch:' + n, section: 'pat', topic: 'holepunch', topicName: 'Hole punching', skill: 'holepunch', skillName: 'Hole punching' });
   R.record({ item: pat(1), picked: 1, answer: 0, ok: false, at: T0 });
@@ -129,5 +133,9 @@ test('PAT misses repair by skill: two practice wins on different days clear it',
   R.record({ item: pat(4), picked: 0, answer: 0, ok: true, at: T0 + DAY });
   assert.strictEqual(R.repairEntry('pat:holepunch').wins.length, 1);
   R.record({ item: pat(5), picked: 0, answer: 0, ok: true, at: T0 + 3 * DAY });
+  assert.strictEqual(R.repairEntry('pat:holepunch').wins.length, 1, 'the 3-day return is not due yet');
+  R.record({ item: pat(6), picked: 0, answer: 0, ok: true, at: T0 + 4 * DAY });
+  assert.strictEqual(R.repairEntry('pat:holepunch').wins.length, 2);
+  R.record({ item: pat(7), picked: 0, answer: 0, ok: true, at: T0 + 11 * DAY });
   assert.ok(R.repairEntry('pat:holepunch').cleared);
 });

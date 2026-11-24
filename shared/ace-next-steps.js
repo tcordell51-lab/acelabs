@@ -136,7 +136,7 @@
       var l2 = a2.learn || a2.drill;
       steps.push({ when: a3 ? 'Days 3 and 4' : 'Day 3', title: 'Same two steps for ' + short(a2), detail: 'Lesson first, then the drill.' + more, href: l2 && l2.href, cta: l2 && l2.label });
     }
-    steps.push({ when: steps.length >= 3 ? 'Day 5' : 'Day ' + (steps.length + 1), title: 'Clear Repair', detail: 'Every miss from this test comes back as a new version. Beat each one twice on different days.', href: '/repair/', cta: 'Open Repair' });
+    steps.push({ when: steps.length >= 3 ? 'Day 5' : 'Day ' + (steps.length + 1), title: 'Clear Repair', detail: 'Every miss from this test comes back as a new version after 1, 3 and 7 days. Get the 7-day one right and it clears.', href: '/repair/', cta: 'Open Repair' });
     if (days != null && days <= 7) steps.push({ when: 'Test week', title: 'Switch to the test-week plan', detail: 'Your DAT is ' + (days === 0 ? 'today' : 'in ' + plural(days, 'day')) + '. Light review, real sleep, no new material.', href: '/test-week.html', cta: 'Open the test-week plan' });
     else if (o.retest && o.retest.href) steps.push({ when: 'Day 6 or 7', title: o.retest.label, detail: o.retest.detail || 'See whether the fixes held, under the clock.', href: o.retest.href, cta: o.retest.cta || 'Start' });
     return steps.slice(0, 5);

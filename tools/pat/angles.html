@@ -251,6 +251,7 @@ function showExplain(op){
   if(!window.PAT||!PAT.explain||op==null){ box.innerHTML=''; return; }
   var item={type:'angles',figure:{degs:Q.degs,arms:Q.arms,rots:Q.rots},options:Q.opts.map(function(t){return {text:t};}),answer:Q.opts.indexOf(Q.correct)};
   box.innerHTML=PAT.explain.html(PAT.explain(item,Q.opts.indexOf(op)));
+  if(window.AceVisuals&&AceVisuals.chipHTML){ var see=AceVisuals.chipHTML({section:'pat',topic:'angles'},'set'); if(see) box.innerHTML+='<p class="pex-see">'+see+'</p>'; }
 }
 function renderStats(){
   var tot={n:0,ok:0,ms:0}; Object.keys(stats).forEach(function(g){var s=stats[g];tot.n+=s.n;tot.ok+=s.ok;tot.ms+=s.ms;});
@@ -311,7 +312,8 @@ if(q.get('mode')==='teach') setMode('teach');
 })();
 </script>
 <script src="/shared/ace-skills.js?v=2"></script>
-<script src="/shared/ace-record.js?v=6"></script>
+<script src="/shared/ace-record.js?v=7"></script>
+<script src="/shared/ace-visuals.js?v=6"></script>
 <script src="pat-ledger.js"></script>
 <script src="engine/pat-core.js"></script>
 <script src="engine/pat-explain.js"></script>

@@ -10,7 +10,8 @@
 // 4. The miss count is the same on Today, Repair and Progress, and Progress shows 15 answers in
 //    each of the four sections. Today's plan changed: the first practice step is OChem or Gen Chem.
 // 5. Repair holds the misses as new versions (same skill or topic, another question).
-// 6. Next day: beat a miss once (win 1). Two days later: beat it again; it clears.
+// 6. Next day: beat a miss once (win 1). It returns 3 days later (win 2), then 7 days after that;
+//    the 7-day return answered right clears it.
 // 7. Adaptive: the next practice set leans to the missed skills, and after a run of wins in one
 //    topic the set picks harder questions than before.
 // 9. Gaps from the rework (2026-11-16): Keyholes and the OChem Summit write to the shared record and
@@ -207,43 +208,37 @@ try {
   assert.equal(t1.wins.length, 1); assert.ok(!t1.cleared);
   ok('day 1: one unassisted win on the target, not cleared yet');
 
-  // ---------- 7. day +3: win 2, cleared ----------
-  await page.clock.setFixedTime(T0 + 3 * DAY);
-  await go('/repair/');
-  let cleared = false;
-  for (let guard = 0; guard < 40; guard++) {
-    const entry = await page.getAttribute('#now', 'data-entry');
-    if (!entry) break;
-    const skip = await page.$('button:has-text("Answer without it")'); if (skip) await skip.click();
-    const served = await page.getAttribute('#now [data-item]', 'data-item');
-    if (entry === targetId) await shot('repair-day3-second-win');
-    const ans = ANSWER[served] != null ? ANSWER[served] : await R((id) => (AceRecord.repairEntry(id).itemData || {}).answer, entry);
-    await page.locator('#now [role="radio"]').nth(ans).click();
-    await page.click('#now button[data-act="check"]');
-    await page.waitForSelector('#now button[data-act="next"]');
-    if (entry === targetId) { cleared = !!(await R((id) => AceRecord.repairEntry(id).cleared, targetId)); }
-    await page.click('#now button[data-act="next"]');
-    await page.waitForTimeout(150);
+  // ---------- 7. day +4: win 2, due again in 7 days; day +11: win 3, cleared ----------
+  async function repairDay(day, label) {
+    await page.clock.setFixedTime(T0 + day * DAY);
+    await go('/repair/');
+    let saw = false;
+    for (let guard = 0; guard < 60; guard++) {
+      const entry = await page.getAttribute('#now', 'data-entry');
+      if (!entry) break;
+      const skip = await page.$('button:has-text("Answer without it")'); if (skip) await skip.click();
+      const served = await page.getAttribute('#now [data-item]', 'data-item');
+      if (entry === targetId) { saw = true; await shot('repair-day' + day + '-' + label); }
+      const ans = ANSWER[served] != null ? ANSWER[served] : await R((id) => (AceRecord.repairEntry(id).itemData || {}).answer, entry);
+      await page.locator('#now [role="radio"]').nth(ans).click();
+      await page.click('#now button[data-act="check"]');
+      await page.waitForSelector('#now button[data-act="next"]');
+      await page.click('#now button[data-act="next"]');
+      await page.waitForTimeout(150);
+    }
+    return saw;
   }
-  assert.ok(cleared, 'the target cleared after the second win on a different day');
-  const openAfter = Number(await page.textContent('#n-open'));
-  assert.ok(openAfter < totalMiss);
-  await shot('repair-day3-cleared');
-  ok('day 3: second win on a different day clears it', 'open in Repair ' + totalMiss + ' -> ' + openAfter);
+  // day +3 is too early: the second return is 3 days after the first win
+  await page.clock.setFixedTime(T0 + 3 * DAY);
+  const early = await R((id) => AceRecord.repairList({ now: Date.now() }).due.some((e) => e.id === id), targetId);
+  assert.equal(early, false, 'the target is not due again before day 4');
+  assert.ok(await repairDay(4, 'second-win'), 'the target was due on day 4');
+  const t2 = await R((id) => AceRecord.repairEntry(id), targetId);
+  assert.equal(t2.wins.length, 2); assert.ok(!t2.cleared, 'two wins do not clear it');
+  assert.equal(Math.round((new Date(t2.due).setHours(0, 0, 0, 0) - new Date(T0).setHours(0, 0, 0, 0)) / DAY), 11, 'third return is 7 days after the second win');
+  ok('day 4: second win, not cleared, back in 7 days');
 
-  // assisted: See it before answering means no win that day (decision documented in ace-record.js)
-  const assistedSaved = await R(() => AceRecord.attempts().every((a) => typeof a.assisted === 'boolean'));
-  assert.ok(assistedSaved); ok('every attempt row carries the assisted flag');
-
-  // counts still agree after the wins
-  const after = {};
-  await go('/'); after.today = Number(await page.getAttribute('#t-counts', 'data-miss-open')); await shot('today-day3');
-  await go('/progress/'); after.progress = Number(await page.getAttribute('#p-misses', 'data-miss-open')); await shot('progress-day3');
-  await go('/repair/'); after.repair = Number(await page.textContent('#n-open'));
-  assert.equal(after.today, after.repair); assert.equal(after.progress, after.repair);
-  ok('after the wins, Today, Repair and Progress still agree', JSON.stringify(after));
-
-  // ---------- 8. adaptive: after a run of wins the set gets harder ----------
+  // ---------- 8. adaptive: after a run of wins the set gets harder (measured on day 4, before the 7-day returns add more wins) ----------
   // the section the plan sent the student to; its largest topic, so there are enough unseen items
   const hub = psec === 'ochem' ? '/oc/' : '/gc/', bankFile = psec === 'ochem' ? 'ochem.json' : 'gchem.json';
   const sizes = {}; for (const it of JSON.parse(fs.readFileSync(path.join(ROOT, 'data', bankFile), 'utf8')).items) sizes[it.topic] = (sizes[it.topic] || 0) + 1;
@@ -273,6 +268,28 @@ try {
   await shot('practice-set-harder');
   assert.ok(d1 > d0, 'mean difficulty of the next picks rose: ' + d0 + ' -> ' + d1);
   ok('after a run of wins the set picks harder questions', 'mean difficulty of the next four ' + d0.toFixed(2) + ' -> ' + d1.toFixed(2));
+
+
+  // ---------- 7 again. day +11: the 7-day return ----------
+  assert.ok(await repairDay(11, 'third-win'), 'the target was due on day 11');
+  const cleared = !!(await R((id) => AceRecord.repairEntry(id).cleared, targetId));
+  assert.ok(cleared, 'the target cleared after the 7-day return was answered right');
+  const openAfter = Number(await page.textContent('#n-open'));
+  assert.ok(openAfter < totalMiss);
+  await shot('repair-day11-cleared');
+  ok('day 11: the 7-day return answered right clears it', 'open in Repair ' + totalMiss + ' -> ' + openAfter);
+
+  // assisted: See it before answering means no win that day (decision documented in ace-record.js)
+  const assistedSaved = await R(() => AceRecord.attempts().every((a) => typeof a.assisted === 'boolean'));
+  assert.ok(assistedSaved); ok('every attempt row carries the assisted flag');
+
+  // counts still agree after the wins
+  const after = {};
+  await go('/'); after.today = Number(await page.getAttribute('#t-counts', 'data-miss-open')); await shot('today-day11');
+  await go('/progress/'); after.progress = Number(await page.getAttribute('#p-misses', 'data-miss-open')); await shot('progress-day11');
+  await go('/repair/'); after.repair = Number(await page.textContent('#n-open'));
+  assert.equal(after.today, after.repair); assert.equal(after.progress, after.repair);
+  ok('after the wins, Today, Repair and Progress still agree', JSON.stringify(after));
 
   // ---------- 9. labs and questions, both ways ----------
   await go('/labs/');

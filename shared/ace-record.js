@@ -21,13 +21,17 @@
    Repair (2026-11-16): every miss also opens a repair entry in the same record
    (record.repair). One scheduler, simple interval logic in localStorage for now
    (Ace Engine's FSRS is not wired into the browser yet):
-     - the miss comes back the next day, or in 2 days when the student tags it
-       "Fell for a trap", "Misread it" or "Changed my answer";
+     - the miss comes back on a 1, 3, 7 day schedule (RETURN_DAYS, 2026-11-24): the next day,
+       then 3 days after that win, then 7 days after that win;
      - "Didn't know it" puts a short lesson before the first return;
      - "Ran short on time" makes the first return untimed;
      - it returns as a new version (a twin: same section and skill, other stem);
-     - it clears after 2 wins on different calendar days, answered unassisted
-       (nothing opened before answering); a wrong answer resets it to the next day.
+     - it clears when the 7-day return is answered right: 3 wins on different calendar days,
+       answered unassisted (nothing opened before answering); a wrong answer at any step
+       sends it back to the start, due the next day;
+     - records written under the older rule (back after 1 or 2 days, cleared on 2 wins) are
+       moved over once by migrateRepair(): cleared entries stay cleared, an entry with one win
+       keeps the win and comes back 3 days after it, an entry with no win keeps its date.
 
    2026-11-16 rework:
      - every attempt row and item carries skill (shared/ace-skills.js) and assisted (true when
@@ -84,8 +88,8 @@
     try { var s = ls(); if (s) s.setItem(NS + k, str); } catch (e) { /* storage full or blocked: memory only */ }
   }
   function dayKey(t) { var d = new Date(t); return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2); }
-  function blank() { return { schema: 1, updated: 0, items: {}, days: {}, imported: {}, repair: {}, model: null }; }
-  function load() { var r = read('record', null); if (!r || r.schema !== 1) r = blank(); r.items = r.items || {}; r.days = r.days || {}; r.imported = r.imported || {}; r.repair = r.repair || {}; r.model = r.model || { sec: {}, top: {}, ib: {} }; return r; }
+  function blank() { return { schema: 1, updated: 0, items: {}, days: {}, imported: {}, repair: {}, model: null, repairSched: 137 }; }
+  function load() { var r = read('record', null); if (!r || r.schema !== 1) r = blank(); r.items = r.items || {}; r.days = r.days || {}; r.imported = r.imported || {}; r.repair = r.repair || {}; r.model = r.model || { sec: {}, top: {}, ib: {} }; if (r.repairSched !== 137) { migrateRepair(r); write('record', r); } return r; }
 
   /* ---- learner model: Elo per section and per topic, difficulty per item ---- */
   var GUESS = 0.2, TARGET = 0.75;
@@ -170,6 +174,33 @@
   var REASONS = { know: "Didn't know it", trap: 'Fell for a trap', misread: 'Misread it', time: 'Ran short on time', changed: 'Changed my answer' };
   function startOfDay(t) { var d = new Date(t); d.setHours(0, 0, 0, 0); return d.getTime(); }
   function daysOut(now, n) { return startOfDay(now) + n * DAY + 3600e3; }   // 1 am on day +n, so "due today" means any time today
+  /* The return schedule: a miss comes back 1 day out, then 3 days after that win, then 7 days
+     after that win. A right answer on the 7-day return clears it. */
+  var RETURN_DAYS = [1, 3, 7];
+  /* One unassisted right answer on a return. Same-day wins count once. */
+  function repairWin(e, now) {
+    var today = startOfDay(now);
+    if (!e.wins.some(function (w) { return startOfDay(w) === today; })) e.wins.push(now);
+    if (e.wins.length >= RETURN_DAYS.length) e.cleared = now;
+    else e.due = daysOut(now, RETURN_DAYS[e.wins.length]);
+  }
+  function repairMiss(e, now) { e.wins = []; e.resets = (e.resets || 0) + 1; e.due = daysOut(now, RETURN_DAYS[0]); e.lastMiss = now; }
+  /* Older records (a miss back after 1 or 2 days, cleared on 2 wins) move to the 1, 3, 7 day
+     schedule once. Nothing is deleted and nothing cleared is reopened. */
+  function migrateRepair(r) {
+    var all = r.repair || {};
+    Object.keys(all).forEach(function (k) {
+      var e = all[k]; if (!e || typeof e !== 'object') { delete all[k]; return; }
+      if (!Array.isArray(e.wins)) e.wins = [];
+      e.wins = e.wins.filter(function (w) { return typeof w === 'number' && isFinite(w); }).sort(function (a, b) { return a - b; });
+      if (e.cleared) return;
+      if (e.wins.length >= RETURN_DAYS.length) e.wins = e.wins.slice(-(RETURN_DAYS.length - 1));
+      if (e.wins.length) e.due = daysOut(e.wins[e.wins.length - 1], RETURN_DAYS[e.wins.length]);
+      else if (!(typeof e.due === 'number' && isFinite(e.due))) e.due = daysOut(e.lastMiss || e.missedAt || Date.now(), RETURN_DAYS[0]);
+    });
+    r.repairSched = 137;
+    return r;
+  }
   function repairOpen(r, a, now, skillMode) {
     r.repair = r.repair || {};
     var sk = skillOf(a.item);
@@ -178,30 +209,29 @@
       e = r.repair[id] = { id: id, section: a.item.section || '', topic: a.item.topic || '', topicName: a.item.topicName || a.item.topic || '',
         skill: sk.skill, skillName: sk.skillName, mode: skillMode ? 'skill' : 'item', tool: a.tool || '',
         trap: a.item.trapTag || sk.skillName || a.item.topicName || a.item.topic || '', src: a.src || '', missedAt: now, reason: null, wins: [],
-        due: daysOut(now, 1), resets: 0, cleared: 0, served: [], lessonFirst: false, untimedFirst: false };
+        due: daysOut(now, RETURN_DAYS[0]), resets: 0, cleared: 0, served: [], lessonFirst: false, untimedFirst: false };
       if (!skillMode && a.item.stem && a.item.choices && a.item.choices.length) e.itemData = { id: String(a.item.id), section: a.item.section, topic: a.item.topic, topicName: a.item.topicName, skill: sk.skill, skillName: sk.skillName, difficulty: a.item.difficulty, stem: a.item.stem, choices: a.item.choices, answer: a.item.answer, why: a.item.why || '' };
     } else {   // missed again while open: reset
-      e.wins = []; e.resets += 1; e.due = daysOut(now, 1); e.lastMiss = now;
+      repairMiss(e, now);
     }
     return e;
   }
   /* PAT and Reading: a practice answer of the same skill on a day the entry is due. */
   function repairSkillAnswer(r, section, skill, ok, now) {
     var e = r.repair[section + ':' + skill]; if (!e || e.cleared || e.due > startOfDay(now) + DAY) return null;
-    if (!ok) { e.wins = []; e.resets += 1; e.due = daysOut(now, 1); e.lastMiss = now; return e; }
-    var today = startOfDay(now);
-    if (!e.wins.some(function (w) { return startOfDay(w) === today; })) e.wins.push(now);
-    if (e.wins.length >= 2) e.cleared = now; else e.due = daysOut(now, 2);
+    if (!ok) { repairMiss(e, now); return e; }
+    repairWin(e, now);
     return e;
   }
-  /* Tag why a miss happened. Drives the first return. */
+  /* Tag why a miss happened. The first return is the next day for every reason; the reason
+     decides what comes with it (a lesson first, or an untimed first return). */
   function repairReason(id, reason, now) {
     now = now || Date.now();
     if (!REASONS[reason]) throw new Error('unknown reason ' + reason);
     var r = load(); r.repair = r.repair || {}; var e = r.repair[String(id)]; if (!e) return null;
     e.reason = reason;
     e.lessonFirst = reason === 'know'; e.untimedFirst = reason === 'time';
-    e.due = daysOut(e.lastMiss || e.missedAt || now, (reason === 'know' || reason === 'time') ? 1 : 2);
+    if (!e.wins || !e.wins.length) e.due = daysOut(e.lastMiss || e.missedAt || now, RETURN_DAYS[0]);
     r.updated = now; write('record', r); emit({ type: 'repair', entry: e });
     return e;
   }
@@ -210,15 +240,9 @@
     o = o || {}; var now = o.at || Date.now();
     var r = load(); r.repair = r.repair || {}; var e = r.repair[String(id)]; if (!e || e.cleared) return e || null;
     if (o.servedId) { e.served = (e.served || []).concat(String(o.servedId)).slice(-12); }
-    if (!o.ok) { e.wins = []; e.resets += 1; e.due = daysOut(now, 1); e.lastMiss = now; e.lessonFirst = false; }
+    if (!o.ok) { repairMiss(e, now); e.lessonFirst = false; }
     else if (o.assisted) { e.due = daysOut(now, 1); }
-    else {
-      var today = startOfDay(now);
-      if (!e.wins.some(function (w) { return startOfDay(w) === today; })) e.wins.push(now);
-      if (e.wins.length >= 2) e.cleared = now;
-      else e.due = daysOut(now, 2);
-      e.untimedFirst = false; e.lessonFirst = false;
-    }
+    else { repairWin(e, now); e.untimedFirst = false; e.lessonFirst = false; }
     r.updated = now; write('record', r); emit({ type: 'repair', entry: e });
     return e;
   }
@@ -358,7 +382,7 @@
   function exportAll() { return { schema: 1, exported: Date.now(), record: load(), attempts: attempts(), legacy: legacyExport() }; }
 
   window.AceRecord = {
-    version: 3, LADDER: LADDER, TARGET: TARGET, pRight: pRight, seedB: seedB, expect: expect, ratings: ratings, sectionRating: sectionRating, pickNear: pickNear, skillOf: skillOf,
+    version: 4, LADDER: LADDER, RETURN_DAYS: RETURN_DAYS.slice(), migrateRepair: migrateRepair, TARGET: TARGET, pRight: pRight, seedB: seedB, expect: expect, ratings: ratings, sectionRating: sectionRating, pickNear: pickNear, skillOf: skillOf,
     saveRun: saveRun, runs: runs, run: run, missCounts: missCounts, FAMILIES: FAMILIES.map(function (f) { return f[0]; }),
     record: record, item: item, due: due, missed: missed, stats: stats, topics: topics, today: today, attempts: attempts,
     changeStats: changeStats, event: event, events: events,
@@ -367,6 +391,13 @@
     migrate: migrate, legacyKeys: legacyKeys, legacyExport: legacyExport, exportAll: exportAll,
     imported: function () { return load().imported; }
   };
+
+  // XP, the daily streak and the mastery rings (shared/ace-mastery.js) follow every saved answer,
+  // so every page that keeps the record gets them without a tag of its own.
+  if (window.AceMastery) { if (window.AceMastery.bind) window.AceMastery.bind(); }
+  else if (typeof document !== 'undefined' && document.createElement && document.head && !document.querySelector('script[src*="/shared/ace-mastery.js"]')) {
+    var am = document.createElement('script'); am.src = '/shared/ace-mastery.js?v=1'; am.async = true; document.head.appendChild(am);
+  }
 
   // The existing Review and Performance pages read through AceProgress: show them this record too.
   if (window.AceProgress && typeof window.AceProgress.registerMissAdapter === 'function') {
