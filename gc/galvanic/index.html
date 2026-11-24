@@ -6,33 +6,33 @@
 <title>Galvanic cell lab · Gen Chem · Ace Labs</title>
 <meta name="description" content="Build a galvanic cell, predict which way electrons flow, then watch it happen.">
 <link rel="icon" type="image/svg+xml" href="/shared/ace-dat-mark.svg">
-<link rel="stylesheet" href="/shared/ace-ui.css?v=8">
+<link rel="stylesheet" href="/shared/ace-ui.css?v=9">
 <link rel="stylesheet" href="/shared/ace-walkthrough.css?v=1">
 <style>
-  .gv-stage { position: relative; background: #FFFDF7; border: 1px solid var(--aui-line); border-radius: var(--aui-r); overflow: hidden; }
+  .gv-stage { position: relative; background: var(--aui-paper); border: 1px solid var(--aui-line); border-radius: var(--aui-r); overflow: hidden; }
   .gv-stage svg { display: block; width: 100%; height: auto; }
   .gv-pick { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: var(--aui-3); }
   .gv-pick label { min-width: 0; display: flex; flex-direction: column; gap: 4px; font-size: var(--aui-t-md); font-weight: 700; color: var(--aui-ink-2); }
   .gv-pick select { width: 100%; min-width: 0; text-overflow: ellipsis; min-height: 44px; border-radius: var(--aui-r-sm); border: 1.5px solid var(--aui-line-2); background: var(--aui-paper); font: 500 var(--aui-t-md) var(--aui-font); padding: 0 10px; color: var(--aui-ink); }
-  .gv-ask { display: grid; gap: var(--aui-3); padding: var(--aui-4); border-radius: var(--aui-r); background: var(--aui-forest); color: #fffdf7; }
+  .gv-ask { display: grid; gap: var(--aui-3); padding: var(--aui-4); border-radius: var(--aui-r); background: var(--aui-forest); color: var(--aui-paper); }
   .gv-ask h2 { font-family: var(--aui-display); font-size: 22px; margin: 0; }
-  .gv-ask p { margin: 0; color: #e9e4d8; font-size: var(--aui-t-md); }
+  .gv-ask p { margin: 0; color: var(--aui-on-forest-2); font-size: var(--aui-t-md); }
   #cap { font-size: var(--aui-t-md); }
-  .gv-ask .aui-row button { min-height: 48px; padding: 0 16px; border-radius: 999px; border: 1.5px solid #5d7f6c; background: transparent; color: #fffdf7; font: 700 var(--aui-t-md) var(--aui-font); cursor: pointer; }
+  .gv-ask .aui-row button { min-height: 48px; padding: 0 16px; border-radius: 999px; border: 1.5px solid #5d7f6c; background: transparent; color: var(--aui-paper); font: 700 var(--aui-t-md) var(--aui-font); cursor: pointer; }
   .gv-ask .aui-row button[aria-pressed="true"] { background: var(--aui-gold); border-color: var(--aui-gold); color: var(--aui-ink); }
   .gv-out { display: grid; gap: var(--aui-3); }
   .gv-eq { font-family: var(--aui-mono); font-size: 15px; background: var(--aui-paper); border: 1px solid var(--aui-line); border-radius: var(--aui-r-sm); padding: 10px 12px; overflow-x: auto; white-space: nowrap; }
   .gv-verdict { font-weight: 700; font-size: var(--aui-t-lg); margin: 0; }
   .gv-verdict.ok { color: var(--aui-good); } .gv-verdict.no { color: var(--aui-miss); }
-  svg .lbl { font: 700 22px var(--aui-font); fill: #0d2018; }
-  svg .lbl-s { font: 500 17px var(--aui-font); fill: #3a4a42; }
-  svg .lbl-g { font: 700 19px var(--aui-font); fill: #007a59; }
-  svg .lbl-r { font: 700 19px var(--aui-font); fill: #9b4500; }
-  svg .pill { fill: #FFFDF7; fill-opacity: .94; stroke: rgba(27,58,45,.3); }
-  svg .lead { stroke: #0d2018; stroke-width: 2; fill: none; }
+  svg .lbl { font: 700 22px var(--aui-font); fill: var(--aui-ink); }
+  svg .lbl-s { font: 500 17px var(--aui-font); fill: var(--aui-ink-2); }
+  svg .lbl-g { font: 700 19px var(--aui-font); fill: var(--aui-good); }
+  svg .lbl-r { font: 700 19px var(--aui-font); fill: var(--aui-miss); }
+  svg .pill { fill: var(--aui-paper); fill-opacity: .94; stroke: var(--aui-line-2); }
+  svg .lead { stroke: var(--aui-ink); stroke-width: 2; fill: none; }
   svg .reveal { opacity: 0; transition: opacity .45s var(--aui-ease); }
   .is-revealed svg .reveal { opacity: 1; }
-  svg .e-dot { fill: #C9A84C; stroke: #0d2018; stroke-width: 1.5; }
+  svg .e-dot { fill: var(--aui-gold); stroke: var(--aui-ink); stroke-width: 1.5; }
   @media (prefers-reduced-motion: reduce) { svg .reveal { transition: none; } svg animateMotion { display: none; } }
   @media (min-width: 900px) { .gv-grid { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: var(--aui-5); align-items: start; } }
 </style>
@@ -101,7 +101,7 @@
         <li>Thomas's line: Zoom 2026-04-28 #84183655423 ~0:14:46 (Gen Chem playbook 9.3).</li></ul></details>
   </section>
 </main>
-<script src="/shared/ace-ui.js?v=5"></script>
+<script src="/shared/ace-ui.js?v=6"></script>
 <script src="/shared/ace-skills.js?v=2"></script>
 <script src="/shared/ace-record.js?v=6"></script>
 <script src="/shared/ace-question.js?v=9"></script>
@@ -269,6 +269,6 @@
   reset();
 })();
 </script>
-<script src="/shared/ace-tabs.js?v=4" defer></script>
+<script src="/shared/ace-tabs.js?v=5" defer></script>
 </body>
 </html>

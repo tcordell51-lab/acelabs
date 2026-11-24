@@ -6,43 +6,43 @@
 <title>Review · Ace Labs</title>
 <meta name="description" content="Every finished test and set, question by question, with the one-tap reason for each miss. Every miss is already in Repair.">
 <link rel="icon" type="image/svg+xml" href="/shared/ace-dat-mark.svg">
-<link rel="stylesheet" href="/shared/ace-ui.css?v=8">
-<link rel="stylesheet" href="/shared/ace-loop.css?v=4">
+<link rel="stylesheet" href="/shared/ace-ui.css?v=9">
+<link rel="stylesheet" href="/shared/ace-loop.css?v=5">
 <style>
   .rv-head { margin-bottom: 4px; }
   .rv-secs { display: flex; flex-wrap: wrap; gap: 8px; }
-  .rv-sec { display: flex; flex-direction: column; padding: 8px 12px; border-radius: 14px; border: 1px solid #e6dccb; background: #FCFAF6; font-size: 13px; }
-  .rv-sec b { font-size: 14px; }
+  .rv-sec { display: flex; flex-direction: column; padding: 8px 12px; border-radius: 14px; border: 1px solid var(--aui-line); background: var(--aui-paper); font-size: 13px; }
+  .rv-sec b { font-size: var(--aui-t-sm); }
   .rv-tabs { display: flex; gap: 8px; flex-wrap: wrap; margin: 6px 0; }
-  .rv-tabs button { min-height: 40px; padding: 0 14px; border-radius: 999px; border: 1.5px solid rgba(27,58,45,.3); background: #FCFAF6; font: 600 14px 'DM Sans', system-ui, sans-serif; color: #0d2018; cursor: pointer; }
-  .rv-tabs button[aria-pressed="true"] { background: #1B3A2D; border-color: #1B3A2D; color: #F5F0E8; }
+  .rv-tabs button { min-height: 40px; padding: 0 14px; border-radius: 999px; border: 1.5px solid var(--aui-line-2); background: var(--aui-paper); font: 600 var(--aui-t-sm) 'DM Sans', system-ui, sans-serif; color: var(--aui-ink); cursor: pointer; }
+  .rv-tabs button[aria-pressed="true"] { background: var(--aui-forest); border-color: var(--aui-forest); color: var(--aui-cream); }
   .rv-list { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; overflow-wrap: anywhere; }
-  .rv-q { padding: 16px; border-radius: 18px; border: 1px solid #e6dccb; background: #FCFAF6; display: flex; flex-direction: column; gap: 10px; }
+  .rv-q { padding: 16px; border-radius: 18px; border: 1px solid var(--aui-line); background: var(--aui-paper); display: flex; flex-direction: column; gap: 10px; }
   .rv-q.miss { border-left: 5px solid #b5482f; }
-  .rv-q.ok { border-left: 5px solid #007a59; }
+  .rv-q.ok { border-left: 5px solid var(--aui-good); }
   .rv-meta { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
-  .rv-mark { font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
-  .rv-mark.ok { color: #007a59; } .rv-mark.miss { color: #b5482f; }
-  .rv-stem { margin: 0; font-size: 16px; line-height: 1.5; color: #0d2018; }
-  .rv-note { color: #3a4a42; font-size: 14px; }
+  .rv-mark { font-size: var(--aui-t-xs); font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+  .rv-mark.ok { color: var(--aui-good); } .rv-mark.miss { color: #b5482f; }
+  .rv-stem { margin: 0; font-size: 16px; line-height: 1.5; color: var(--aui-ink); }
+  .rv-note { color: var(--aui-ink-2); font-size: var(--aui-t-sm); }
   .rv-choices { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
-  .rv-choices li { display: flex; gap: 10px; align-items: baseline; padding: 8px 10px; border-radius: 12px; border: 1px solid #ece4d5; font-size: 14.5px; }
+  .rv-choices li { display: flex; gap: 10px; align-items: baseline; padding: 8px 10px; border-radius: 12px; border: 1px solid #ece4d5; font-size: var(--aui-t-sm); }
   .rv-choices li b { flex-shrink: 0; width: 18px; }
-  .rv-choices li em { margin-left: auto; font-style: normal; font-size: 12px; font-weight: 700; white-space: nowrap; }
+  .rv-choices li em { margin-left: auto; font-style: normal; font-size: var(--aui-t-xs); font-weight: 700; white-space: nowrap; }
   .rv-choices li.right { background: #e6f1ea; border-color: #9cc9ad; }
   .rv-choices li.yours { background: #f8e6df; border-color: #e0a894; }
-  .rv-why { margin: 0; } .rv-why dt { font-weight: 700; font-size: 13px; color: #3a4a42; } .rv-why dd { margin: 2px 0 0; font-size: 14.5px; line-height: 1.5; }
-  .rv-reason { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; padding-top: 10px; border-top: 1px dashed rgba(27,58,45,.18); }
-  .rv-reason__h { font-size: 13px; font-weight: 700; color: #3a4a42; margin-right: 4px; flex-basis: 100%; }
-  .rv-reason__b { min-height: 40px; padding: 0 12px; border-radius: 999px; border: 1.5px solid rgba(27,58,45,.3); background: #fffdf7; font: 500 13.5px 'DM Sans', system-ui, sans-serif; color: #0d2018; cursor: pointer; }
-  .rv-reason__b[aria-pressed="true"] { background: #C9A84C; border-color: #C9A84C; font-weight: 700; }
-  .rv-reason__line { flex-basis: 100%; margin: 4px 0 0; font-size: 13.5px; color: #3a4a42; }
-  .see-it { align-self: flex-start; display: inline-flex; gap: 6px; align-items: center; min-height: 38px; padding: 0 14px; border-radius: 999px; background: #C9A84C; color: #0d2018; font-weight: 700; font-size: 14px; text-decoration: none; }
+  .rv-why { margin: 0; } .rv-why dt { font-weight: 700; font-size: 13px; color: var(--aui-ink-2); } .rv-why dd { margin: 2px 0 0; font-size: var(--aui-t-sm); line-height: 1.5; }
+  .rv-reason { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; padding-top: 10px; border-top: 1px dashed var(--aui-line); }
+  .rv-reason__h { font-size: 13px; font-weight: 700; color: var(--aui-ink-2); margin-right: 4px; flex-basis: 100%; }
+  .rv-reason__b { min-height: 40px; padding: 0 12px; border-radius: 999px; border: 1.5px solid var(--aui-line-2); background: var(--aui-paper); font: 500 13.5px 'DM Sans', system-ui, sans-serif; color: var(--aui-ink); cursor: pointer; }
+  .rv-reason__b[aria-pressed="true"] { background: var(--aui-gold); border-color: var(--aui-gold); font-weight: 700; }
+  .rv-reason__line { flex-basis: 100%; margin: 4px 0 0; font-size: 13.5px; color: var(--aui-ink-2); }
+  .see-it { align-self: flex-start; display: inline-flex; gap: 6px; align-items: center; min-height: 38px; padding: 0 14px; border-radius: 999px; background: var(--aui-gold); color: var(--aui-ink); font-weight: 700; font-size: var(--aui-t-sm); text-decoration: none; }
   .rv-runs { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
-  .rv-runs a { display: flex; justify-content: space-between; gap: 12px; align-items: center; padding: 14px 16px; border-radius: 16px; border: 1px solid #e6dccb; background: #FCFAF6; color: #0d2018; text-decoration: none; }
-  .rv-runs a b { font-size: 16px; } .rv-runs a span { font-size: 13px; color: #3a4a42; }
-  .rv-empty { padding: 14px; border-radius: 14px; background: #FCFAF6; border: 1px dashed #d8ccb6; }
-  .rv-legacy { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; font-size: 14px; }
+  .rv-runs a { display: flex; justify-content: space-between; gap: 12px; align-items: center; padding: 14px 16px; border-radius: 16px; border: 1px solid var(--aui-line); background: var(--aui-paper); color: var(--aui-ink); text-decoration: none; }
+  .rv-runs a b { font-size: 16px; } .rv-runs a span { font-size: 13px; color: var(--aui-ink-2); }
+  .rv-empty { padding: 14px; border-radius: 14px; background: var(--aui-paper); border: 1px dashed #d8ccb6; }
+  .rv-legacy { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; font-size: var(--aui-t-sm); }
   .rv-legacy li { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; padding: 8px 0; border-bottom: 1px solid #ece4d5; }
 </style>
 </head>
@@ -57,7 +57,7 @@
 <script src="/shared/ace-record.js?v=6"></script>
 <script src="/shared/ace-visuals.js?v=4"></script>
 <script src="/shared/ace-test-review.js?v=4"></script>
-<script src="/shared/ace-ui.js?v=5" defer></script>
+<script src="/shared/ace-ui.js?v=6" defer></script>
 <script>
 (function () {
   'use strict';
@@ -106,6 +106,6 @@
   } catch (e) { /* an old adapter failed: nothing to list */ }
 })();
 </script>
-<script src="/shared/ace-tabs.js?v=4" defer></script>
+<script src="/shared/ace-tabs.js?v=5" defer></script>
 </body>
 </html>

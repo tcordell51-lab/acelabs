@@ -6,8 +6,8 @@
 <title>Today · Ace Labs</title>
 <meta name="description" content="Ace Labs: your DAT study plan for today, the week ahead, and one tap to each of the six sections.">
 <link rel="icon" type="image/svg+xml" href="/shared/ace-dat-mark.svg">
-<link rel="stylesheet" href="/shared/ace-ui.css?v=8">
-<link rel="stylesheet" href="/shared/ace-loop.css?v=4">
+<link rel="stylesheet" href="/shared/ace-ui.css?v=9">
+<link rel="stylesheet" href="/shared/ace-loop.css?v=5">
 <style>
   .home { display: grid; gap: var(--aui-5); }
   .home-head { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: var(--aui-3); }
@@ -19,11 +19,11 @@
 
   /* Today card */
   .today-card { background: var(--aui-forest); color: var(--aui-cream); border-radius: var(--aui-r-lg); padding: var(--aui-5); display: grid; gap: var(--aui-3); box-shadow: var(--aui-shadow); }
-  .today-card .k { margin: 0; font-size: var(--aui-t-xs); font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: #E2C97A; }
+  .today-card .k { margin: 0; font-size: var(--aui-t-xs); font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--aui-gold-hi); }
   .today-card h2 { margin: 0; font-family: var(--aui-display); font-size: clamp(24px, 3.4vw, 30px); line-height: 1.15; color: var(--aui-cream); }
   .today-card p { margin: 0; font-size: 15.5px; line-height: 1.5; color: #e9e3d6; max-width: 60ch; }
   .today-card .focus { padding: 10px 14px; border-left: 3px solid var(--aui-gold); background: rgba(201,168,76,.14); border-radius: 0 12px 12px 0; }
-  .today-card .focus b { color: #E2C97A; }
+  .today-card .focus b { color: var(--aui-gold-hi); }
   .today-tasks { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
   .today-tasks li { display: grid; grid-template-columns: 44px minmax(0, 1fr); align-items: stretch; background: rgba(245,240,232,.07); border: 1px solid rgba(245,240,232,.16); border-radius: var(--aui-r); }
   .today-tasks li.is-done { opacity: .62; }
@@ -38,11 +38,11 @@
   .today-tasks .tt { display: grid; gap: 2px; min-width: 0; }
   .today-tasks .tt b { font-size: 16px; line-height: 1.3; overflow-wrap: anywhere; }
   .today-tasks .tt small { font-size: 13.5px; color: #d6cfbf; line-height: 1.4; }
-  .today-tasks .m { flex-shrink: 0; font-size: 13px; font-weight: 700; color: #E2C97A; white-space: nowrap; }
+  .today-tasks .m { flex-shrink: 0; font-size: 13px; font-weight: 700; color: var(--aui-gold-hi); white-space: nowrap; }
   .today-foot { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 18px; }
   .today-card .loop-go { flex: 1 1 260px; }
   .today-card .total { font-size: var(--aui-t-sm); color: #d6cfbf; }
-  .today-card a.quiet { color: #E2C97A; font-weight: 700; font-size: 15px; display: inline-flex; align-items: center; min-height: 44px; }
+  .today-card a.quiet { color: var(--aui-gold-hi); font-weight: 700; font-size: 15px; display: inline-flex; align-items: center; min-height: 44px; }
 
   /* Week strip */
   .week { background: var(--aui-paper); border: 1px solid var(--aui-line); border-radius: var(--aui-r-lg); padding: var(--aui-4); display: grid; gap: var(--aui-3); }
@@ -52,15 +52,15 @@
   .week-strip { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px; list-style: none; margin: 0; padding: 0; }
   .week-strip li { display: grid; justify-items: center; gap: 4px; padding: 8px 2px; border-radius: 12px; border: 1px solid transparent; text-align: center; min-width: 0; }
   .week-strip li.now { border-color: var(--aui-forest); background: #fff; box-shadow: var(--aui-shadow); }
-  .week-strip .d { font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--aui-ink-3); }
+  .week-strip .d { font-size: var(--aui-t-xs); font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--aui-ink-3); }
   .week-strip .n { font-size: 17px; font-weight: 700; color: var(--aui-ink); }
-  .week-strip .dot { width: 100%; max-width: 34px; height: 8px; border-radius: 4px; background: #e6dccb; }
+  .week-strip .dot { width: 100%; max-width: 34px; height: 8px; border-radius: 4px; background: var(--aui-line); }
   .week-strip li[data-kind="off"] .dot, .week-strip li[data-kind="blackout"] .dot, .week-strip li[data-kind="none"] .dot { background: transparent; border: 1px dashed var(--aui-line-2); }
   .week-strip li[data-work="1"] .dot { background: var(--aui-forest-2); }
   .week-strip li[data-kind="full"] .dot { background: var(--aui-gold); }
   .week-strip li[data-kind="test"] .dot { background: var(--aui-miss); }
   .week-strip li[data-done="1"] .dot { background: var(--aui-good); }
-  .week-strip .w { font-size: 12px; color: var(--aui-ink-3); line-height: 1.25; overflow-wrap: anywhere; }
+  .week-strip .w { font-size: var(--aui-t-xs); color: var(--aui-ink-3); line-height: 1.25; overflow-wrap: anywhere; }
   .week-empty { margin: 0; font-size: 15px; color: var(--aui-ink-2); }
 
   /* Repair + whiteboards */
@@ -68,9 +68,9 @@
   .home-tile:hover { border-color: var(--aui-forest); }
   .home-tile .big { font-family: var(--aui-font); font-variant-numeric: tabular-nums; font-size: 32px; font-weight: 700; line-height: 1; min-width: 44px; text-align: center; color: var(--aui-forest); }
   .home-tile b { display: block; font-size: 17px; }
-  .home-tile small { display: block; font-size: 14.5px; color: var(--aui-ink-2); line-height: 1.4; }
+  .home-tile small { display: block; font-size: var(--aui-t-sm); color: var(--aui-ink-2); line-height: 1.4; }
   .home-tile .go { font-weight: 700; color: var(--aui-forest); font-size: 15px; white-space: nowrap; }
-  .home-tile--see { background: #fffdf7; border-color: #e0d3b4; }
+  .home-tile--see { background: var(--aui-paper); border-color: #e0d3b4; }
   .home-tile--see svg { color: var(--aui-gold-ink); }
 
   /* Six section bands */
@@ -80,16 +80,16 @@
   .bands a:hover { border-color: var(--aui-forest); }
   .bands .bar { align-self: stretch; margin: -10px 0; background: var(--sec, var(--aui-forest)); }
   .bands b { display: block; font-size: 17px; }
-  .bands small { display: block; font-size: 14.5px; color: var(--aui-ink-2); line-height: 1.4; }
+  .bands small { display: block; font-size: var(--aui-t-sm); color: var(--aui-ink-2); line-height: 1.4; }
   .bands .right { display: grid; justify-items: end; gap: 4px; }
   .bands .band { min-width: 66px; }
-  .bands .word { font-size: 12.5px; color: var(--aui-ink-3); white-space: nowrap; }
+  .bands .word { font-size: var(--aui-t-xs); color: var(--aui-ink-3); white-space: nowrap; }
 
   .plan-steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
-  .plan-step { display: flex; gap: 14px; align-items: flex-start; padding: 14px 16px; border-radius: 18px; border: 1px solid #e6dccb; background: #FCFAF6; color: #0d2018; text-decoration: none; min-height: 44px; }
-  .plan-step .num { flex-shrink: 0; width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; font-weight: 700; background: #C9A84C; color: #0d2018; }
+  .plan-step { display: flex; gap: 14px; align-items: flex-start; padding: 14px 16px; border-radius: 18px; border: 1px solid var(--aui-line); background: var(--aui-paper); color: var(--aui-ink); text-decoration: none; min-height: 44px; }
+  .plan-step .num { flex-shrink: 0; width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; font-weight: 700; background: var(--aui-gold); color: var(--aui-ink); }
   .plan-step .tx { display: flex; flex-direction: column; gap: 3px; }
-  .plan-step .k { font-size: 12px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: #7c6113; }
+  .plan-step .k { font-size: var(--aui-t-xs); font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--aui-gold-ink); }
   .plan-step .t1 { font-size: 17px; font-weight: 700; }
   .plan-step .t2 { font-size: 15px; line-height: 1.45; }
   .home h2.sec-h { margin: 0 0 var(--aui-3); font-family: var(--aui-display); font-size: 24px; }
@@ -165,7 +165,7 @@
 <script src="/shared/ace-visuals.js?v=4"></script>
 <script src="/shared/ace-plan.js?v=1"></script>
 <script src="/shared/ace-plan-core.js?v=1"></script>
-<script src="/shared/ace-ui.js?v=5" defer></script>
+<script src="/shared/ace-ui.js?v=6" defer></script>
 <script>
 (function () {
   'use strict';
@@ -327,6 +327,6 @@
   render();
 })();
 </script>
-<script src="/shared/ace-tabs.js?v=4" defer></script>
+<script src="/shared/ace-tabs.js?v=5" defer></script>
 </body>
 </html>

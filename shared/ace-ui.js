@@ -50,7 +50,7 @@
   /* The phone tab bar: the same five places. Loaded here so every page with a bar has it. */
   function tabs() {
     if (window.AceTabs || document.querySelector('script[src*="/shared/ace-tabs.js"]')) return;
-    var t = document.createElement('script'); t.src = '/shared/ace-tabs.js?v=4'; t.defer = true; document.head.appendChild(t);
+    var t = document.createElement('script'); t.src = '/shared/ace-tabs.js?v=5'; t.defer = true; document.head.appendChild(t);
   }
 
   function mount() {

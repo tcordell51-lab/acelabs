@@ -1,62 +1,57 @@
-/* Ace Labs canonical design tokens — single source of truth for the Ace Labs
-   shell + each tool engine. Tools may keep their own local token names (Bio's
-   `--paper`, OChem's `--white`, etc.) but those should resolve to the values
-   defined here so all four engines render in the same palette and typography.
-
-   Loaded by:
-   - ace-labs.html (home shell)
-   - mocks-catalog.html
-   - prometric-mock.html
-   - tools/<engine>/index.html  (Bio, OChem already; QR + GC pending)
-*/
-:root{
+/* al-tokens.css : the older --al-* names, now aliases of the ace-ui.css tokens.
+   ace-ui.css is the single source of color, type and shape. A page that still writes
+   var(--al-teal) gets the same forest every other page gets. Do not add values here:
+   add the token to ace-ui.css and alias it.
+   The @import version must equal the ?v= pages use for ace-ui.css (tests/shell/ace-tokens.test.js). */
+@import url("/shared/ace-ui.css?v=9");
+:root:root{
   /* surfaces */
-  --al-bg:#f5f0e8;
-  --al-paper:#fffdf7;
-  --al-paper-2:#f9f3e6;
-  --al-paper-3:#f3ecdb;
+  --al-bg:var(--aui-cream);
+  --al-paper:var(--aui-paper);
+  --al-paper-2:var(--aui-paper-2);
+  --al-paper-3:var(--aui-paper-2);
 
   /* ink */
-  --al-ink:#0d2018;
-  --al-ink-2:#3a4a42;
-  --al-ink-mute:#5c6a63;
-  --al-ink-soft:#9aa39e;
+  --al-ink:var(--aui-ink);
+  --al-ink-2:var(--aui-ink-2);
+  --al-ink-mute:var(--aui-ink-3);
+  --al-ink-soft:var(--aui-ink-3);
 
   /* gold (italic accent + section kickers) */
-  --al-gold:#C9A84C;
-  --al-gold-m:#E2C97A;
-  --al-gold-d:#8C7235;
-  --al-gold-bg:rgba(201,168,76,.10);
+  --al-gold:var(--aui-gold);
+  --al-gold-m:var(--aui-gold-hi);
+  --al-gold-d:var(--aui-gold-ink);
+  --al-gold-bg:var(--aui-gold-soft);
   --al-gold-glow:rgba(201,168,76,.35);
 
   /* deep teal (hero CTA, primary buttons) */
-  --al-teal:#1B3A2D;
-  --al-teal-2:#2A5240;
-  --al-teal-3:#3A6B54;
+  --al-teal:var(--aui-forest);
+  --al-teal-2:var(--aui-forest-2);
+  --al-teal-3:var(--aui-forest-2);
 
-  /* outcome — Wong / Okabe-Ito correctness tokens (answer-feedback only) */
-  --al-good:#009E73;
-  --al-good-d:#007a59;
-  --al-trap:#D55E00;
-  --al-trap-d:#9b4500;
+  /* outcome : Wong / Okabe-Ito correctness tokens (answer-feedback only) */
+  --al-good:var(--aui-good);
+  --al-good-d:var(--aui-good);
+  --al-trap:var(--aui-miss);
+  --al-trap-d:var(--aui-miss);
 
   /* lines */
-  --al-line:rgba(13,32,24,.12);
-  --al-line-2:rgba(13,32,24,.20);
+  --al-line:var(--aui-line);
+  --al-line-2:var(--aui-line-2);
 
   /* per-engine accents (border-left + name italic) */
-  --al-qr-color:#C9A84C;
-  --al-bio-color:#5FA874;
-  --al-gc-color:#3A6B54;
-  --al-ochem-color:#8C7235;
+  --al-qr-color:var(--aui-sec-qr);
+  --al-bio-color:var(--aui-sec-bio);
+  --al-gc-color:var(--aui-sec-gc);
+  --al-ochem-color:var(--aui-sec-oc);
 
   /* type stack */
-  --al-font-serif:'Playfair Display',Georgia,serif;
-  --al-font-sans:'DM Sans',system-ui,-apple-system,sans-serif;
-  --al-font-mono:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,monospace;
+  --al-font-serif:var(--aui-display);
+  --al-font-sans:var(--aui-font);
+  --al-font-mono:var(--aui-font);
 
   /* shadows */
-  --al-shadow:0 1px 3px rgba(13,32,24,.06), 0 8px 24px rgba(13,32,24,.04);
+  --al-shadow:var(--aui-shadow);
   --al-shadow-md:0 2px 6px rgba(13,32,24,.08), 0 16px 40px rgba(13,32,24,.06);
   --al-shadow-lg:0 4px 14px rgba(13,32,24,.10), 0 24px 56px rgba(13,32,24,.08);
 
@@ -68,13 +63,13 @@
      --al-almost     : partial credit / close
      --al-new        : unseen / new concept callout
   */
-  --al-confirmed:#009E73;
-  --al-confirmed-pale:rgba(0,158,115,.10);
-  --al-needs-review:#D55E00;
-  --al-needs-review-pale:rgba(213,94,0,.10);
-  --al-almost:#E69F00;
+  --al-confirmed:var(--aui-good);
+  --al-confirmed-pale:var(--aui-good-soft);
+  --al-needs-review:var(--aui-miss);
+  --al-needs-review-pale:var(--aui-miss-soft);
+  --al-almost:var(--aui-warn);
   --al-almost-pale:rgba(230,159,0,.10);
-  --al-new:#0072B2;
+  --al-new:var(--aui-info);
   --al-new-pale:rgba(0,114,178,.10);
 
   /* ── Motion tokens ─────────────────────────────────────────────────────

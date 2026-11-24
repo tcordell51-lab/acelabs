@@ -1,63 +1,42 @@
 /* ace-pages.css : the look of the shell pages (home, the door hubs, Review,
    Performance). Cream, forest and brass gold, Playfair Display headings, DM Sans body
    (2026-11-16; was dark forest):
-   the Visual Canon's web-dark skin (ace-system/visuals/canon.css), token
-   names matched so blocks can move between the two.
+   its token names are kept, and every one is now an alias of an ace-ui.css token.
    No emojis, no decorative glyphs, no em dashes in any copy these pages carry. */
 
-@font-face {
-  font-family: "DM Sans";
-  src: url("/shared/fonts/dm-sans.woff2") format("woff2");
-  font-weight: 100 1000;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: "Playfair Display";
-  src: url("/shared/fonts/playfair-display.woff2") format("woff2");
-  font-weight: 400 900;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: "Hanken Grotesk";
-  src: url("/shared/fonts/hanken-wght-normal.woff2") format("woff2");
-  font-weight: 100 900;
-  font-style: normal;
-  font-display: swap;
-}
+@import url("/shared/ace-ui.css?v=9");
 
 :root {
-  /* Cream skin (2026-11-16): the same names, now the Ace Labs cream tokens from ace-ui.css. */
-  --bg-deep: #EFE7D6;
-  --bg-base: #F5F0E8;
-  --bg-panel: #FCFAF6;
-  --bg-panel-elevated: #FFFFFF;
-  --gold: #C9A84C;
-  --gold-light: #7c6113;
-  --gold-dim: #8C7235;
-  --gold-bg: rgba(201, 168, 76, 0.14);
+  /* Aliases of the ace-ui.css tokens. ace-ui.css is the single source: add no values here. */
+  --bg-deep: var(--aui-paper-2);
+  --bg-base: var(--aui-cream);
+  --bg-panel: var(--aui-paper);
+  --bg-panel-elevated: var(--aui-white);
+  --gold: var(--aui-gold);
+  --gold-light: var(--aui-gold-ink);
+  --gold-dim: var(--aui-brass);
+  --gold-bg: var(--aui-gold-soft);
   --gold-border: rgba(140, 114, 53, 0.38);
-  --gold-text: #7c6113;
-  --text-hi: #0d2018;
-  --text-mid: #3a4a42;
-  --text-lo: #5c6a63;
-  --border: rgba(27, 58, 45, 0.16);
-  --rule: rgba(27, 58, 45, 0.22);
-  --focus: #C9A84C;
-  --good-ink: #007a59;
-  --trap-ink: #9b4500;
-  --sec-bio: #2f7d4f;
-  --sec-gchem: #2f5f9e;
-  --sec-ochem: #6b4fa0;
-  --sec-pat: #9a6b12;
-  --sec-rc: #1f7a70;
-  --sec-qr: #a3405c;
-  --sec-strategy: #7c6113;
+  --gold-text: var(--aui-gold-ink);
+  --text-hi: var(--aui-ink);
+  --text-mid: var(--aui-ink-2);
+  --text-lo: var(--aui-ink-3);
+  --border: var(--aui-line);
+  --rule: var(--aui-line-2);
+  --focus: var(--aui-gold);
+  --good-ink: var(--aui-good);
+  --trap-ink: var(--aui-miss);
+  --sec-bio: var(--aui-sec-bio);
+  --sec-gchem: var(--aui-sec-gc);
+  --sec-ochem: var(--aui-sec-oc);
+  --sec-pat: var(--aui-sec-pat);
+  --sec-rc: var(--aui-sec-rc);
+  --sec-qr: var(--aui-sec-qr);
+  --sec-strategy: var(--aui-gold-ink);
   --sec-fl: #a3352b;
-  --display: "Playfair Display", Georgia, "Times New Roman", serif;
-  --body: "DM Sans", "Helvetica Neue", Arial, sans-serif;
-  --radius: 14px;
+  --display: var(--aui-display);
+  --body: var(--aui-font);
+  --radius: var(--aui-r);
   color-scheme: light;
 }
 
@@ -77,27 +56,28 @@ img, svg { max-width: 100%; }
 button { font: inherit; }
 :focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; border-radius: 6px; }
 
-.wrap { max-width: 1080px; margin: 0 auto; padding: 0 28px; }
+.wrap { max-width: var(--aui-max); margin: 0 auto; padding: 0 var(--aui-5); }
 @media (max-width: 720px) { .wrap { padding: 0 16px; } }
 
 /* ---------- type ---------- */
 .eyebrow {
   font-family: var(--body);
-  font-size: 12px;
-  font-weight: 750;
-  letter-spacing: 0.16em;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--gold-text);
   margin: 0 0 10px;
 }
 h1, h2, h3 { font-family: var(--display); font-weight: 700; color: var(--text-hi); margin: 0; line-height: 1.12; letter-spacing: -0.005em; }
-h1 { font-size: clamp(32px, 5.2vw, 50px); }
-h1 em, h2 em { font-style: italic; color: var(--gold-light); font-weight: 700; }
+h1 { font-size: var(--aui-t-2xl); line-height: 1.1; font-weight: 600; letter-spacing: -.01em; }
+@media (min-width: 720px) { h1 { font-size: var(--aui-t-3xl); } }
+h1 em, h2 em { font-style: normal; color: var(--gold-light); }
 h2 { font-size: clamp(22px, 3vw, 28px); }
 h3 { font-size: 20px; }
 .lede { color: var(--text-mid); font-size: 17px; max-width: 62ch; margin: 14px 0 0; }
 .muted { color: var(--text-mid); }
-.small { font-size: 14px; }
+.small { font-size: 15px; }
 .num { font-family: var(--body); font-variant-numeric: lining-nums tabular-nums; }
 
 /* ---------- page frame ---------- */
@@ -105,7 +85,7 @@ h3 { font-size: 20px; }
 @media (max-width: 720px) { .page-head { padding: 28px 0 18px; } }
 .section { padding: 18px 0 30px; }
 .section-head { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-bottom: 16px; }
-.section-head p { margin: 6px 0 0; color: var(--text-mid); font-size: 15px; max-width: 60ch; }
+.section-head p { margin: 6px 0 0; color: var(--text-mid); font-size: 16px; max-width: 60ch; }
 .rule { border: 0; border-top: 1px solid var(--rule); margin: 8px 0 0; }
 
 /* ---------- cards ---------- */
@@ -132,7 +112,7 @@ a.card:hover { border-color: var(--gold-border); background: var(--bg-panel-elev
 .card h3 a { text-decoration: none; color: inherit; }
 .card h3 a:hover { color: var(--gold-light); }
 .card p { margin: 0; color: var(--text-mid); font-size: 15px; }
-.card .go { margin-top: auto; padding-top: 8px; font-size: 14px; font-weight: 700; color: var(--gold-light); }
+.card .go { margin-top: auto; padding-top: 8px; font-size: 15px; font-weight: 700; color: var(--gold-light); }
 .card.hero { background: linear-gradient(160deg, #F3E9CF 0%, var(--bg-panel) 60%); border-color: var(--gold-border); padding: 26px 26px 24px; }
 @media (max-width: 720px) { .card.hero { padding: 20px 18px; } }
 
@@ -140,9 +120,9 @@ a.card:hover { border-color: var(--gold-border); background: var(--bg-panel-elev
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  font-size: 12px;
-  font-weight: 750;
-  letter-spacing: 0.14em;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--text-mid);
 }
@@ -156,10 +136,10 @@ a.card:hover { border-color: var(--gold-border); background: var(--bg-panel-elev
 [data-section="fl"] { --rail: var(--sec-fl); }
 [data-section="strategy"] { --rail: var(--sec-strategy); }
 
-.more { display: flex; flex-wrap: wrap; gap: 6px 14px; margin-top: 4px; font-size: 14px; }
+.more { display: flex; flex-wrap: wrap; gap: 6px 14px; margin-top: 4px; font-size: 15px; }
 .more a { color: var(--text-mid); text-decoration: none; border-bottom: 1px solid var(--rule); padding-bottom: 1px; }
 .more a:hover { color: var(--text-hi); border-color: var(--gold-border); }
-.more .k { color: var(--text-lo); font-size: 12px; font-weight: 750; letter-spacing: 0.12em; text-transform: uppercase; width: 100%; }
+.more .k { color: var(--text-lo); font-size: 13px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; width: 100%; }
 
 /* ---------- buttons ---------- */
 .btn {
@@ -170,9 +150,9 @@ a.card:hover { border-color: var(--gold-border); background: var(--bg-panel-elev
   min-height: 44px;
   padding: 0 20px;
   border-radius: 999px;
-  border: 1px solid var(--gold-border);
+  border: 1.5px solid var(--aui-forest);
   background: transparent;
-  color: var(--text-hi);
+  color: var(--aui-forest);
   font-family: var(--body);
   font-size: 15px;
   font-weight: 700;
@@ -180,11 +160,12 @@ a.card:hover { border-color: var(--gold-border); background: var(--bg-panel-elev
   cursor: pointer;
   white-space: nowrap;
 }
-.btn:hover { border-color: var(--gold); }
-.btn.primary { background: #1B3A2D; border-color: #1B3A2D; color: #F5F0E8; }
-.btn.primary:hover { filter: brightness(1.05); }
+.btn:hover { background: var(--aui-gold-soft); }
+.btn.primary { background: var(--aui-forest); border-color: var(--aui-forest); color: var(--aui-cream); }
+.btn.primary:hover { background: var(--aui-forest-2); }
+.btn.gold { background: var(--aui-gold); border-color: var(--aui-gold); color: var(--aui-ink); }
 .btn.big { min-height: 52px; padding: 0 30px; font-size: 16px; }
-.btn.small { min-height: 34px; padding: 0 14px; font-size: 13px; }
+.btn.small { min-height: 44px; padding: 0 16px; font-size: 15px; }
 .btn[disabled] { opacity: 0.5; cursor: default; }
 .actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
 
@@ -193,15 +174,15 @@ a.card:hover { border-color: var(--gold-border); background: var(--bg-panel-elev
 .rows > li { border-bottom: 1px solid var(--border); padding: 14px 0; display: flex; gap: 14px; align-items: center; flex-wrap: wrap; }
 .rows .what { flex: 1 1 260px; min-width: 0; }
 .rows .what b { display: block; font-weight: 650; color: var(--text-hi); }
-.rows .what span { color: var(--text-mid); font-size: 14px; }
+.rows .what span { color: var(--text-mid); font-size: 15px; }
 .links { display: flex; gap: 6px; flex-wrap: wrap; }
 .links a, .links button {
-  font-size: 13px; font-weight: 700; color: var(--gold-light); text-decoration: none;
-  border: 1px solid var(--gold-border); border-radius: 999px; padding: 6px 12px; background: transparent; cursor: pointer;
+  font-size: 15px; font-weight: 700; color: var(--aui-forest); text-decoration: none; min-height: 44px; display: inline-flex; align-items: center;
+  border: 1.5px solid var(--aui-line-2); border-radius: 999px; padding: 6px 14px; background: transparent; cursor: pointer;
 }
 .links a:hover, .links button:hover { border-color: var(--gold); }
 
-.tag { display: inline-block; font-size: 11px; font-weight: 750; letter-spacing: 0.12em; text-transform: uppercase; border-radius: 999px; padding: 3px 9px; border: 1px solid var(--rule); color: var(--text-mid); white-space: nowrap; }
+.tag { display: inline-block; font-size: 13px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; border-radius: 999px; padding: 3px 9px; border: 1px solid var(--rule); color: var(--text-mid); white-space: nowrap; }
 .tag.learning { color: var(--trap-ink); border-color: rgba(155, 69, 0, 0.35); }
 .tag.reviewing { color: var(--gold-light); border-color: var(--gold-border); }
 .tag.mastered { color: var(--good-ink); border-color: rgba(0, 122, 89, 0.35); }
@@ -210,31 +191,31 @@ a.card:hover { border-color: var(--gold-border); background: var(--bg-panel-elev
 .tabs { display: flex; gap: 6px; flex-wrap: wrap; margin: 0 0 14px; }
 .tabs button {
   border: 1px solid var(--border); background: transparent; color: var(--text-mid);
-  border-radius: 999px; padding: 7px 14px; font-size: 14px; font-weight: 650; cursor: pointer;
+  border-radius: 999px; padding: 7px 16px; min-height: 44px; font-size: 15px; font-weight: 700; cursor: pointer;
 }
 .tabs button[aria-pressed="true"] { border-color: var(--gold); color: var(--gold-light); background: var(--gold-bg); }
 
 /* ---------- details (night lists) ---------- */
 details.nights { margin-top: 6px; border-top: 1px solid var(--border); padding-top: 8px; }
-details.nights summary { cursor: pointer; font-size: 14px; font-weight: 700; color: var(--text-mid); list-style: none; }
+details.nights summary { cursor: pointer; min-height: 44px; display: flex; align-items: center; font-size: 15px; font-weight: 700; color: var(--text-mid); list-style: none; }
 details.nights summary::-webkit-details-marker { display: none; }
 details.nights summary::after { content: " +"; color: var(--gold); }
 details.nights[open] summary::after { content: " -"; }
 details.nights ol { margin: 10px 0 0; padding: 0; list-style: none; display: grid; gap: 2px; }
-details.nights li { display: flex; gap: 10px; align-items: baseline; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid rgba(27, 58, 45, 0.10); font-size: 14.5px; }
+details.nights li { display: flex; gap: 10px; align-items: baseline; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid var(--aui-line); font-size: 15px; }
 details.nights li a.n { color: var(--text-hi); text-decoration: none; min-width: 0; }
 details.nights li a.n:hover { color: var(--gold-light); }
 details.nights li .num { color: var(--text-lo); margin-right: 6px; }
-details.nights li a.sheet { flex: 0 0 auto; font-size: 12px; font-weight: 750; letter-spacing: 0.08em; text-transform: uppercase; color: var(--gold-text); text-decoration: none; }
+details.nights li a.sheet { flex: 0 0 auto; font-size: 13px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--gold-text); text-decoration: none; }
 
 /* ---------- empty / notes ---------- */
 .empty { border: 1px dashed var(--rule); border-radius: var(--radius); padding: 22px; color: var(--text-mid); }
-.note { font-size: 14px; color: var(--text-mid); }
+.note { font-size: 15px; color: var(--text-mid); }
 
 /* ---------- footer ---------- */
-.foot { margin-top: 40px; border-top: 1px solid var(--border); padding: 22px 0 40px; color: var(--text-lo); font-size: 14px; }
+.foot { margin-top: 40px; border-top: 1px solid var(--border); padding: 22px 0 40px; color: var(--text-lo); font-size: 15px; }
 .foot nav { display: flex; flex-wrap: wrap; gap: 8px 18px; margin-bottom: 10px; }
-.foot a { color: var(--text-mid); text-decoration: none; }
+.foot a { color: var(--text-mid); text-decoration: none; display: inline-flex; align-items: center; min-height: 44px; }
 .foot a:hover { color: var(--text-hi); }
 
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
@@ -252,7 +233,7 @@ details.nights li a.sheet { flex: 0 0 auto; font-size: 12px; font-weight: 750; l
 .foot .al-disclaimer .al-disclaimer-meta { color: var(--text-lo) !important; }
 
 /* Touch targets (audit 2026-10-29): on a phone every control is at least 44px tall. */
-@media (pointer: coarse) {
+@media (max-width: 759px), (pointer: coarse) {
   .btn.small { min-height: 44px; }
   .links a, .links button { min-height: 44px; display: inline-flex; align-items: center; }
   .tabs button { min-height: 44px; }
@@ -260,3 +241,6 @@ details.nights li a.sheet { flex: 0 0 auto; font-size: 12px; font-weight: 750; l
   details.nights li a.n, details.nights li a.sheet { display: inline-flex; min-height: 44px; align-items: center; }
   .more a { display: inline-block; padding: 10px 0; }
 }
+
+/* The phone tab bar never covers the last control. */
+@media (max-width: 759px) { body.has-ace-tabs { padding-bottom: calc(var(--aui-tabs) + env(safe-area-inset-bottom)); } .wrap { padding: 0 var(--aui-4); } }
