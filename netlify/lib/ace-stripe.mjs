@@ -8,6 +8,13 @@
 //      ACE_LABS_PASS_PRICE_ID   price_... of the "Ace Labs pass" one-time price
 //      STRIPE_WEBHOOK_SECRET    whsec_... of the Ace Labs webhook endpoint
 //      ACE_LABS_STRIPE_ALLOW_LIVE  "yes" only when Thomas switches to live mode
+//
+// Payment Link mode (no secret key at all): set ACE_LABS_PASS_LINK to a Stripe Payment Link
+// (https://buy.stripe.com/...) for the $249 pass. That link must carry metadata product=acelabs-pass
+// and days=90 (Stripe copies Payment Link metadata onto each Checkout Session it makes) and send the
+// buyer back to /account/?paid={CHECKOUT_SESSION_ID}. The webhook (STRIPE_WEBHOOK_SECRET) records
+// the pass; the buy button only adds client_reference_id (the account id) and prefilled_email.
+// A link without /test_ is live and needs ACE_LABS_STRIPE_ALLOW_LIVE=yes, like a live key.
 import crypto from 'node:crypto';
 
 export const PRODUCT_TAG = 'acelabs-pass';
@@ -38,6 +45,28 @@ export function verifyStripeSignature(raw, header, secret, nowMs = Date.now(), t
 /** For tests: a header Stripe would send for this body. */
 export function signStripePayload(raw, secret, t = Math.floor(Date.now() / 1000)) {
   return `t=${t},v1=${crypto.createHmac('sha256', secret).update(`${t}.${raw}`, 'utf8').digest('hex')}`;
+}
+
+/** The Payment Link for the pass, or '' when none (or a malformed one) is set. */
+export function passLink(env) {
+  const u = String(env.ACE_LABS_PASS_LINK || '').trim();
+  return /^https:\/\/buy\.stripe\.com\/[A-Za-z0-9_]+$/.test(u) ? u : '';
+}
+
+/** Why the Payment Link is not usable right now, or '' when it is. */
+export function passLinkProblem(env) {
+  const u = passLink(env);
+  if (!u) return 'stripe_not_configured';
+  if (!/\/test_/.test(u) && env.ACE_LABS_STRIPE_ALLOW_LIVE !== 'yes') return 'live_mode_locked';
+  if (!env.STRIPE_WEBHOOK_SECRET) return 'webhook_not_configured';   // without the webhook a payment would never become a pass
+  return '';
+}
+
+/** The address the buy button sends this account to: the link plus who is paying. */
+export function passLinkUrl(env, { accountId, email }) {
+  const q = new URLSearchParams({ client_reference_id: accountId });
+  if (email) q.set('prefilled_email', email);
+  return passLink(env) + '?' + q.toString();
 }
 
 /** Why Stripe is not usable right now, or '' when it is. */

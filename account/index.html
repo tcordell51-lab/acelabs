@@ -90,7 +90,10 @@
     if (paid && /^cs_(test|live)_[A-Za-z0-9]+$/.test(paid)) {
       try { history.replaceState(null, '', location.pathname); } catch (e) { /* keep the address */ }
       $('wait-h').textContent = 'Confirming your payment'; $('wait-p').textContent = 'This takes a few seconds.';
-      S.confirm(paid).then(function (r) {
+      var tries = 0;
+      (function attempt() { S.confirm(paid).then(function (r) {
+        // Payment Link mode: the webhook records the pass a few seconds after Stripe sends the buyer back
+        if (r && !r.ok && r.error === 'pending' && ++tries < 8) { setTimeout(attempt, 2500); return; }
         if (r && r.ok && r.account) {
           draw(r.account);
           $('paid').textContent = 'Thank you. Your pass is active' + (r.account.until ? ' until ' + day(r.account.until) : '') + '.';
@@ -103,7 +106,7 @@
             $('paid-err').hidden = false;
           });
         }
-      });
+      }); })();
       return;
     }
     load();

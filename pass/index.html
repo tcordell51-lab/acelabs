@@ -75,7 +75,7 @@
     var b = $('buy'), err = $('err');
     err.hidden = true; b.disabled = true; b.textContent = 'Opening checkout';
     S.checkout().then(function (r) {
-      if (r && r.ok && r.url && /^https:\/\/checkout\.stripe\.com\//.test(r.url)) { location.assign(r.url); return; }
+      if (r && r.ok && r.url && /^https:\/\/(checkout|buy)\.stripe\.com\//.test(r.url)) { location.assign(r.url); return; }
       b.disabled = false; b.textContent = 'Get the pass';
       if (r && r.error === 'already_included') { show('s-have'); return; }
       if (r && r.status === 401) { location.assign('/sign-in/?next=' + encodeURIComponent('/pass/')); return; }

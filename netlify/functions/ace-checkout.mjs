@@ -7,9 +7,13 @@
 //   and answers with a session that opens everything. Whichever of the two arrives first wins.
 //
 // Test mode only unless ACE_LABS_STRIPE_ALLOW_LIVE=yes. See netlify/lib/ace-stripe.mjs.
+//
+// With ACE_LABS_PASS_LINK set (Payment Link mode, no secret key), the first call answers with the
+// Payment Link for this account, and ?confirm=1 cannot ask Stripe: it answers with this account's
+// own state, 200 once the webhook has recorded the pass and 402 { error: 'pending' } until then.
 import { json, accountsEnabled, sessionFromRequest } from '../lib/ace-token.mjs';
 import { defaultKv, accountById, resolveAccess, mintAccountSession, sessionBody, grantPass, passDays, passPriceCents, siteUrl } from '../lib/ace-accounts.mjs';
-import { stripeProblem, passPriceProblem, createCheckout, retrieveCheckout, isPaidPass } from '../lib/ace-stripe.mjs';
+import { stripeProblem, passPriceProblem, createCheckout, retrieveCheckout, isPaidPass, passLink, passLinkProblem, passLinkUrl } from '../lib/ace-stripe.mjs';
 import { sameOrigin } from './ace-magic-request.mjs';
 import { accountView } from './ace-account.mjs';
 
@@ -20,11 +24,23 @@ export async function handleCheckout(req, { env = process.env, kv, lookups, fetc
   const s = await sessionFromRequest(req, env, { now: Math.floor(now / 1000), headerOnly: true });
   if (!s) return json(401, { ok: false, error: 'sign_in_required' });
   if (s.src !== 'email') return json(409, { ok: false, error: 'portal_account' });   // portal students already have everything
-  const problem = stripeProblem(env);
+  const linkMode = !!passLink(env);
+  const problem = linkMode ? passLinkProblem(env) : stripeProblem(env);
   if (problem) return json(503, { ok: false, error: problem });
   const store = kv || await defaultKv();
   const acct = await accountById(store, s.acct);
   if (!acct) return json(401, { ok: false, error: 'no_account' });
+
+  if (linkMode) {
+    const access = await resolveAccess(acct, env, { now, lookups });
+    if (new URL(req.url).searchParams.get('confirm')) {
+      if (access.plan === 'free') return json(402, { ok: false, error: 'pending' });
+      const m = await mintAccountSession(acct, access, env, Math.floor(now / 1000));
+      return json(200, { ...sessionBody(m), account: accountView(acct, access) }, { 'Set-Cookie': m.cookie });
+    }
+    if (['coach', 'coaching'].includes(access.plan) || (access.plan === 'comp' && !access.until)) return json(409, { ok: false, error: 'already_included', plan: access.plan });
+    return json(200, { ok: true, url: passLinkUrl(env, { accountId: acct.id, email: acct.email }) });
+  }
 
   if (new URL(req.url).searchParams.get('confirm')) {
     let body; try { body = JSON.parse((await req.text()).slice(0, 2048) || '{}'); } catch { return json(400, { ok: false, error: 'bad_json' }); }

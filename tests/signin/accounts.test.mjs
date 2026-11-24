@@ -5,7 +5,7 @@ import assert from 'node:assert/strict';
 import { decide } from '../../netlify/lib/ace-gate-core.mjs';
 import { SESSION_COOKIE } from '../../netlify/lib/ace-token.mjs';
 import { memoryKv, findOrCreate, accountByEmail, accountById, resolveAccess, grantPass, passUntil, issueMagic, consumeMagic, saveAccount, airtableLookups, DAY_MS, compStatuses, coachEmails, passPriceLabel, passPriceCents, crashDays, passDays } from '../../netlify/lib/ace-accounts.mjs';
-import { signStripePayload, verifyStripeSignature, stripeProblem, REFUND_RULE } from '../../netlify/lib/ace-stripe.mjs';
+import { signStripePayload, verifyStripeSignature, stripeProblem, passLinkProblem, REFUND_RULE } from '../../netlify/lib/ace-stripe.mjs';
 import { signInEmail, brandProblems } from '../../netlify/lib/ace-mail.mjs';
 import { handleMagicRequest } from '../../netlify/functions/ace-magic-request.mjs';
 import { handleMagicVerify } from '../../netlify/functions/ace-magic-verify.mjs';
@@ -310,6 +310,30 @@ test('webhook: a buyer with no account gets one made for the paying address', as
   const ev = { id: 'evt_6', type: 'checkout.session.completed', data: { object: paidSession('cs_test_N', 'ALNOSUCHACCT', { customer_details: { email: 'Fresh@X.com' } }) } };
   assert.equal((await (await hook(ev, { ...ACC, ...STRIPE }, kv)).json()).granted, true);
   assert.ok(passUntil((await accountByEmail(kv, 'fresh@x.com')).pass.grants) > MS);
+});
+
+test('payment link mode: no secret key; the link carries the account, the webhook grants, confirm waits for it', async () => {
+  const kv = memoryKv(); const st = fakeStripe();
+  const LINK = { ACE_LABS_PASS_LINK: 'https://buy.stripe.com/test_abc123', STRIPE_WEBHOOK_SECRET: WHSEC };
+  const call = (headers, env, q = '') => handleCheckout(req('/.netlify/functions/ace-checkout' + q, { method: 'POST', headers, body: { session_id: 'cs_test_L' } }), { env, kv, lookups: noLookups, fetchImpl: st.fetchImpl, now: MS });
+  const { a, headers } = await emailSession(kv);
+  assert.equal((await call(headers, { ...ACC, ACE_LABS_PASS_LINK: LINK.ACE_LABS_PASS_LINK })).status, 503, 'no webhook secret: closed, a payment would never become a pass');
+  assert.equal((await call(headers, { ...ACC, ...LINK, ACE_LABS_PASS_LINK: 'https://buy.stripe.com/abc123' })).status, 503, 'a live link is locked');
+  assert.equal((await call(headers, { ...ACC, ...LINK, ACE_LABS_PASS_LINK: 'https://evil.example/test_abc' })).status, 503, 'only a buy.stripe.com link');
+  assert.equal(passLinkProblem({ ...LINK, ACE_LABS_PASS_LINK: 'https://buy.stripe.com/abc123', ACE_LABS_STRIPE_ALLOW_LIVE: 'yes' }), '');
+  const r = await call(headers, { ...ACC, ...LINK });
+  assert.equal(r.status, 200);
+  const u = new URL((await r.json()).url);
+  assert.equal(u.origin + u.pathname, 'https://buy.stripe.com/test_abc123');
+  assert.equal(u.searchParams.get('client_reference_id'), a.id); assert.equal(u.searchParams.get('prefilled_email'), 'buyer@x.com');
+  assert.equal(st.calls.length, 0, 'nothing is asked of the Stripe API: there is no key');
+  const c1 = await call(headers, { ...ACC, ...LINK }, '?confirm=1');
+  assert.equal(c1.status, 402); assert.equal((await c1.json()).error, 'pending');
+  const ev = { id: 'evt_L', type: 'checkout.session.completed', data: { object: paidSession('cs_test_L', a.id) } };
+  assert.equal((await (await hook(ev, { ...ACC, ...LINK }, kv)).json()).granted, true);
+  const c2 = await call(headers, { ...ACC, ...LINK }, '?confirm=1');
+  assert.equal(c2.status, 200); const body = await c2.json();
+  assert.equal(body.account.plan, 'pass'); assert.ok(body.token);
 });
 
 test('account refresh: a pass the webhook recorded opens everything without signing in again', async () => {
