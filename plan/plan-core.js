@@ -246,7 +246,8 @@
       }
       if (s === 'rc') return { section: s, kind: 'drill', title: 'Reading: ' + (n === 1 ? 'one passage' : cw.toLowerCase() + ' passages') + (timed ? ', timed' : ', mapped'), detail: timed ? 'Map it, then search for each answer. About 20 minutes a passage on test day.' : 'Map the passage first, then search for each answer instead of rereading.', minutes: m, href: DRILL.rc };
       if (s === 'qr' && timed && m >= 25 && m <= 60) return { section: s, kind: 'drill', title: 'QR: pacing practice', detail: 'Hold the pace: 40 questions in 45 minutes on test day. Skip and return.', minutes: m, href: LINK.pacing };
-      var sets = cw + ' ' + SHORT[s] + (n === 1 ? ' set' : ' sets');
+      var art = (n === 1 && /^[AEIOU]/.test(SHORT[s])) ? 'An' : cw;
+      var sets = art + ' ' + SHORT[s] + (n === 1 ? ' set' : ' sets');
       return { section: s, kind: 'drill', title: sets + (timed ? ', timed' : ' near your level'), detail: timed ? 'No hints, no checking until the set is done.' : 'Check each answer and read the explanation on every miss.', minutes: m, href: DRILL[s] };
     }
     function nightTask(s, minutes) {
