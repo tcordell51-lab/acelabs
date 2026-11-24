@@ -310,6 +310,72 @@ add("FULL_4", "qr-a:exp1719", "qr-f4-committee", "qr-12", 4,
     ["What is the probability that the committee has no dentists?", "4 choose 3 = 4 committees, so 4/84 = 1/21."],
     val=F(comb(5, 2) * comb(4, 1), comb(9, 3)), key=F(10, 21))
 
+# ---------------------------------------------------------------- coordinate geometry and triangle items replaced (v3 round 2)
+add("FULL_1", "qr-a:coo1459", "qr-f1-weighted-grade", "qr-13", 2,
+    "In a course, exams count for 60% of the grade and labs count for 40%. A student averages 80 on exams and 90 on labs. What is the course grade?",
+    ["80", "82", "84", "85", "86"], 2,
+    "The grade is 84. Weight each average: 0.60 x 80 = 48 and 0.40 x 90 = 36, and 48 + 36 = 84.",
+    ["Multiply each average by its **weight**.", "Exams: 0.60 x 80 = 48.", "Labs: 0.40 x 90 = 36.", "Add: 84."],
+    ["This is the exam average alone. Labs pull the grade up.", "This gives labs too little weight. Labs count for 40%, which adds 4 points to 80.", None, "This is the plain average of 80 and 90. Exams count for more than labs.", "This swaps the weights. Exams, the lower average, carry 60%."],
+    ["What is the grade if exams count 50% and labs 50%?", "The plain average: 85."],
+    val=F(60, 100) * 80 + F(40, 100) * 90, key=84)
+add("FULL_1", "qr-a:ds1700", "qr-f1-tickets-system", "qr-5", 3,
+    "Three adult tickets and two child tickets cost $46. One adult ticket and four child tickets cost $32. What is the price of one adult ticket, in dollars?",
+    ["5", "8", "10", "12", "14"], 3,
+    "An adult ticket costs $12. Double the first equation to get 6a + 4c = 92, subtract a + 4c = 32, and 5a = 60.",
+    ["Write 3a + 2c = 46 and a + 4c = 32.", "**Double** the first: 6a + 4c = 92.", "Subtract the second: 5a = 60.", "a = 12."],
+    ["$5 is the child ticket. The question asks for the adult ticket.", "At $8, three adult tickets leave $22 for two child tickets, $11 each. Then the second purchase costs $52, not $32.", "At $10, the child ticket is $8 and the second purchase costs $42, not $32.", None, "At $14, the child ticket is $2 and the second purchase costs $22, not $32."],
+    ["What does one child ticket cost?", "32 - 12 = 20 for four tickets: $5."],
+    val=F(2 * 46 - 32, 5), key=12)
+add("FULL_2", "qr-a:ds1695", "qr-f2-dose-weight", "qr-3", 2,
+    "A medication is dosed at 5 milligrams per kilogram of body weight. A child weighs 44 pounds. Using 1 kilogram = 2.2 pounds, how many milligrams is the dose?",
+    ["50", "100", "220", "440", "484"], 1,
+    "The dose is 100 mg. 44 pounds is 44 / 2.2 = 20 kilograms, and 20 x 5 = 100.",
+    ["Convert first: 44 / **2.2** = 20 kg.", "Dose: 20 kg x 5 mg/kg.", "100 mg."],
+    ["This is half the dose. 20 kg at 5 mg per kg is 100 mg.", None, "This multiplies 44 pounds by 5 without converting to kilograms.", "This is ten times the weight in pounds. Convert to kilograms, then multiply by 5.", "This multiplies by 2.2 instead of dividing. A child weighs fewer kilograms than pounds."],
+    ["What is the dose for a 66-pound child?", "30 kg x 5 = 150 mg."],
+    val=F(44) / F(22, 10) * 5, key=100)
+add("FULL_2", "qr-a:coo1458", "qr-f2-mean-to-median", "qr-13", 3,
+    "Five numbers have a mean of 12. Four of the numbers are 8, 10, 15 and 16. What is the median of the five numbers?",
+    ["8", "10", "11", "12", "15"], 2,
+    "The median is 11. The five numbers total 5 x 12 = 60, the four known ones total 49, so the fifth is 11. In order they are 8, 10, 11, 15, 16.",
+    ["Total: 5 x 12 = 60.", "Known four: 8 + 10 + 15 + 16 = 49.", "**Fifth number**: 60 - 49 = 11.", "Sorted, the middle value is 11."],
+    ["8 is the smallest value, not the middle one.", "10 is the second value once the missing 11 is placed.", None, "12 is the mean. The median is the middle value of the sorted list.", "15 is the fourth value in order, not the third."],
+    ["What is the range of the five numbers?", "16 - 8 = 8."],
+    val=F(5 * 12 - (8 + 10 + 15 + 16)), key=11)
+add("FULL_2", "qr-a:tri1659", "qr-f2-text-budget", "qr-5", 2,
+    "A phone plan costs $25 a month plus $0.10 for each text message. What is the greatest number of text messages that keeps the monthly bill at or below $40?",
+    ["15", "65", "100", "149", "150"], 4,
+    "The answer is 150. The texts can cost up to 40 - 25 = 15 dollars, and 15 / 0.10 = 150.",
+    ["Write **25 + 0.10t ≤ 40**.", "Subtract 25: 0.10t ≤ 15.", "Divide by 0.10: t ≤ 150."],
+    ["15 is the dollars left for texts, not the number of texts.", "65 adds the $25 fee to the $40 limit. Subtract the fee, then divide by the cost per text.", "100 texts cost $10, for a $35 bill. There is room for more.", "149 texts fit, but 150 gives exactly $40, which is still allowed.", None],
+    ["What is the bill for 80 texts?", "25 + 8 = $33."],
+    val=F(40 - 25) / F(1, 10), key=150)
+add("FULL_3", "qr-a:coo1457", "qr-f3-sum-diff-product", "qr-5", 2,
+    "Two numbers have a sum of 10 and a difference of 4. What is their product?",
+    ["14", "20", "21", "24", "40"], 2,
+    "The product is 21. Adding x + y = 10 and x - y = 4 gives 2x = 14, so x = 7 and y = 3.",
+    ["Write x + y = 10 and x - y = 4.", "**Add** them: 2x = 14, so x = 7.", "Then y = 3.", "Product: 7 x 3 = 21."],
+    ["This adds 10 and 4. Find the two numbers first.", "No pair with sum 10 and difference 4 multiplies to 20. The numbers are 7 and 3.", None, "This is 6 x 4. Those numbers have a sum of 10 but a difference of 2.", "This multiplies the sum by the difference. The question asks for the product of the two numbers."],
+    ["What is the sum of the squares of the two numbers?", "49 + 9 = 58."],
+    val=F(7 * 3), key=21)
+add("FULL_3", "qr-a:ds1698", "qr-f3-dice-sum-8", "qr-12", 3,
+    "A fair six-sided die is rolled twice. What is the probability that the two rolls add to 8?",
+    ["1/12", "1/9", "1/8", "5/36", "1/6"], 3,
+    "The probability is 5/36. Five of the 36 equally likely outcomes add to 8: (2,6), (3,5), (4,4), (5,3) and (6,2).",
+    ["All outcomes: 6 x 6 = **36**.", "List sums of 8: (2,6), (3,5), (4,4), (5,3), (6,2).", "That is 5 outcomes.", "5/36."],
+    ["This is 3/36. It counts each pair once and misses that (2,6) and (6,2) are different outcomes.", "This is 4/36. It leaves out one outcome, usually (4,4).", "This treats 8 as one of eight possible totals. The totals are not equally likely.", None, "This is 6/36, the chance of a sum of 7. A sum of 8 has one fewer way."],
+    ["What is the probability that the two rolls add to 7?", "6/36 = 1/6."],
+    val=F(sum(1 for a in range(1, 7) for b in range(1, 7) if a + b == 8), 36), key=F(5, 36))
+add("FULL_4", "qr-a:tri1660", "qr-f4-sd-shift", "qr-13", 3,
+    "A data set has a mean of 20 and a standard deviation of 3. If 5 is added to every value, what is the standard deviation of the new data set?",
+    ["0", "3", "5", "8", "15"], 1,
+    "The standard deviation stays 3. Adding the same number to every value shifts the mean to 25 but leaves each value the same distance from the mean.",
+    ["Adding 5 moves every value and the mean by 5.", "Each **distance from the mean** is unchanged.", "So the standard deviation is still 3."],
+    ["Zero would mean every value is the same. The spread has not changed.", None, "5 is the shift. It changes the mean, not the spread.", "This adds the shift to the standard deviation. Only the mean rises by 5.", "This multiplies 3 by 5. The values were shifted, not scaled."],
+    ["What is the new standard deviation if every value is multiplied by 5 instead?", "15. Scaling stretches every distance by 5."],
+    val=F(3), key=3)
+
 # numeric choices must be in ascending order and the keyed choice must equal the worked value
 def num(o):
     o = o.replace("$", "").replace(",", "").replace("%", "")
