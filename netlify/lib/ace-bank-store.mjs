@@ -146,7 +146,9 @@ export function formStatus(form, decisions, opts) {
   let ok = 0, fix = 0, reject = 0;
   for (const id of ids) { const it = itemById(id, opts); if (!it) continue; const s = statusOf(it, decisions); if (s === 'approve') ok++; else if (s === 'fix') fix++; else if (s === 'reject') reject++; }
   const complete = ['bio', 'gc', 'ochem', 'qr'].every((s) => form.sections[s]) && !!form.rc;
-  return { id: form.id, name: form.name, status: complete && ids.length && ok === ids.length ? 'ready' : 'awaiting review', approved: ok, needed: ids.length, fix, reject, rcFallback: !!(form.rc && form.rc.fallback) };
+  // What a student sits: the reviewed items, the fallback Reading section when a form borrows one, and the 90 generated PAT figures.
+  const questions = ids.length + (form.rc && !form.rc.passages ? Number(form.rc.questions) || 50 : 0) + (form.pat ? 90 : 0);
+  return { id: form.id, name: form.name, status: complete && ids.length && ok === ids.length ? 'ready' : 'awaiting review', approved: ok, needed: ids.length, questions, fix, reject, rcFallback: !!(form.rc && form.rc.fallback) };
 }
 const RC_TYPE_NAMES = { detail: 'Detail', inference: 'Inference', mainidea: 'Main idea / purpose', function: 'Function of a paragraph', except: 'EXCEPT / NOT', tone: 'Tone / attitude', vocab: 'Vocabulary in context' };
 export function formContent(form, opts) {
