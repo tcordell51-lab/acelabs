@@ -35,8 +35,9 @@
     return null;
   }
 
+  /* Section words (chemistry, organic, general) name the course, not the night, so they never decide a match. */
   var STOP = {};
-  'the a an and or of to in on at for with by is are it its from your you what how one two three then that this as into vs versus their them be not no all every'.split(' ').forEach(function (w) { STOP[w] = 1; });
+  'the a an and or of to in on at for with by is are it its from your you what how one two three then that this as into vs versus their them be not no all every chemistry organic general'.split(' ').forEach(function (w) { STOP[w] = 1; });
   function words(s) {
     return String(s || '').toLowerCase().replace(/[^a-z0-9 ]+/g, ' ').split(/\s+/)
       .filter(function (w) { return w.length > 2 && !STOP[w]; })

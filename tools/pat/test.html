@@ -185,9 +185,12 @@
 <script src="engine/pat-patternfold-poly.js"></script>
 <script src="engine/pat-test.js"></script>
 <script src="engine/pat-store.js"></script>
+<script src="/shared/ace-index.js?v=3"></script>
+<script src="/shared/ace-route.js?v=4"></script>
 <script src="/shared/ace-skills.js?v=2"></script>
 <script src="/shared/ace-record.js?v=6"></script>
 <script src="/shared/ace-test-review.js?v=3"></script>
+<script src="/shared/ace-next-steps.js?v=1"></script>
 <script>
 (function () {
   'use strict';
@@ -472,6 +475,19 @@
       return '<div class="prow"><span>' + esc(r.label) + '</span><span class="v">' + r.correct + ' of ' + r.total + '</span><span class="m"><i style="width:' + pct + '%"></i></span></div>';
     }).join('');
   }
+  /* The "what to do next" areas (shared/ace-next-steps.js): one per subtest, with blanks, the time spent
+     on each miss against Ace pacing, the trap types picked, the Retold night and the trainer. */
+  var NIGHT = { keyholes: 2, tfe: 3, angles: 4, holepunch: 5, patternfold: 6, cubes: 7 };
+  function nextAreas(A, a) {
+    return A.sections.map(function (s) {
+      var miss = ui.test.items.slice(s.from - 1, s.to).filter(function (it) { return a.answers[it.n - 1] !== it.answer; });
+      var t = window.AceRoute && window.AceRoute.nightTitle ? window.AceRoute.nightTitle('pat', NIGHT[s.type]) : '';
+      return { section: 'pat', label: s.name, correct: s.correct, total: s.of, blank: s.of - s.answered, paceSec: TARGET[s.type],
+        missSec: miss.map(function (it) { return (a.timeSpent && a.timeSpent[it.n - 1]) || 0; }), traps: s.traps,
+        learn: { href: '/tools/pat-retold/?night=' + NIGHT[s.type], label: 'Night ' + NIGHT[s.type] + ': ' + (t || s.name) },
+        drill: { href: '/tools/pat/' + s.links.studio, label: s.name + ' trainer' } };
+    });
+  }
   function renderResults(timeUp) {
     var A = ui.analysis, a = ui.attempt, used = A.sections.reduce(function (t, x) { return t + x.timeSec; }, 0);
     var h = '<div class="res-head"><div class="big">' + A.total + '<small> / 90</small></div><div class="rail"><div class="kicker">' + esc(ui.test.label) + (a.mode === 'thomas' ? ' : Thomas order' : '') + '</div>' +
@@ -482,7 +498,7 @@
     A.sections.forEach(function (s) {
       h += '<tr><td>' + s.name + '</td><td class="num">' + s.correct + ' / ' + s.of + '<span class="meter"><i style="width:' + Math.round(100 * s.correct / s.of) + '%"></i></span></td><td class="num hide-sm">' + s.from + ' to ' + s.to + '</td><td class="num">' + mmss(s.timeSec) + '</td><td class="num hide-sm">about ' + mmss(TARGET[s.type] * s.of) + '</td></tr>';
     });
-    h += '</tbody></table></div>';
+    h += '</tbody></table></div><div id="patNext"></div>';
     var order = A.weak.concat(A.sections.map(function (s) { return s.type; }).filter(function (t) { return A.weak.indexOf(t) < 0; }));
     h += '<div class="sec-cards">';
     order.forEach(function (t) {
@@ -509,6 +525,8 @@
     h += '</div></div>';
     h += '<div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:22px"><button class="btn gold" type="button" id="retake">Retake this test</button><button class="btn" type="button" id="allTests">All tests</button></div>';
     $('resWrap').innerHTML = h;
+    if (window.AceNextSteps) window.AceNextSteps.render($('patNext'), { src: 'pat-test', title: ui.test.label || 'PAT test', pct: A.total / 90, areas: nextAreas(A, a),
+      retest: { href: '/tools/pat/test.html', label: 'Take a fresh PAT test', detail: 'All 90 under the hour, on a new seed, to see whether the fixes held.', cta: 'Open PAT tests' } });
     Array.prototype.forEach.call($('resWrap').querySelectorAll('.items-list button'), function (b) { b.addEventListener('click', function () { openItem(parseInt(b.dataset.n, 10)); }); });
     $('retake').addEventListener('click', function () { ui.pendingTestId = ui.test.testId; renderScratch(); });
     $('allTests').addEventListener('click', renderLanding);

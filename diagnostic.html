@@ -464,6 +464,10 @@ body{
   margin-bottom:.25rem;
 }
 .diag-result-hero p{font-size:.9rem;opacity:.75;margin:0}
+.diag-result-hero .diag-review-row{opacity:1;margin-top:1rem}
+.diag-review-btn{display:inline-flex;align-items:center;min-height:48px;padding:.6rem 1.2rem;border-radius:10px;background:#C9A84C;color:#16120A;font-weight:700;font-size:1rem;text-decoration:none}
+.diag-review-btn[hidden]{display:none}
+.diag-review-btn:hover,.diag-review-btn:focus-visible{background:#E2C97A;outline:none}
 
 .diag-result-grid{
   display:grid;
@@ -778,23 +782,14 @@ html:not(.diag-running) header.al-top{display:none}
     <div class="diag-result-hero">
       <h2>Diagnostic complete.</h2>
       <p id="resultSubline">Here is what the data says about where to focus.</p>
+      <p class="diag-review-row"><a class="diag-review-btn" id="diagReview" href="/review/" hidden>Review question by question</a></p>
     </div>
 
     <!-- Per-section accuracy grid -->
     <div class="diag-result-grid" id="sectionGrid"></div>
 
-    <!-- Weak topics -->
-    <div class="diag-weak-section">
-      <h3>Your three weakest areas</h3>
-      <div class="diag-weak-list" id="weakList"></div>
-    </div>
-
-    <!-- Next-step handoffs (populated in renderResults) -->
-    <div class="diag-weak-section" id="diagNextSteps" style="display:none">
-      <h3>What to do next</h3>
-      <p style="font-size:.86rem;color:var(--al-ink-mute);margin-bottom:1rem">Turn this diagnostic into action: start with your weakest section, then rehearse full pacing under real timing.</p>
-      <div class="diag-result-actions" id="diagHandoffs"></div>
-    </div>
+    <!-- What to do next: three weakest areas, this week, schedule, coach (shared/ace-next-steps.js) -->
+    <div id="diagNext"></div>
 
     <!-- Actions -->
     <div class="diag-result-actions">
@@ -1347,12 +1342,14 @@ function submitDiagnostic(){
   // through the test question by question on /review/ (shared/ace-test-review.js).
   if(window.AceTestReview && window.AceRecord){
     const rows = pool.map((q, i) => ({ item: q, picked: answers[i] !== undefined ? answers[i] : null }));
+    // The results screen comes first (raw counts, the three weakest areas, this week's plan); its
+    // first button opens the question-by-question review of this run.
     window.AceTestReview.finish({ src: 'diagnostic', title: 'Diagnostic', rows, back: '/diagnostic.html' })
-      .then(id => { leaving = true; location.href = '/review/?run=' + encodeURIComponent(id); })
-      .catch(() => showScreen('screenResults'));
-    return;
+      .then(id => { const b = document.getElementById('diagReview'); if(b){ b.href = '/review/?run=' + encodeURIComponent(id); b.hidden = false; } })
+      .catch(() => {});
   }
   showScreen('screenResults');
+  window.scrollTo(0, 0);
 }
 
 /* ── Scoring ────────────────────────────────────────────── */
@@ -1375,10 +1372,11 @@ function scoreQuestions(){
     if(isCorrect) sectionData[sec].correct++;
 
     if(!sectionData[sec].topics[topic]){
-      sectionData[sec].topics[topic] = {correct:0, total:0, section:sec};
+      sectionData[sec].topics[topic] = {correct:0, total:0, blank:0, section:sec};
     }
     sectionData[sec].topics[topic].total++;
     if(isCorrect) sectionData[sec].topics[topic].correct++;
+    if(chosen === undefined || chosen === null) sectionData[sec].topics[topic].blank++;
   });
 
   // Flatten topics
@@ -1390,6 +1388,7 @@ function scoreQuestions(){
         section: sec,
         correct: td.correct,
         total:   td.total,
+        blank:   td.blank,
         accuracy: td.total > 0 ? td.correct / td.total : 0,
       });
     });
@@ -1476,50 +1475,6 @@ function renderResults(result){
     sectionGrid.appendChild(card);
   });
 
-  // Weak topics
-  const weakList = document.getElementById('weakList');
-  weakList.innerHTML = '';
-
-  if(topWeakTopics.length === 0){
-    weakList.innerHTML = '<p style="color:var(--al-ink-mute);font-size:.9rem">Not enough data to identify weak topics. Complete more questions.</p>';
-  } else {
-    topWeakTopics.forEach((t, i) => {
-      const pct = t.total > 0 ? Math.round((t.correct / t.total) * 100) : 0;
-      const label = topicLabel(t.topic);
-      const url = MODULE_URLS[t.topic];
-      const secKey = ({BIO:'bio', GC:'gchem', OCHEM:'ochem', QR:'qr'})[String(t.section || '').toUpperCase()] || t.section;
-      const route = window.AceRoute ? window.AceRoute.links({ section: secKey, concept: label, topic: t.topic }) : null;
-      let recHtml;
-      if(route){
-        const parts = [];
-        if(route.night) parts.push(`<a href="${escapeHtml(route.learn)}">Learn it: night ${route.night}${route.nightTitle ? ', ' + escapeHtml(route.nightTitle) : ''}</a>`);
-        parts.push(`<a href="${escapeHtml(route.drill)}">Drill it</a>`);
-        if(route.sheetTitle) parts.push(`<a href="${escapeHtml(route.sheet)}" target="_blank" rel="noopener">Sheet: ${escapeHtml(route.sheetTitle)}</a>`);
-        recHtml = `${label}: ` + parts.join(' &middot; ') + '.';
-      } else if(url){
-        recHtml = `${label} &rarr; <a href="${escapeHtml(url)}">Open module</a>.`;
-      } else {
-        recHtml = `${label}: review your notes and practice problems for this topic.`;
-      }
-
-      const feedbackVerb = pct === 0 ? 'No questions answered correctly in this area.' :
-                           pct < 40  ? 'Not quite there yet.' :
-                                       'Almost: a focused review should close the gap.';
-
-      const item = document.createElement('div');
-      item.className = 'diag-weak-item';
-      item.innerHTML = `
-        <div class="diag-weak-item-header">
-          <span class="diag-weak-rank rank-${i+1}">${i+1}</span>
-          <span class="diag-weak-name">${label}</span>
-          <span class="diag-weak-score">${t.correct}/${t.total} correct (${pct}%)</span>
-        </div>
-        <div class="diag-weak-rec">${feedbackVerb} ${recHtml}</div>
-      `;
-      weakList.appendChild(item);
-    });
-  }
-
   // Result subline
   const totalCorrect = Object.values(perSection).reduce((s,d) => s + d.correct, 0);
   const totalQ       = Object.values(perSection).reduce((s,d) => s + d.total, 0);
@@ -1527,29 +1482,26 @@ function renderResults(result){
   document.getElementById('resultSubline').textContent =
     `${totalCorrect} of ${totalQ} correct (${overall}% overall). Focus on the three areas listed below.`;
 
-  // Next-step handoffs — route to the weakest section's engine plus a full mock,
-  // so the results screen leads somewhere instead of dead-ending at the homepage.
-  const SECTION_ENGINES = {
-    bio:   { href:'/bio/?run=daily',      label:'Biology' },
-    gc:    { href:'/gc/?run=daily',       label:'Gen Chem' },
-    ochem: { href:'/oc/?run=daily',       label:'Org Chem' },
-    qr:    { href:'/qr/drill/?run=daily', label:'Quant Reasoning' },
-  };
-  const ranked = Object.entries(perSection)
-    .filter(([, d]) => d && d.total > 0)
-    .sort((a, b) => a[1].pct - b[1].pct);
-  const weakestKey = ranked.length ? ranked[0][0] : null;
-  const eng = weakestKey ? SECTION_ENGINES[weakestKey] : null;
-  const handoffs = document.getElementById('diagHandoffs');
-  const nextWrap = document.getElementById('diagNextSteps');
-  if(handoffs && nextWrap){
-    const parts = [];
-    if(eng){
-      parts.push(`<a class="btn-primary" href="${eng.href}">Study ${eng.label}, your weakest section</a>`);
-    }
-    parts.push(`<a class="btn-secondary" href="/">See today's plan</a>`);
-    handoffs.innerHTML = parts.join('');
-    nextWrap.style.display = 'block';
+  // What to do next (shared/ace-next-steps.js): the three weakest topics with why and the exact fix,
+  // this week's steps, the schedule builder and the coach card.
+  const SEC = ({BIO:'bio', GC:'gchem', OCHEM:'ochem', QR:'qr'});
+  const SHORT = ({bio:'Bio', gchem:'GChem', ochem:'OChem', qr:'QR'});
+  const COURSE = ({bio:'/tools/bio-retold/', gchem:'/tools/gchem/', ochem:'/tools/organic/', qr:'/tools/qr-retold/'});
+  const DRILL = ({bio:'/tools/bio/', gchem:'/tools/gc/', ochem:'/tools/ochem/tree/', qr:'/tools/qr/'});
+  const source = (result.allTopics && result.allTopics.length) ? result.allTopics : (topWeakTopics || []);
+  const areas = source.map(t => {
+    const sec = SEC[String(t.section || '').toUpperCase()] || t.section;
+    const label = String(topicLabel(t.topic)).replace(/^[A-Za-z]+ \u00b7 /, '');
+    const route = window.AceRoute ? window.AceRoute.links({ section: sec, concept: label, topic: t.topic }) : null;
+    const learn = route && route.night
+      ? { href: route.learn, label: 'Night ' + route.night + ': ' + (route.nightTitle || label) }
+      : { href: COURSE[sec] || '/learn/', label: (SHORT[sec] || '') + ' Retold, from night 1' };
+    const drill = { href: (route && route.drill) || DRILL[sec] || '/practice/', label: label + ' in the ' + (SHORT[sec] || '') + ' engine' };
+    return { section: sec, label: label, correct: t.correct, total: t.total, blank: t.blank || 0, learn: learn, drill: drill };
+  });
+  if(window.AceNextSteps){
+    window.AceNextSteps.render(document.getElementById('diagNext'), { src: 'diagnostic', title: 'Diagnostic', pct: totalQ ? totalCorrect / totalQ : null, areas: areas,
+      retest: { href: '/tools/minitests/', label: 'Check the fixes on The Climb', detail: 'One 40-question rung under the clock, across all four sections.', cta: 'Open The Climb' } });
   }
 }
 
@@ -1591,10 +1543,11 @@ function retakeDiagnostic(){
 }
 </script>
   <script src="/shared/ace-index.js?v=3"></script>
-  <script src="/shared/ace-route.js?v=3"></script>
+  <script src="/shared/ace-route.js?v=4"></script>
   <script src="/shared/ace-skills.js?v=2"></script>
   <script src="/shared/ace-record.js?v=6"></script>
   <script src="/shared/ace-test-review.js?v=3"></script>
+  <script src="/shared/ace-next-steps.js?v=1"></script>
   <script src="/shared/ace-shell.js?v=4" defer></script>
 </body>
 </html>
