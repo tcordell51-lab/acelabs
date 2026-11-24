@@ -14,6 +14,8 @@
   .see-jump a:hover { border-color: var(--aui-forest); }
   .see-sec { scroll-margin-top: 72px; }
   .see-sec > header { display: flex; align-items: baseline; gap: var(--aui-3); flex-wrap: wrap; margin-bottom: var(--aui-3); }
+  .see-sec__hero { display: block; width: 100%; aspect-ratio: 12 / 4; object-fit: cover; object-position: center; border-radius: var(--aui-r); margin: 0 0 var(--aui-4); background: var(--aui-forest); }
+  @media (max-width: 600px) { .see-sec__hero { aspect-ratio: 16 / 7; } }
   .see-sec > header span { font-size: var(--aui-t-sm); color: var(--aui-ink-3); }
   .see-grid { display: grid; gap: var(--aui-4); grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); }
   .see-tile { display: flex; flex-direction: column; background: var(--aui-paper); border: 1px solid var(--aui-line); border-radius: var(--aui-r); overflow: hidden; color: inherit; text-decoration: none; box-shadow: var(--aui-shadow); transition: transform .2s var(--aui-ease), border-color .2s; }
@@ -142,6 +144,10 @@
     var h = el('header'); h.appendChild(el('h2', 'aui-h2', s[1]));
     h.appendChild(el('span', null, (boards.length ? boards.length + ' whiteboard' + (boards.length === 1 ? '' : 's') + ', ' : '') + tools.length + ' lab' + (tools.length === 1 ? '' : 's')));
     sec.appendChild(h);
+    var hero = el('img', 'see-sec__hero'); hero.src = '/shared/art/hero/' + s[0] + '-1200.webp';
+    hero.srcset = '/shared/art/hero/' + s[0] + '-640.webp 640w, /shared/art/hero/' + s[0] + '-1200.webp 1200w';
+    hero.sizes = '(max-width: 1240px) 100vw, 1200px'; hero.alt = ''; hero.width = 1200; hero.height = 400; hero.loading = 'lazy'; hero.decoding = 'async';
+    sec.appendChild(hero);
     if (boards.length) {
       var grid = el('div', 'see-grid');
       boards.forEach(function (x) {
