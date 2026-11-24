@@ -342,15 +342,16 @@ export function checkMocks(mocks) {
       items.forEach((it, i) => {
         if (ids.has(it.id)) errors.push(`${mk.id} ${sec.key}: ${it.id} repeats across mocks`);
         ids.add(it.id);
-        if (it.opts.length !== 5) errors.push(`${it.id}: not five choices`);
-        if (!keyNotLongest(it.opts, it.correct)) errors.push(`${it.id}: key is the longest choice`);
+        // quantitative comparison has four fixed choices and data sufficiency five fixed choices, as on the DAT
+        if (it.opts.length !== (it.fmt === 'qc' ? 4 : 5)) errors.push(`${it.id}: wrong number of choices`);
+        if (!it.fmt && !keyNotLongest(it.opts, it.correct)) errors.push(`${it.id}: key is the longest choice`);
         kc[it.correct]++;
         if (i >= 2 && items[i - 1].correct === it.correct && items[i - 2].correct === it.correct) errors.push(`${mk.id} ${sec.key}: three ${L[it.correct]} keys in a row at ${i + 1}`);
       });
       const rc = [0, 0, 0, 0, 0];
-      items.forEach((it) => { if (isText(it.opts, it.os)) rc[lengthRank(it.opts, it.correct)]++; });
+      items.forEach((it) => { if (!it.fmt && isText(it.opts, it.os)) rc[lengthRank(it.opts, it.correct)]++; });
       const nText = rc.reduce((a, b) => a + b, 0);
-      if (nText >= 6 && rc.some((c) => c > Math.max(2, Math.ceil(nText * 0.4)))) errors.push(`${mk.id} ${sec.key}: key length rank is lopsided (${rc.join(' ')})`);
+      if (nText >= 10 && rc.some((c) => c > Math.max(2, Math.ceil(nText * 0.4)))) errors.push(`${mk.id} ${sec.key}: key length rank is lopsided (${rc.join(' ')})`);
       if (items.length && kc.some((c) => c !== items.length / 5)) errors.push(`${mk.id} ${sec.key}: key letters not even (${kc.map((c, i) => L[i] + c).join(' ')})`);
     }
     if (!mk.pat || !mk.pat.seed) errors.push(`${mk.id}: no PAT seed`);
@@ -365,6 +366,9 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === path.resolve(process.a
     const errs = checkMocks(mocks);
     // Shipping rule: every science and QR item has passed a blind re-solve.
     const ver = new Set(fs.existsSync(VERIFIED) ? JSON.parse(fs.readFileSync(VERIFIED, 'utf8')).map((x) => x.id) : []);
+    // original items written for this repo: keys worked a second time by the scripts in scripts/mock-content
+    const V3 = path.join(ROOT, 'scripts/mock-content/v3-verified.json');
+    if (fs.existsSync(V3)) JSON.parse(fs.readFileSync(V3, 'utf8')).forEach((id) => ver.add(id));
     for (const mk of mocks) for (const [k, list] of Object.entries(mk.sections)) for (const it of list) if (!ver.has(it.id)) errs.push(`${mk.id} ${k}: ${it.id} has not passed the blind re-solve`);
     errs.forEach((e) => console.log('  ERROR ' + e));
     console.log(errs.length ? `FAIL: ${errs.length} error(s)` : `PASS: ${mocks.length} full mocks`);

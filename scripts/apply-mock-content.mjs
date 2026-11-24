@@ -52,7 +52,8 @@ export function apply(data) {
   }
   const used = new Set();
   // A stop's lesson nights, read from the items already filed under it.
-  const stopNights = {};
+  const stopNights = {}, stopTopic = {};
+  for (const mk of data.mocks) for (const list of Object.values(mk.sections)) for (const it of list) if (it.src !== 'v3' && !retag[it.id] && !stopTopic[it.stop]) stopTopic[it.stop] = it.topic;
   for (const mk of data.mocks) for (const list of Object.values(mk.sections)) for (const it of list) if (!retag[it.id] && it.nights && it.nights.length && !stopNights[it.stop]) stopNights[it.stop] = it.nights;
   for (const mk of data.mocks) {
     for (const [sec, list] of Object.entries(mk.sections)) {
@@ -91,6 +92,7 @@ export function apply(data) {
         if (retag[it.id] || it.src === 'v3') it.nights = stopNights[it.stop] || [];
         const tp = topics[it.stop];
         if (tp) { it.topic = tp.name; if (tp.nick) it.nick = tp.nick; else delete it.nick; }
+        else if (it.src === 'v3' && stopTopic[it.stop]) it.topic = stopTopic[it.stop];   // a stop that already has a plain name (biology)
         else if (it.src === 'v3') problems.push(`${it.id}: stop ${it.stop} has no entry in topics.json`);
       }
     }
