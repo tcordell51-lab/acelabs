@@ -8,6 +8,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="pat-cream.css">
+<link rel="stylesheet" href="pat-explain.css">
 <style>
   /* module-specific layout only — palette + chrome come from pat-cream.css */
   h1.title{font-size:30px;margin:2px 0 6px;line-height:1.12}
@@ -384,8 +385,16 @@ function renderNet(){
   document.getElementById('back').disabled=step===0;
   document.getElementById('next').disabled=step===P.net.length;
 }
+/* worked explanation + See it chip after every answer (engine/pat-explain.js, PAT.explain.drill). Pure: it reads the finished item and draws no random numbers, so seeds still reproduce. */
+function showPex(host,kind,data,chosen){
+  if(!window.PAT||!PAT.explain||!PAT.explain.drillHTML||!host)return;
+  var b=document.getElementById('pexBox'); if(!b){b=document.createElement('div');b.id='pexBox';b.setAttribute('aria-live','polite');}
+  host.appendChild(b);
+  try{b.innerHTML=PAT.explain.drillHTML(kind,data,chosen);}catch(e){b.innerHTML='';}
+}
+function clearPex(){var b=document.getElementById('pexBox'); if(b)b.innerHTML='';}
 function renderOpts(){
-  var w=document.getElementById('opts'); w.innerHTML=''; answered=false;
+  var w=document.getElementById('opts'); w.innerHTML=''; answered=false; clearPex();
   P.opts.forEach(function(op,i){
     var div=document.createElement('div'); div.className='opt';
     div.innerHTML='<div class="lab">'+'ABCD'[i]+'</div><svg viewBox="0 0 240 190">'+cubeSVG(120,86,62,op.r)+'</svg>';
@@ -402,6 +411,8 @@ function renderOpts(){
       LOG.push({seed:seed,netIdx:P.netIdx,anchor:faceName(P.F.frames[P.F.order[0]].n),chosen:'ABCD'[i],correct:'ABCD'[correctIdx],ok:ok?1:0,ms:ms});
       document.getElementById('export').disabled=false;
       renderStats();
+      var faces={}; P.net.forEach(function(c,ix){faces[faceName(P.F.frames[ix].n)]=P.pats[ix]});
+      showPex(rc.parentNode,'patternfold',{faces:faces,options:P.opts.map(function(o){return {ok:!!o.ok,why:o.why||''}}),answer:correctIdx},i);
     });
     w.appendChild(div);
   });
@@ -425,6 +436,9 @@ render();
 renderStats();
 })();
 </script>
+<script src="engine/pat-core.js"></script>
+<script src="engine/pat-explain.js"></script>
+<script src="/shared/ace-visuals.js?v=5"></script>
 <script src="/shared/ace-skills.js?v=2"></script>
 <script src="/shared/ace-record.js?v=6"></script>
 <script src="pat-ledger.js"></script>

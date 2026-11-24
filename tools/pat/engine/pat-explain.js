@@ -755,7 +755,103 @@
     return svg.replace(m[0], labelSVG(m[0], pts)).replace('<figcaption>Pattern</figcaption>', '<figcaption>Pattern, faces numbered for the steps</figcaption>');
   }
 
+  /* ================= studio drills =================
+     The four studio drills (tools/pat/{holepunch,tfe,patternfold,keyholes}.html) generate their
+     own items in the page. PAT.explain.drill(kind, data, chosen) explains one of those items from
+     plain data the page hands over AFTER generation. It is a pure function: it draws no random
+     numbers and changes nothing it is given, so a seed still reproduces the same item.
+       holepunch   { folds:[{axis,c,side}], punches:[[x,y]], sets:[[[x,y]]], options:[[[x,y]]], answer }
+       tfe         { feat, options:[{ ok, tax, hidden }], answer }
+       patternfold { faces:{ top, front, right, bottom, back, left }, options:[{ ok, why }], answer }
+       keyholes    { view, options:[{ correct, trap }], traps:{ CODE:{ label, note } }, answer }       */
+  function strip(t) { return String(t).replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim(); }
+  function sent(t) { t = strip(t).replace(/\s+-\s+/g, ': '); t = cap(t); return /[.!?]$/.test(t) ? t : t + '.'; }
+  function dHole(d) {
+    var F = d.folds.length, key = d.options[d.answer], H = key.length, ks = Object.keys(hset(key)).sort().join('|');
+    var sig = function (a) { return Object.keys(hset(a)).sort().join('|'); };
+    var steps = [S('Start folded: **' + pl(d.punches.length, 'punch', 'punches') + '** at ' + listAnd(d.punches.map(cname)) + '.')];
+    for (var i = 0; i < F && steps.length < 4; i++) {
+      var f = d.folds[F - 1 - i], n = d.sets[i + 1].length;
+      steps.push(S('Unfold ' + (f.axis === 'v' ? 'the vertical' : 'the horizontal') + ' crease: mirror across it. Now **' + pl(n, 'hole') + '**.'));
+    }
+    if (steps.length < 3) steps.push(S('Only layers under the punch get a hole. Count them.'));
+    steps.push(S('Fully open: **' + pl(H, 'hole') + '**. Match the grid, cell by cell.'));
+    var early = d.sets.length > 1 ? sig(d.sets[d.sets.length - 2]) : '', mirV = sig(key.map(function (q) { return [4 - q[0], q[1]]; })), mirH = sig(key.map(function (q) { return [q[0], 4 - q[1]]; }));
+    var traps = {};
+    d.options.forEach(function (o, k) {
+      if (k === d.answer) return;
+      var g = sig(o), hs = hset(o), kh = hset(key), extra = o.filter(function (q) { return !kh[hkey(q)]; }), lost = key.filter(function (q) { return !hs[hkey(q)]; });
+      if (g === early) traps[k] = 'It stops one unfold early: ' + pl(o.length, 'hole') + ', not ' + H + '. The last crease still has to be mirrored.';
+      else if (g === mirV || g === mirH) traps[k] = 'The whole sheet is flipped. The count is right, but every hole sits on the wrong side of the crease.';
+      else if (!extra.length && lost.length) traps[k] = 'It is missing the hole at ' + cname(lost[0]) + ': ' + pl(o.length, 'hole') + ', not ' + H + '.';
+      else if (extra.length && !lost.length) traps[k] = 'It adds a hole at ' + cname(extra[0]) + ' that no layer under the punch can make.';
+      else if (extra.length === 1 && lost.length === 1) traps[k] = 'One hole is a cell off: it shows ' + cname(extra[0]) + ', but the mirror lands on ' + cname(lost[0]) + '.';
+      else traps[k] = 'Its holes do not mirror across the creases: ' + cname(extra[0] || o[0]) + ' has no partner from any unfold.';
+    });
+    return { answer: 'Open sheet: ' + pl(H, 'hole') + ', one for each layer under a punch.',
+      steps: steps, traps: traps,
+      check: { q: 'How many holes show once the paper is fully open?', a: H + '. Each unfold mirrors the holes that sat under that flap.' } };
+  }
+  var TFE_TRAP = {
+    mirror: 'Front and back are swapped. On the end view, the left edge is the front of the object.',
+    dash: 'A hidden edge is drawn solid. An edge you cannot see from the end must be dashed.',
+    height: 'A step is in the wrong place. Heights come from the front view, depths from the top view.'
+  };
+  function dTfe(d) {
+    var key = d.options[d.answer], traps = {};
+    d.options.forEach(function (o, k) { if (k !== d.answer) traps[k] = TFE_TRAP[o.tax] || 'Its outline disagrees with the front or the top view along one edge.'; });
+    return { answer: key && key.hidden ? 'It keeps the front heights and the top depths, and dashes the hidden edges.' : 'It keeps the front heights and the top depths, with nothing hidden.',
+      steps: [S('Stand at the right end. **End-left** is the front of the object.'),
+        S('Read every height off the front view.'),
+        S('Read every depth off the top view.'),
+        S(key && key.hidden ? 'Edges behind material are **dashed**. This one has them.' : 'Nothing hides behind material here, so expect **no dashes**.')],
+      traps: traps,
+      check: { q: 'On the end view, which side is the front of the object?', a: 'The left side. Depth runs left to right, front to back.' } };
+  }
+  var PF_NAME = { tri: 'half-shade', band: 'edge band', corner: 'corner square', solid: 'shaded', blank: 'blank' };
+  function dFold(d) {
+    var f = d.faces, nm = function (k) { return PF_NAME[f[k]] || f[k]; }, traps = {};
+    d.options.forEach(function (o, k) { if (k !== d.answer) traps[k] = sent(o.why || 'One face does not match the net'); });
+    return { answer: 'Top ' + nm('top') + ', front ' + nm('front') + ', right ' + nm('right') + ', as the net folds.',
+      steps: [S('Pair the look-alike choices. Find the one face that differs.'),
+        S('**Opposites** never show together: ' + nm('top') + ' sits across from ' + nm('bottom') + '.'),
+        S('Also across: ' + nm('front') + ' from ' + nm('back') + ', ' + nm('left') + ' from ' + nm('right') + '.'),
+        S('A mark keeps touching the **same edge** on the cube as on the net.')],
+      traps: traps,
+      check: { q: 'Which face sits opposite the ' + nm('top') + ' top face?', a: 'The ' + nm('bottom') + ' face. A choice that shows both at once is out.' } };
+  }
+  function dKey(d) {
+    var view = strip(d.view || '').replace(/\s*\(.*\)\s*$/, '').toLowerCase() || 'one straight-on view', traps = {};
+    d.options.forEach(function (o, k) {
+      if (k === d.answer) return;
+      var t = d.traps && d.traps[o.trap];
+      traps[k] = t ? cap(strip(t.label)) + ': ' + strip(t.note).split(/(?<=[.!?])\s+/)[0].replace(/\s+-\s+/g, ': ') : 'Its outline matches no straight-on view of the object.';
+    });
+    return { answer: 'It is the object\'s ' + view + ', outline and proportions both exact.',
+      steps: [S('An opening fits only if it equals **one straight-on view**.'),
+        S('Picture the top, the front and the end outlines.'),
+        S('Turning or mirror-flipping the opening is allowed. Changing it is not.'),
+        S('Match notches first, then **proportions**. This one is the ' + view + '.')],
+      traps: traps,
+      check: { q: 'Which view of the object does the correct opening match?', a: 'The ' + view + '. Any turn or mirror of it would pass too.' } };
+  }
+  var DRILL = { holepunch: dHole, tfe: dTfe, patternfold: dFold, keyholes: dKey };
+  function drill(kind, data, chosen) {
+    var ex = DRILL[kind](data);
+    ex.type = kind; ex.picked = chosen == null ? null : chosen; ex.key = data.answer;
+    ex.sources = ['Every line above is computed from this drill item by the Ace PAT engine.'];
+    return ex;
+  }
+  /* The panel a drill page shows after an answer: the worked explanation, then the See it chip. */
+  function drillHTML(kind, data, chosen) {
+    var h = html(drill(kind, data, chosen), { chosen: chosen, open: false });
+    var V = typeof window !== 'undefined' && window.AceVisuals;
+    var chip = V && V.chipHTML ? V.chipHTML({ section: 'pat', topic: kind }, 'set') : '';
+    return h + (chip ? '<p class="pex-see">' + chip + '</p>' : '');
+  }
+
   explain.html = html; explain.trapOf = trapOf; explain.figure = figure; explain.SOURCES = SOURCES;
+  explain.drill = drill; explain.drillHTML = drillHTML;
   PAT.explain = explain;
   if (typeof module === 'object' && module.exports) module.exports = PAT;
 })(typeof self !== 'undefined' ? self : globalThis);
