@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pathway Builder · Ace Labs</title>
+<meta name="description" content="Put the steps of a DAT pathway in order: cellular respiration, the central dogma, the nephron, SN1 and more. Drag the cards or tap the arrows.">
+<link rel="icon" type="image/svg+xml" href="/shared/ace-dat-mark.svg">
+<link rel="stylesheet" href="/shared/ace-ui.css?v=8">
+<link rel="stylesheet" href="/shared/ace-board.css?v=1">
+<style>
+  .pw-back { display: inline-flex; align-items: center; gap: 6px; min-height: var(--aui-tap); font-weight: 700; text-decoration: none; }
+  .pw-grid { display: grid; gap: var(--aui-3); grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr)); }
+  .pw-pick { display: grid; gap: 4px; align-content: start; min-height: 96px; padding: var(--aui-4); background: var(--aui-paper); border: 1px solid var(--aui-line); border-left: 6px solid var(--c, var(--aui-forest)); border-radius: var(--aui-r); color: inherit; text-decoration: none; box-shadow: var(--aui-shadow); }
+  .aui a.pw-pick { color: inherit; }
+  .pw-pick:hover { border-color: var(--aui-line-2); border-left-color: var(--c, var(--aui-forest)); }
+  .pw-pick small { font-size: 13px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--c, var(--aui-ink-3)); }
+  .pw-pick b { font-size: var(--aui-t-lg); line-height: 1.25; }
+  .pw-pick span { font-size: 15px; color: var(--aui-ink-2); }
+  .pw-pick .pw-best { color: var(--aui-good); font-weight: 700; }
+  .pw-game { max-width: 720px; }
+  .pw-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; position: relative; touch-action: pan-y; }
+  .pw-card { display: grid; grid-template-columns: 40px minmax(0, 1fr) auto; gap: 10px; align-items: center; min-height: 64px; padding: 8px 8px 8px 12px; background: #FDFCF8; border: 2px solid var(--aui-line-2); border-radius: 14px; font: 700 20px/1.25 "Kalam ACE", "DM Sans", system-ui, sans-serif; color: #1B3A2D; box-shadow: 0 2px 0 rgba(27, 58, 45, .12); cursor: grab; user-select: none; -webkit-user-select: none; touch-action: none; transition: transform .16s ease, border-color .16s ease, background .16s ease; }
+  .pw-card sub, .pw-card sup { font-size: 68%; line-height: 0; }
+  .pw-card[data-drag] { cursor: grabbing; z-index: 3; box-shadow: 0 10px 24px rgba(27, 58, 45, .25); border-color: #C9A84C; transition: none; }
+  .pw-card[data-state="ok"] { border-color: #2f7d4f; background: #eef6ef; }
+  .pw-card[data-state="no"] { border-color: #a3405c; background: #fbf0f3; }
+  .pw-n { display: grid; place-items: center; width: 36px; height: 36px; border-radius: 50%; background: #1B3A2D; color: #F5F0E8; font: 700 16px/1 "DM Sans", system-ui, sans-serif; }
+  .pw-card[data-state="ok"] .pw-n { background: #2f7d4f; } .pw-card[data-state="no"] .pw-n { background: #a3405c; }
+  .pw-moves { display: flex; gap: 4px; }
+  .pw-moves button { width: 44px; height: 44px; border-radius: 10px; border: 1.5px solid var(--aui-line-2); background: var(--aui-paper); color: #1B3A2D; font-size: 18px; line-height: 1; cursor: pointer; display: grid; place-items: center; }
+  .pw-moves button:disabled { opacity: .35; cursor: default; }
+  .pw-moves button:focus-visible, .pw-card:focus-visible { outline: 3px solid #C9A84C; outline-offset: 2px; }
+  .pw-bar { display: flex; flex-wrap: wrap; gap: var(--aui-3); align-items: center; }
+  .pw-msg { margin: 0; font-size: var(--aui-t-md); font-weight: 700; min-height: 1.5em; }
+  .pw-msg[data-ok="true"] { color: var(--aui-good); }
+  .pw-hint { margin: 0; font-size: 15px; color: var(--aui-ink-2); }
+  body[data-mode="menu"] #game, body[data-mode="game"] #menu { display: none; }
+  @media (max-width: 480px) { .pw-card { font-size: 18px; grid-template-columns: 34px minmax(0, 1fr) auto; } .pw-n { width: 32px; height: 32px; } }
+  @media (prefers-reduced-motion: reduce) { .pw-card { transition: none; } }
+</style>
+</head>
+<body class="aui" data-mode="menu">
+<main class="aui-wrap" id="main">
+  <div id="menu" class="aui-stack">
+    <header class="aui-stack">
+      <a class="pw-back" href="/see/">&larr; All whiteboards</a>
+      <p class="aui-kicker">Labs · See it</p>
+      <h1 class="aui-h1">Pathway Builder</h1>
+      <p class="aui-lede">Pick a pathway. Put its steps in order. Then see it drawn.</p>
+    </header>
+    <div id="pw-grid" class="pw-grid"></div>
+  </div>
+  <div id="game" class="aui-stack pw-game">
+    <a class="pw-back" href="/see/pathway/">&larr; All pathways</a>
+    <header class="aui-stack">
+      <p class="aui-kicker" id="pw-kicker"></p>
+      <h1 class="aui-h1" id="pw-title"></h1>
+      <p class="pw-hint">Drag a card, or tap its arrows, until the steps run top to bottom. Then check.</p>
+    </header>
+    <ol id="pw-list" class="pw-list" aria-label="Steps, in your order"></ol>
+    <p id="pw-msg" class="pw-msg" role="status" aria-live="polite"></p>
+    <div class="pw-bar" id="pw-bar"></div>
+  </div>
+</main>
+<script src="/shared/ace-record.js?v=6"></script>
+<script src="/shared/ace-board.js?v=1"></script>
+<script src="/shared/boards/gc.js?v=1"></script>
+<script src="/shared/boards/bio.js?v=1"></script>
+<script src="/shared/boards/oc.js?v=1"></script>
+<script src="/shared/boards/qr.js?v=1"></script>
+<script src="/shared/ace-ui.js?v=4" defer></script>
+<script>
+(function () {
+  'use strict';
+  var B = window.AceBoard, KEY = 'acelabs.pathways';
+  var COLOR = { bio: '#2f7d4f', gchem: '#2f5f9e', ochem: '#6b4fa0', qr: '#a3405c' };
+  var ORDER = ['bio', 'gchem', 'ochem', 'qr'];
+  function el(tag, cls, text) { var n = document.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; }
+  function load() { try { return JSON.parse(localStorage.getItem(KEY) || '{}') || {}; } catch (e) { return {}; } }
+  function save(v) { try { localStorage.setItem(KEY, JSON.stringify(v)); } catch (e) { /* private mode: the game still plays */ } }
+  var paths = B.list().filter(function (b) { return b.path; }).sort(function (a, b) { return ORDER.indexOf(a.section) - ORDER.indexOf(b.section); });
+  var id = new URLSearchParams(location.search).get('p'), board = id && B.get(id);
+
+  /* ---------- the menu ---------- */
+  if (!board || !board.path) {
+    var best = load(), grid = document.getElementById('pw-grid');
+    paths.forEach(function (b) {
+      var a = el('a', 'pw-pick'); a.href = '/see/pathway/?p=' + encodeURIComponent(b.id); a.style.setProperty('--c', COLOR[b.section] || '#1B3A2D'); a.setAttribute('data-path', b.id);
+      a.appendChild(el('small', null, B.SECTION[b.section] || ''));
+      var t = el('b'); t.innerHTML = B.html(b.path.title); a.appendChild(t);
+      a.appendChild(el('span', best[b.id] ? 'pw-best' : null, best[b.id] ? 'Solved. Best: ' + best[b.id].tries + (best[b.id].tries === 1 ? ' check' : ' checks') : b.path.steps.length + ' steps'));
+      grid.appendChild(a);
+    });
+    return;
+  }
+
+  /* ---------- one pathway ---------- */
+  document.body.setAttribute('data-mode', 'game');
+  var steps = board.path.steps, n = steps.length, list = document.getElementById('pw-list'), msg = document.getElementById('pw-msg'), bar = document.getElementById('pw-bar');
+  document.getElementById('pw-kicker').textContent = (B.SECTION[board.section] || '') + ' · Pathway Builder';
+  document.getElementById('pw-title').innerHTML = B.html(board.path.title);
+  document.title = board.path.title.replace(/[_^]\{([^}]*)\}/g, '$1') + ' · Pathway Builder · Ace Labs';
+  var order, tries = 0, solved = false;
+  function shuffle() {
+    var a = steps.map(function (s, i) { return i; });
+    do { for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)), t = a[i]; a[i] = a[j]; a[j] = t; } }
+    while (a.every(function (v, i) { return v === i; }) || a.filter(function (v, i) { return v === i; }).length > n - 3);
+    return a;
+  }
+  function draw(focusStep, focusBtn) {
+    list.textContent = '';
+    order.forEach(function (s, pos) {
+      var li = el('li', 'pw-card'); li.setAttribute('data-step', String(s)); li.tabIndex = 0;
+      li.appendChild(el('span', 'pw-n', String(pos + 1)));
+      var tx = el('span'); tx.innerHTML = B.html(steps[s]); li.appendChild(tx);
+      li.setAttribute('aria-label', 'Position ' + (pos + 1) + ' of ' + n + ': ' + tx.textContent);
+      var mv = el('span', 'pw-moves');
+      [['up', '▲', 'Move up', pos === 0, -1], ['down', '▼', 'Move down', pos === n - 1, 1]].forEach(function (d) {
+        var b = el('button', null, d[1]); b.type = 'button'; b.setAttribute('data-move', d[0]); b.setAttribute('aria-label', d[2] + ': ' + tx.textContent); b.disabled = d[3] || solved;
+        b.addEventListener('click', function (e) { e.stopPropagation(); move(pos, pos + d[4], d[0]); });
+        mv.appendChild(b);
+      });
+      li.appendChild(mv);
+      li.addEventListener('keydown', function (e) {
+        if (solved || e.target !== li) return;
+        if (e.key === 'ArrowUp' && pos > 0) { e.preventDefault(); move(pos, pos - 1, null); }
+        if (e.key === 'ArrowDown' && pos < n - 1) { e.preventDefault(); move(pos, pos + 1, null); }
+      });
+      drag(li, pos);
+      list.appendChild(li);
+      if (focusStep === s) { var f = focusBtn ? li.querySelector('[data-move="' + focusBtn + '"]:not(:disabled)') || li : li; f.focus({ preventScroll: true }); }
+    });
+  }
+  function move(from, to, btn) {
+    if (solved || to < 0 || to >= n || from === to) return;
+    var s = order.splice(from, 1)[0]; order.splice(to, 0, s); msg.textContent = ''; msg.removeAttribute('data-ok');
+    draw(s, btn);
+  }
+  /* Pointer drag: the card follows the finger; the others slide out of its way; drop commits. */
+  function drag(li, pos) {
+    li.addEventListener('pointerdown', function (e) {
+      if (solved || e.button || (e.target.closest && e.target.closest('button'))) return;
+      var cards = Array.prototype.slice.call(list.children), rects = cards.map(function (c) { return c.getBoundingClientRect(); });
+      var y0 = e.clientY, to = pos, moved = false, gap = rects.length > 1 ? rects[1].top - rects[0].bottom : 10, h = rects[pos].height + gap;
+      try { li.setPointerCapture(e.pointerId); } catch (x) {}
+      function onMove(ev) {
+        var dy = ev.clientY - y0; if (!moved && Math.abs(dy) < 6) return;
+        if (!moved) { moved = true; li.setAttribute('data-drag', ''); }
+        ev.preventDefault();
+        var mid = rects[pos].top + rects[pos].height / 2 + dy; to = pos;
+        cards.forEach(function (c, i) {
+          if (i === pos) return;
+          var cm = rects[i].top + rects[i].height / 2, shift = 0;
+          if (i > pos && mid > cm) { shift = -h; to = Math.max(to, i); }
+          if (i < pos && mid < cm) { shift = h; to = Math.min(to, i); }
+          c.style.transform = shift ? 'translateY(' + shift + 'px)' : '';
+        });
+        li.style.transform = 'translateY(' + dy + 'px)';
+      }
+      function onUp() {
+        li.removeEventListener('pointermove', onMove); li.removeEventListener('pointerup', onUp); li.removeEventListener('pointercancel', onUp);
+        cards.forEach(function (c) { c.style.transform = ''; }); li.removeAttribute('data-drag');
+        if (moved && to !== pos) move(pos, to, null);
+      }
+      li.addEventListener('pointermove', onMove); li.addEventListener('pointerup', onUp); li.addEventListener('pointercancel', onUp);
+    });
+  }
+  function check() {
+    if (solved) return;
+    tries++;
+    var right = 0;
+    Array.prototype.forEach.call(list.children, function (li, pos) { var ok = order[pos] === pos; if (ok) right++; li.setAttribute('data-state', ok ? 'ok' : 'no'); });
+    if (right === n) {
+      solved = true; msg.setAttribute('data-ok', 'true');
+      msg.textContent = 'In order' + (tries === 1 ? ', first check.' : ' after ' + tries + ' checks.');
+      var v = load(); if (!v[board.id] || tries < v[board.id].tries) { v[board.id] = { tries: tries, t: Date.now() }; save(v); }
+      try { if (window.AceRecord && window.AceRecord.event) window.AceRecord.event('pathway-done', { id: board.id, tries: tries }); } catch (e) {}
+      draw(); Array.prototype.forEach.call(list.children, function (li) { li.setAttribute('data-state', 'ok'); li.style.cursor = 'default'; });
+      buttons();
+    } else {
+      msg.removeAttribute('data-ok');
+      msg.textContent = right + ' of ' + n + ' in the right place. Green cards stay; move the rest.';
+    }
+  }
+  function buttons() {
+    bar.textContent = '';
+    if (!solved) {
+      var c = el('button', 'aui-btn aui-btn--gold', 'Check my order'); c.type = 'button'; c.id = 'pw-check'; c.addEventListener('click', check); bar.appendChild(c);
+      var see = el('a', 'aui-btn aui-btn--quiet', 'See it drawn first'); see.href = B.url(board.id); bar.appendChild(see);
+      return;
+    }
+    var a = el('a', 'aui-btn aui-btn--gold', 'See it drawn'); a.href = B.url(board.id); a.id = 'pw-see'; bar.appendChild(a);
+    var k = paths.indexOf(board), nx = paths[(k + 1) % paths.length];
+    var nb = el('a', 'aui-btn aui-btn--quiet'); nb.innerHTML = 'Next: ' + B.html(nx.path.title); nb.href = '/see/pathway/?p=' + encodeURIComponent(nx.id); bar.appendChild(nb);
+    var again = el('button', 'aui-btn aui-btn--quiet', 'Shuffle again'); again.type = 'button'; again.addEventListener('click', start); bar.appendChild(again);
+  }
+  function start() { order = shuffle(); tries = 0; solved = false; msg.textContent = ''; msg.removeAttribute('data-ok'); draw(); buttons(); }
+  start();
+  window.__pathway = { order: function () { return order.slice(); }, n: n };
+})();
+</script>
+</body>
+</html>
