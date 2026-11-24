@@ -191,7 +191,8 @@
 <script src="/shared/ace-route.js?v=4"></script>
 <script src="/shared/ace-skills.js?v=2"></script>
 <script src="/shared/ace-record.js?v=6"></script>
-<script src="/shared/ace-test-review.js?v=3"></script>
+<script src="/shared/ace-visuals.js?v=4"></script>
+<script src="/shared/ace-test-review.js?v=4"></script>
 <script src="/shared/ace-next-steps.js?v=1"></script>
 <script>
 (function () {
@@ -556,6 +557,7 @@
       h += '<div class="opt' + cls + '"><span class="let"><i></i>' + PAT.LETTERS[i] + (i === chosen ? ' (your choice)' : '') + '</span>' + PAT[it.type].renderOption(it, i) + (tag ? '<span class="tag">' + esc(tag) + '</span>' : '') + '</div>';
     });
     h += '</div>' + PAT.explain.html(ex, { chosen: chosen, note: it.type === 'cubes' ? 'Highlighted in the figure: the cubes with exactly ' + it.meta.k + ' painted side' + (it.meta.k === 1 ? '' : 's') + '.' : null });
+    if (window.AceVisuals && window.AceVisuals.chipHTML) h += window.AceVisuals.chipHTML({ section: 'pat', topic: it.type, skill: it.type }, 'test');
     h += '<div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:18px"><button class="btn" type="button" id="irPrev"' + (n === 1 ? ' disabled' : '') + '>Previous question</button><button class="btn" type="button" id="irNext"' + (n === 90 ? ' disabled' : '') + '>Next question</button><button class="btn ghost" type="button" id="irNextMiss">Next one to revisit</button></div>';
     $('irWrap').innerHTML = h;
     $('irPrev').addEventListener('click', function () { openItem(n - 1); });

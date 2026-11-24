@@ -1,14 +1,19 @@
-/* ace-visuals.js : every interactive visual on Ace Labs, in one list (inventory 2026-11-16).
+/* ace-visuals.js : every interactive visual on Ace Labs, in one list (inventory 2026-11-16, whiteboards 2026-11-24).
 
      AceVisuals.tools      [{ id, section, group, step, title, path, topics, blurb, does, next, links }]
      AceVisuals.sections   [{ id, name, start, path: [{ step, title, href }], groups: [name, ...] }]
      AceVisuals.match(q)   q = a miss or a question: { section, topic, topicName, concept, skill }
-                           -> { id, title, url, label } for the best visual, or null. Null means
-                              "show no button": a wrong visual is worse than none.
+                           -> { id, title, url, label, board? } for the best visual, or null. Null
+                              means "show no button": a wrong visual is worse than none.
+     AceVisuals.chip(q, from)      the "See it" chip as an element (null when nothing matches)
+     AceVisuals.chipHTML(q, from)  the same chip as an HTML string ('' when nothing matches)
+                           A chip for a whiteboard (tool.board) opens the board in a bottom sheet
+                           in place (shared/ace-board.js, loaded on first tap); any other visual
+                           is a plain link.
 
    Matching is by the topic phrases below, inside the question's own section only. A deep link
    (links[]) wins over its parent tool, and a longer phrase wins over a shorter one.
-   Loaded by /labs/, /review/ and /repair/. Also runs in node (tests/shell/ace-visuals.test.js). */
+   Loaded by /labs/, /see/, /review/, /repair/ and every question player. Also runs in node (tests/shell/ace-visuals.test.js). */
 (function (root) {
   'use strict';
 
@@ -17,8 +22,57 @@
   var DEVO = '/tools/bio/bio-devo.html', DIV = '/tools/bio/bio-diversity.html', EVO = '/tools/bio/bio-evolution.html';
   var QRP = '/tools/qr/proposals/';
   function L(label, path, topics) { return { label: label, path: path, topics: topics }; }
+  /* A whiteboard: data in shared/boards/*.js, drawn by shared/ace-board.js, full page at /see/?b=<id>. */
+  function B(id, section, title, blurb, topics) {
+    return { id: 'bd-' + id, board: id, section: section, group: 'Whiteboards', step: 'see', title: title, path: '/see/?b=' + id,
+      blurb: blurb, does: 'Predict first, then watch it drawn step by step.', next: 'Then answer the three quick questions under it.', topics: topics };
+  }
 
   var TOOLS = [
+    /* ---------- Whiteboards (2026-11-24): one drawn board per high-yield topic ---------- */
+    B('mole-bridge', 'gchem', 'The mole bridge', 'Grams, particles, gas liters and molarity all cross through moles.',
+      ['mole bridge', 'mole', 'mole conv', 'mole conversion', 'mole concept', 'stoichiometry', 'stoich', 'limiting reactant', 'limiting reagent', 'lim react', 'percent yield',
+       'empirical', 'molecular formula', 'balancing chemical equation', 'molarity', 'molarity molality normality', 'solution', 'solution concentration', 'dilution', 'dilution calculation', 'avogadro', 'molar mass']),
+    B('acid-base', 'gchem', 'Proton traffic: the titration curve', 'Weak acid, strong base, four landmarks on one curve.',
+      ['proton traffic', 'acid base', 'acid', 'ph', 'poh', 'ph poh', 'ph basic', 'ka kb', 'conjugate pair', 'strong weak', 'strong v weak', 'titration', 'titration curve',
+       'buffer', 'henderson hasselbalch', 'indicator', 'bronsted', 'lewis acid', 'equivalence point', 'pka']),
+    B('equilibrium', 'gchem', 'Balance and the push-back', 'Q against K, then Le Chatelier on one reaction.',
+      ['balance push back', 'equilibrium', 'equilibria', 'eq kc', 'eq ice', 'eq lechat', 'ice table', 'le chatelier', 'lechatelier', 'keq', 'kc kp', 'keq kp ksp', 'ksp',
+       'solubility equilibria', 'solubility product', 'reaction quotient']),
+    B('energy-ledger', 'gchem', 'The energy ledger', 'Enthalpy levels, Hess\'s law and the Gibbs quadrant.',
+      ['energy ledger', 'enthalpy', 'calorimetry', 'heat capacity', 'hess', 'heat of reaction', 'thermochemistry', 'thermo', 'thermodynamic', 'entropy', 'gibbs', 'free energy',
+       'downhill entropy free energy', 'spontaneity']),
+    B('gases', 'gchem', 'Gases: one equation, four dials', 'PV = nRT, the laws inside it, partial pressures and KMT.',
+      ['gases', 'gas law', 'ideal gas', 'ideal gas law', 'partial pressure', 'dalton', 'boyle', 'charles', 'kinetic molecular theory', 'graham', 'real gas']),
+    B('kinetics', 'gchem', 'How fast, not how far', 'The energy hill, the catalyst shortcut and the rate law.',
+      ['how fast not how far', 'kinetic', 'chemical kinetic', 'rate law', 'reaction order', 'integrated rate law', 'arrhenius', 'activation energy', 'catalyst',
+       'reaction coordinate', 'factor affecting reaction rate', 'reaction rate']),
+    B('redox', 'gchem', 'The charge ledger: redox and cells', 'One zinc-copper cell: who loses electrons, where they go, what voltage.',
+      ['charge ledger', 'redox', 'oxidation state', 'oxidation number', 'balancing redox', 'electrochemistry', 'electrochem', 'nernst', 'nernst equation', 'electrolysis', 'electrolytic', 'electrolysis stoichiometry', 'faraday law']),
+    B('respiration', 'bio', 'Cellular respiration: follow the glucose', 'Four stages, two places, about 30 to 32 ATP.',
+      ['cellular respiration', 'respiration', 'glycolysis', 'kreb', 'kreb cycle', 'citric acid cycle', 'electron transport', 'electron transport chain', 'oxidative phosphorylation',
+       'chemiosmosis', 'fermentation', 'atp yield', 'metabolism']),
+    B('photosynthesis', 'bio', 'Photosynthesis: two linked factories', 'Light reactions feed the Calvin cycle.',
+      ['photosynthesis', 'calvin cycle', 'calvin', 'light reaction', 'light dependent', 'chloroplast', 'photosystem']),
+    B('central-dogma', 'bio', 'The central dogma: DNA to RNA to protein', 'Replication, transcription, processing and translation, each in its place.',
+      ['central dogma', 'transcription', 'translation', 'transcription translation', 'gene expression', 'protein synthesis', 'rna processing', 'splicing']),
+    B('nephron', 'bio', 'The nephron and its hormones', 'Filter, take back, concentrate. ADH and aldosterone tune the end.',
+      ['nephron', 'kidney', 'renal', 'excretory', 'excretory system', 'urinary', 'adh', 'aldosterone', 'osmoregulation']),
+    B('sn-e-decide', 'ochem', 'SN1, SN2, E1 or E2? The decision board', 'Read the carbon, then the reagent. Nine boxes, four answers.',
+      ['sn1', 'sn2', 'e1', 'e2', 'sn1 sn2', 'sn1 sn2 e1 e2', 'substitution elimination', 'substitution versus elimination', 'substitution', 'elimination', 'nucleophilic substitution', 'sub elim']),
+    B('eas-directors', 'ochem', 'EAS directors: where the next group lands', 'Donors send it ortho and para. Withdrawers send it meta.',
+      ['ortho para', 'meta director', 'directing group', 'directing effect', 'eas director', 'activator', 'deactivator', 'activating group']),
+    B('enolates', 'ochem', 'The alpha carbon wakes up', 'An acidic hydrogen, an enolate, and a new carbon to carbon bond.',
+      ['alpha carbon wake up', 'alpha carbon', 'enolate', 'enol', 'aldol', 'aldol condensation', 'claisen', 'claisen condensation', 'alpha hydrogen', 'keto enol']),
+    B('number-line', 'qr', 'Fractions, decimals, percent: one number line', 'The benchmark conversions worth knowing cold.',
+      ['fraction', 'decimal', 'fraction decimal', 'fraction decimal number sense', 'number sense', 'estimation', 'estim', 'approximation', 'approximation estimation']),
+    B('algebra-setup', 'qr', 'Word problem to equation: the setup', 'Name it, translate it, solve it, check it.',
+      ['setup mindset', 'translation setup', 'translation', 'algebra', 'algebra equation', 'algebra one two unknown', 'linear equation', 'lin eq', 'system of equation', 'inequality', 'absolute value']),
+    B('powers-roots', 'qr', 'Powers, roots and quadratics', 'The exponent rules as one staircase, then one factoring move.',
+      ['power root quadratic', 'exponent', 'exponent root', 'exponent root logarithm', 'root', 'quadratic', 'quadratic factoring formula', 'factoring', 'scientific notation', 'radical', 'exps']),
+    B('trig-triangle', 'qr', 'Trigonometry, just enough', 'One right triangle, three ratios, two special triangles.',
+      ['trigonometry', 'trig', 'trigonometry just enough', 'sohcahtoa', 'unit circle', 'special angle', 'special right', 'sine', 'cosine', 'tangent']),
+
     /* ---------- Organic Chemistry ---------- */
     { id: 'oc-wheels', section: 'ochem', group: 'Reactions and mechanisms', step: 'try', featured: true,
       title: 'Reaction wheels', path: OC + '?game=wheel',
@@ -97,11 +151,6 @@
       blurb: 'Two decision trees: stereo relationships, and substitution or elimination.',
       does: 'Run a question down the tree, one fork at a time.', next: 'Then open the SN and E hub in Reaction Maps.',
       topics: ['substitution versus elimination', 'decision tree'] },
-    { id: 'oc-eas', section: 'ochem', group: 'Reactions and mechanisms', step: 'see',
-      title: 'EAS directors', path: '/tools/ochem/v2/tiktoks/eas-directors-tiktok.html',
-      blurb: 'Who aims where on a benzene ring.',
-      does: 'Read the group\'s lone pairs and call ortho, para or meta.', next: 'Then spin the benzene wheel.',
-      topics: ['ortho para', 'meta director', 'directing group', 'eas director'] },
     { id: 'oc-synth', section: 'ochem', group: 'Reactions and mechanisms', step: 'test',
       title: 'Synthesis lab', path: OC + '#synthesis-lab',
       blurb: 'Multi-step routes from start to target.',
@@ -139,17 +188,17 @@
       title: 'VSEPR in 3D', path: '/gc/vsepr/',
       blurb: 'Thirteen molecules from CO2 to XeF4.',
       does: 'Count domains, call the shape, then turn the model.', next: 'Then build one in the Lewis sandbox.',
-      topics: ['vsepr', 'geometry', 'molecular shape', 'hybridization', 'bond angle'] },
+      topics: ['vsepr', 'geometry', 'molecular shape', 'hybridization', 'bond angle', 'shape sticky force'] },
     { id: 'gc-lewis', section: 'gchem', group: 'Structure and bonding', step: 'try',
       title: 'Lewis sandbox', path: '/tools/gc/lewis-sandbox.html',
       blurb: 'A five-stage build: electrons, skeleton, lone pairs, geometry, polarity.',
       does: 'Build the structure stage by stage.', next: 'Then drill shapes in the Recognition lab.',
-      topics: ['lewis', 'lewis structure', 'bonding', 'formal charge', 'polarity', 'octet'] },
+      topics: ['lewis', 'lewis structure', 'bonding', 'formal charge', 'polarity', 'octet', 'why atoms bond', 'resonance structure'] },
     { id: 'gc-trends', section: 'gchem', group: 'Structure and bonding', step: 'see',
       title: 'Periodic trends', path: '/tools/gc/trends.html',
       blurb: 'A heatmap of the table, a speed drill and an isoelectronic ranker.',
       does: 'Switch the trend and watch the table recolor, then rank.', next: 'Then take a Gen Chem set.',
-      topics: ['periodic', 'periodic trend', 'electronegativity', 'ionization energy', 'atomic radius', 'electron affinity'] },
+      topics: ['periodic', 'periodic trend', 'electronegativity', 'ionization energy', 'atomic radius', 'electron affinity', 'atomic structure', 'electron configuration'] },
     { id: 'gc-galvanic', section: 'gchem', group: 'Electrochemistry', step: 'see',
       title: 'Galvanic cell', path: '/gc/galvanic/',
       blurb: 'Nine half-cells you can pair up.',
@@ -159,7 +208,12 @@
       title: 'Recognition lab', path: '/tools/gc/recognition-lab.html',
       blurb: 'Graphs, structures and diagrams against a short timer.',
       does: 'Name what the picture shows, fast.', next: 'Then take a Gen Chem set.',
-      topics: ['phase diagram', 'titration curve', 'titration', 'heating curve', 'heating and cooling curve', 'buffer', 'rate law', 'kinetic', 'reaction coordinate', 'nuclear', 'nuclear decay', 'intermolecular force', 'imf'] },
+      topics: ['phase diagram', 'heating curve', 'heating and cooling curve', 'nuclear', 'nuclear decay', 'nuclear half life', 'intermolecular force', 'imf', 'vapor pressure', 'phase change', 'liquid'] },
+    { id: 'gc-guacamole', section: 'gchem', group: 'Structure and bonding', step: 'try',
+      title: 'GuacaMOLE', path: '/gc/guacamole/',
+      blurb: 'Mole conversions as a walk: grams, moles, particles.',
+      does: 'Pick the next conversion step and walk the path.', next: 'Then open the mole bridge board.',
+      topics: ['guacamole', 'mole game', 'mole walk'] },
 
     /* ---------- Biology ---------- */
     { id: 'bio-plates', section: 'bio', group: 'Cell', step: 'see',
@@ -214,7 +268,8 @@
         L('Pedigrees', GEN + '#node-pedigrees', ['pedigree']),
         L('Hardy-Weinberg', GEN + '#node-hardy-weinberg', ['hardy weinberg', 'population genetic']),
         L('Gene regulation', GEN + '#node-gene-regulation', ['gene regulation', 'operon']),
-        L('Mutations', GEN + '#node-mutations', ['mutation'])
+        L('Mutations', GEN + '#node-mutations', ['mutation']),
+        L('Beyond Mendel', GEN + '#node-non-mendelian', ['non mendelian', 'epistasis', 'epistasis polygenic trait', 'polygenic', 'incomplete dominance', 'codominance'])
       ] },
     { id: 'bio-physiology', section: 'bio', group: 'Body systems', step: 'see',
       title: 'Body Systems', path: PHYS,
@@ -229,19 +284,15 @@
         L('Digestive', PHYS + '#node-digestive', ['digestive', 'digestion']),
         L('Reproductive', PHYS + '#node-reproductive', ['reproductive', 'reproduction']),
         L('Action potential', PHYS + '#node-action-potential', ['action potential', 'neuron', 'nervous']),
-        L('Brain regions', PHYS + '#node-brain-regions', ['brain']),
-        L('Special senses', PHYS + '#node-special-senses', ['special sense', 'eye', 'ear'])
+        L('Brain regions', PHYS + '#node-brain-regions', ['brain', 'brain region', 'brain region function']),
+        L('Special senses', PHYS + '#node-special-senses', ['special sense', 'eye', 'ear']),
+        L('Sliding filament', PHYS + '#node-sliding-filament', ['sliding filament', 'muscle', 'sarcomere', 'muscular', 'muscular system'])
       ] },
     { id: 'bio-immune', section: 'bio', group: 'Body systems', step: 'see',
       title: 'Innate vs adaptive immunity', path: '/tools/bio/bio-immune-cells.html',
       blurb: 'The immune cells, sorted by which arm they belong to.',
       does: 'Pick a cell and see which arm it works for.', next: 'Then open Body Systems.',
       topics: ['immune', 'immunity', 'antibody', 'lymphocyte'] },
-    { id: 'bio-sliding', section: 'bio', group: 'Body systems', step: 'see',
-      title: 'Sliding filament', path: '/tools/bio/sliding-filament-tiktok.html',
-      blurb: 'Actin and myosin, one contraction at a time.',
-      does: 'Watch the sarcomere shorten step by step.', next: 'Then open Body Systems.',
-      topics: ['sliding filament', 'muscle', 'sarcomere', 'muscular'] },
     { id: 'bio-diversity', section: 'bio', group: 'Diversity', step: 'see',
       title: 'Diversity of Life hub', path: DIV,
       blurb: 'Domains, plants, animals and phylogenetic trees.',
@@ -314,12 +365,12 @@
       title: 'Probability Sandbox', path: QRP + 'agent-04-prob-tree/probability-sandbox.html',
       blurb: 'One tree for every probability question.',
       does: 'Build the tree branch by branch and read the answer off it.', next: 'Then drill probability in QR practice.',
-      topics: ['probability', 'conditional', 'probability tree', 'permutation', 'combination'] },
+      topics: ['probability', 'conditional', 'probability tree', 'permutation', 'combination', 'p cond', 'p andor', 'count pc', 'counting principle', 'expected value', 'p expected'] },
     { id: 'qr-stats', section: 'qr', group: 'Statistics', step: 'try',
       title: 'Stats Lab', path: QRP + 'agent-05-stats/stats-lab.html',
       blurb: 'Points you can move, with z-scores and the harmonic mean.',
       does: 'Move a point and watch mean, median and spread shift.', next: 'Then try the mean versus median trap.',
-      topics: ['statistic', 'median', 'standard deviation', 'descriptive statistic', 'z score', 'harmonic mean'] },
+      topics: ['statistic', 'median', 'standard deviation', 'descriptive statistic', 'desc stats', 'z score', 'zscore', 'harmonic mean', 'harm', 'normal distribution'] },
     { id: 'qr-mean-median', section: 'qr', group: 'Statistics', step: 'see',
       title: 'Mean versus median trap', path: QRP + 'agent-05-stats/mean-vs-median-trap.html',
       blurb: 'What one outlier does to each.',
@@ -329,22 +380,22 @@
       title: '2D Geometry', path: QRP + 'agent-06-geometry/geo-2d.html',
       blurb: 'Circles and squares with corners you drag.',
       does: 'Drag a corner and watch area and perimeter change.', next: 'Then open Volume and surface area.',
-      topics: ['geometry', '2d geometry', 'circle', 'area', 'perimeter'] },
+      topics: ['geometry', '2d geometry', 'geo 2d', 'circle', 'area', 'perimeter', 'polygon'] },
     { id: 'qr-triangle', section: 'qr', group: 'Geometry', step: 'see',
       title: 'Triangle invariance', path: QRP + 'agent-06-geometry/tri-inv.html',
       blurb: 'A triangle you can reshape, with the triangle inequality checked live.',
       does: 'Drag a vertex and watch sides and angles recompute.', next: 'Then open 2D Geometry.',
-      topics: ['triangle', 'triangle invariance'] },
+      topics: ['triangle', 'triangle invariance', 'tri inv', 'triangle inequality'] },
     { id: 'qr-coord', section: 'qr', group: 'Geometry', step: 'see',
       title: 'Coordinate plane', path: QRP + 'agent-06-geometry/coord.html',
       blurb: 'Two points, their slope, distance and midpoint.',
       does: 'Move the two points and read the slope and distance.', next: 'Then open 2D Geometry.',
-      topics: ['coordinate', 'coordinate plane', 'slope', 'midpoint'] },
+      topics: ['coordinate', 'coordinate plane', 'coord', 'coordinate geometry', 'slope', 'midpoint', 'distance formula'] },
     { id: 'qr-volume', section: 'qr', group: 'Geometry', step: 'see',
       title: 'Volume and surface area', path: QRP + 'agent-06-geometry/vol-sa.html',
       blurb: 'Solids in 3D and the cube law.',
       does: 'Scale the solid and compare volume to surface.', next: 'Then drill geometry in QR practice.',
-      topics: ['volume', 'surface area', 'volume surface', 'cube law'] },
+      topics: ['volume', 'surface area', 'volume surface', 'vol sa', 'cube law', '3d solid'] },
 
     /* ---------- Reading ---------- */
     { id: 'rc-map', section: 'rc', group: 'Passage maps', step: 'see',
@@ -358,15 +409,15 @@
     { id: 'ochem', name: 'Organic Chemistry', color: '#6b4fa0',
       start: 'Start here: see a reaction family on its map, then fill its wheel from memory.',
       path: [{ step: 'See it', title: 'Reaction Maps', href: OC + '#hubs' }, { step: 'Try it', title: 'Reaction wheels', href: OC + '?game=wheel' }, { step: 'Test it', title: 'The Summit', href: '/tools/ochem/summit/' }],
-      groups: ['Reactions and mechanisms', 'Stereochemistry and 3D', 'Structure and spectroscopy', 'Practice'] },
+      groups: ['Whiteboards', 'Reactions and mechanisms', 'Stereochemistry and 3D', 'Structure and spectroscopy', 'Practice'] },
     { id: 'gchem', name: 'General Chemistry', color: '#2f5f9e',
       start: 'Start here: turn the molecule first, then build it yourself.',
       path: [{ step: 'See it', title: 'VSEPR in 3D', href: '/gc/vsepr/' }, { step: 'Try it', title: 'Lewis sandbox', href: '/tools/gc/lewis-sandbox.html' }, { step: 'Test it', title: 'Ten-question Gen Chem set', href: '/gc/?run=daily' }],
-      groups: ['Structure and bonding', 'Electrochemistry', 'Graphs and diagrams'] },
+      groups: ['Whiteboards', 'Structure and bonding', 'Electrochemistry', 'Graphs and diagrams'] },
     { id: 'bio', name: 'Biology', color: '#2f7d4f',
       start: 'Start here: label a plate cold, then open the hub for whatever you could not name.',
       path: [{ step: 'See it', title: 'Biology plates', href: '/bio/see/' }, { step: 'Try it', title: 'Osmosis lab', href: '/tools/bio/bio-osmosis.html' }, { step: 'Test it', title: 'Biology set', href: '/bio/' }],
-      groups: ['Cell', 'Genetics', 'Body systems', 'Diversity', 'Development', 'Evolution'] },
+      groups: ['Whiteboards', 'Cell', 'Genetics', 'Body systems', 'Diversity', 'Development', 'Evolution'] },
     { id: 'pat', name: 'Perceptual Ability', color: '#a8641f',
       start: 'Start here: pick the subtest you miss most and train only that one today.',
       path: [{ step: 'See it', title: 'Six Views', href: '/games/six-views/' }, { step: 'Try it', title: 'Top, front, end', href: '/tools/pat/tfe.html' }, { step: 'Test it', title: 'Ninety-question PAT', href: '/tools/pat/test.html' }],
@@ -374,7 +425,7 @@
     { id: 'qr', name: 'Quantitative Reasoning', color: '#a3405c',
       start: 'Start here: watch one method drawn, then rebuild it on a new problem.',
       path: [{ step: 'See it', title: 'Worked solutions', href: '/qr/worked/' }, { step: 'Try it', title: 'Probability Sandbox', href: QRP + 'agent-04-prob-tree/probability-sandbox.html' }, { step: 'Test it', title: 'QR practice', href: '/qr/drill/' }],
-      groups: ['Percent, ratio and word problems', 'Probability', 'Statistics', 'Geometry'] },
+      groups: ['Whiteboards', 'Percent, ratio and word problems', 'Probability', 'Statistics', 'Geometry'] },
     { id: 'rc', name: 'Reading Comprehension', color: '#1f7a70',
       start: 'Start here: map one passage before you read a single question.',
       path: [{ step: 'See it', title: 'Map it, then find the line', href: '/rc/map/' }, { step: 'Try it', title: 'Map a second passage', href: '/rc/map/' }, { step: 'Test it', title: 'Timed passages', href: '/tools/rc/' }],
@@ -457,8 +508,8 @@
     var best = null, top = 0;
     TOOLS.forEach(function (t) {
       if (t.section !== sec) return;
-      var s = score(text, t.topics);
-      if (s > top) { top = s; best = { id: t.id, title: t.title, url: t.path, label: t.title }; }
+      var s = score(text, t.topics); if (s && t.board) s += 60;   // a whiteboard beats a hub deep link on the same phrase
+      if (s > top) { top = s; best = { id: t.id, title: t.title, url: t.path, label: t.title }; if (t.board) best.board = t.board; }
       (t.links || []).forEach(function (l) {
         var d = score(text, l.topics); if (d) d += 50;   // a deep link beats a one-word tool topic
         if (d > top) { top = d; best = { id: t.id, title: t.title, url: l.path, label: l.label }; }
@@ -474,7 +525,45 @@
     return base + (base.indexOf('?') < 0 ? '?' : '&') + 'from=' + encodeURIComponent(from) + hash;
   }
 
-  var api = { tools: TOOLS, sections: SECTIONS, match: match, spoke: spoke, SPOKES: SPOKES, section: section, norm: norm, withFrom: withFrom };
+  /* The "See it" chip. One look everywhere (gold pill, 44px tap target), on right and wrong
+     answers alike. A whiteboard opens in a bottom sheet over the page; anything else is a link. */
+  var EYE = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>';
+  var CSS = '.see-chip{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 16px;margin:8px 0 0;border-radius:999px;border:0;background:#C9A84C;color:#0d2018 !important;font:700 15px/1.2 "DM Sans",system-ui,-apple-system,sans-serif;text-decoration:none !important;cursor:pointer;max-width:100%;text-align:left;box-sizing:border-box}' +
+    '.see-chip:hover{background:#d6b862}.see-chip svg{flex:none;width:18px;height:18px}.see-chip span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}' +
+    '.see-chip:focus-visible{outline:3px solid #1B3A2D;outline-offset:2px}';
+  function esc(x) { return String(x == null ? '' : x).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+  function style() {
+    if (typeof document === 'undefined' || document.getElementById('see-chip-css')) return;
+    var st = document.createElement('style'); st.id = 'see-chip-css'; st.textContent = CSS; (document.head || document.documentElement).appendChild(st);
+  }
+  function chipHTML(q, from) {
+    var m = match(q); if (!m) return '';
+    style();
+    return '<a class="see-chip" href="' + esc(withFrom(m.url, from)) + '"' + (m.board ? ' data-see-board="' + esc(m.board) + '"' : '') +
+      ' data-see-from="' + esc(from || '') + '" data-see-id="' + esc(m.id) + '">' + EYE + '<span>See it: ' + esc(m.label) + '</span></a>';
+  }
+  function chip(q, from) {
+    var h = chipHTML(q, from); if (!h) return null;
+    var d = document.createElement('div'); d.innerHTML = h; return d.firstChild;
+  }
+  /* Open a board in the bottom sheet, loading the engine on first use. Falls back to the full page. */
+  function openBoard(id, from, href) {
+    var go = function () { if (href) root.location.href = href; };
+    var run = function () { try { root.AceBoard.ready(function () { if (!root.AceBoard.get(id)) return go(); root.AceBoard.open(id, { from: from }); }); } catch (e) { go(); } };
+    if (root.AceBoard) return run();
+    var sc = document.createElement('script'); sc.src = '/shared/ace-board.js?v=1'; sc.onload = run; sc.onerror = go; document.head.appendChild(sc);
+  }
+  if (typeof document !== 'undefined' && document.addEventListener) {
+    document.addEventListener('click', function (e) {
+      if (e.defaultPrevented || e.button || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+      var a = e.target && e.target.closest ? e.target.closest('[data-see-board]') : null; if (!a) return;
+      e.preventDefault();
+      try { if (root.AceRecord && root.AceRecord.event) root.AceRecord.event('see-chip', { board: a.getAttribute('data-see-board'), from: a.getAttribute('data-see-from') || '' }); } catch (x) {}
+      openBoard(a.getAttribute('data-see-board'), a.getAttribute('data-see-from') || '', a.getAttribute('href'));
+    });
+  }
+
+  var api = { tools: TOOLS, sections: SECTIONS, match: match, spoke: spoke, SPOKES: SPOKES, section: section, norm: norm, withFrom: withFrom, chip: chip, chipHTML: chipHTML, openBoard: openBoard };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   if (root) root.AceVisuals = api;
 })(typeof window !== 'undefined' ? window : null);

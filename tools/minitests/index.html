@@ -237,7 +237,8 @@
 <script src="/shared/ace-route.js?v=4"></script>
 <script src="/shared/ace-skills.js?v=2"></script>
 <script src="/shared/ace-record.js?v=6"></script>
-<script src="/shared/ace-test-review.js?v=3"></script>
+<script src="/shared/ace-visuals.js?v=4"></script>
+<script src="/shared/ace-test-review.js?v=4"></script>
 <script src="/shared/ace-next-steps.js?v=1"></script>
 <script src="remediation-map.js"></script>
 <script type="module">import { rootsUrl } from "../ochem/roots/route.js"; window.ROOTS_URL = rootsUrl;</script>
@@ -529,7 +530,7 @@ function missCard(q, pickedIdx, opts){
     (q.figureSvg?('<div class="fig" style="text-align:left">'+q.figureSvg+'</div>'):'')+
     (pickedIdx>-1 && !right ? '<div class="ans">You chose <b class="no">'+LETTERS[pickedIdx]+') '+q.choices[pickedIdx]+'</b> · correct is <b class="ok">'+LETTERS[q.correct]+') '+q.choices[q.correct]+'</b></div>'
        : '<div class="ans">Correct: <b class="ok">'+LETTERS[q.correct]+') '+q.choices[q.correct]+'</b></div>')+
-    '<div class="exp">'+q.explanation+'</div>'+
+    '<div class="exp">'+q.explanation+'</div>'+seeChip(q)+
     '<div class="fixrow">'+
       (trick?'<a class="fx trick" onclick="toggleTrick(\''+id+'\',\''+trick+'\')">Watch the trick</a>':'')+
       '<a class="fx learn" href="'+learn+'">Learn it · Retold ('+hint+')</a>'+
@@ -819,7 +820,7 @@ function renderCheck(){
     if(it.kind==='review') tail = (mc&&mc.resolved) ? ' &nbsp;Two spaced wins - mastered. It moves to maintenance so it stays sharp.' : ' &nbsp;One spaced win in - one more, on a fresh question, and the concept is yours.';
     else if(it.kind==='maintain') tail = ' &nbsp;Still sharp - back in '+(mc?mc.ivl:'')+' days.';
     body='<div class="choices">'+choiceHtml(q,C.pick,true)+'</div>'+
-      '<div class="correct-note"><b>Correct.</b> '+q.explanation+tail+'</div>'+
+      '<div class="correct-note"><b>Correct.</b> '+q.explanation+tail+'</div>'+seeChip(q)+
       '<div class="cbtnrow"><button class="gold" onclick="checkNext()">'+(C.i+1>=C.queue.length?'Finish':'Next')+'</button></div>';
   } else if(C.stage==='lockin'){
     body=lockPanel(it,q);
@@ -881,6 +882,8 @@ function checkToFix(){
   logReview({key:key, grade:GRADE.again, correct:false, section:q.section, topic:q.topic, tier:it.tier, diag:C.diag, conf:C.conf, box:0, due:m?m.due:Date.now()});
   save(); C.stage='fix'; renderCheck();
 }
+/* See it: the matching visual (shared/ace-visuals.js) as a chip, right or wrong. '' when none. */
+function seeChip(q){ return window.AceVisuals&&window.AceVisuals.chipHTML ? '<div class="seerow">'+window.AceVisuals.chipHTML({section:q.section,topic:q.topic,topicName:q.topic,stem:q.stem},'test')+'</div>' : ''; }
 function fixPanel(it,q){
   var rem=(REM[q.section]||{}), fx=fixLinks(q.section,q.topic), learn=fx.learn, review=fx.drill;
   var hint=fx.night?('night '+fx.night+(fx.nightTitle?', '+fx.nightTitle:'')):((rem.topics&&rem.topics[q.topic])||q.topic);
@@ -896,7 +899,7 @@ function fixPanel(it,q){
   };
   var fixes=order.map(function(o){return link[o];}).filter(Boolean).join('');
   return '<div class="fixpanel"><p class="fx-lead">'+lead+'</p>'+
-    '<div class="exp">'+q.explanation+'</div>'+
+    '<div class="exp">'+q.explanation+'</div>'+seeChip(q)+
     '<div class="fixrow">'+fixes+'</div><div class="trick-embed" id="'+id+'"></div>'+
     '<div class="cbtnrow"><button class="gold" onclick="checkToLock()">I\'ve got it - lock it in</button></div></div>';
 }

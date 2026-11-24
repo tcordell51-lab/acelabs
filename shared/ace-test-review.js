@@ -13,7 +13,7 @@
    (their figures and passages live in the engine): they repair by skill.
 
      AceTestReview.render(host, run)   the question-by-question review with the one shared reason
-                                       row on each miss and a See it link when a visual matches.
+                                       row on each miss and a See it chip on every row a visual matches.
    Needs ace-record.js and ace-skills.js; ace-visuals.js is optional (See it). */
 (function () {
   'use strict';
@@ -68,7 +68,6 @@
   }
 
   function el(tag, cls, text) { var n = document.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; }
-  var EYE = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"></path><circle cx="12" cy="12" r="3"></circle></svg>';
   function repairIdFor(row) { return (row.section === 'pat' || row.section === 'rc') ? row.section + ':' + row.skill : row.id; }
 
   function render(host, run, o) {
@@ -145,13 +144,13 @@
         line.hidden = !(entry && entry.reason); if (entry && entry.reason) line.textContent = LINE[entry.reason];
         why.appendChild(line);
         li.appendChild(why);
-        var v = window.AceVisuals ? window.AceVisuals.match({ section: r.section, topic: r.topic, topicName: r.topicName, concept: r.skillName, stem: r.stem }) : null;
-        if (v) {
-          var a = el('a', 'see-it'); a.innerHTML = EYE; a.appendChild(document.createTextNode(' See it: ' + v.label));
-          a.href = window.AceVisuals.withFrom(v.url, 'review'); a.setAttribute('data-see', v.id);
-          a.addEventListener('click', function () { rec.event('review-see', { id: rid }); });
-          li.appendChild(a);
-        }
+      }
+      // See it on every question, right or wrong: the matching visual, in a sheet over the review.
+      var see = window.AceVisuals && window.AceVisuals.chip ? window.AceVisuals.chip({ section: r.section, topic: r.topic, topicName: r.topicName, concept: r.skillName, stem: r.stem }, 'review') : null;
+      if (see) {
+        see.setAttribute('data-see', see.getAttribute('data-see-id'));
+        see.addEventListener('click', function () { rec.event('review-see', { id: r.id, ok: !!r.ok }); });
+        var sr = el('div', 'rv-see'); sr.appendChild(see); li.appendChild(sr);
       }
       return li;
     }
