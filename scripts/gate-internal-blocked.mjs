@@ -49,7 +49,8 @@ const INTERNAL_PAGES = [
   'tools/ochem/roots/dev.html',
   'tools/ochem/tree/dev.html',
   'tools/ochem/tree/smiles.html',
-  'scripts/dat-wording-report.json'   // 2026-11-16: the wording rewrite's audit trail (internal)
+  'scripts/dat-wording-report.json',  // 2026-11-16: the wording rewrite's audit trail (internal)
+  'scripts/topic-scorecard.json'      // 2026-11-24: the per-topic scorecard (internal; docs/topic-scorecard.md reads it)
 ];
 
 // Production clip pages that a student page plays inside a frame as its "Watch" explainer.
