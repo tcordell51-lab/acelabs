@@ -71,10 +71,10 @@ const R = (fn, arg) => page.evaluate(fn, arg);
 try {
   // ---------- 1. a fresh student lands on Today ----------
   await go('/');
-  assert.equal(await page.getAttribute('#t-go', 'data-step'), 'diagnostic');
+  assert.equal(await page.getAttribute('#t-go', 'data-step'), 'setup');
   assert.equal(await page.getAttribute('#t-counts', 'data-miss-open'), '0');
   await shot('today-fresh');
-  ok('a fresh student is sent to the diagnostic first');
+  ok('a fresh student gets one step: set the test date');
 
   // ---------- 2. the diagnostic, through its own buttons ----------
   await go('/diagnostic.html');

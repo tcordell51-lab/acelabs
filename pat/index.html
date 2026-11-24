@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Perceptual Ability · Ace Labs</title>
+<meta name="description" content="Perceptual Ability on Ace Labs: the course, the six trainers and the full ninety-question PAT test.">
+<link rel="icon" type="image/svg+xml" href="/shared/ace-dat-mark.svg">
+<link rel="stylesheet" href="/shared/ace-ui.css?v=8">
+</head>
+<body class="aui">
+<main class="aui-wrap aui-stack" id="main">
+  <header class="aui-hubhead">
+    <div class="aui-stack">
+      <p class="aui-kicker">Section</p>
+      <h1 class="aui-h1">Perceptual Ability</h1>
+      <p class="aui-lede">Ninety questions in sixty minutes: six question types, fifteen of each. Learn each method, then train it until it is fast.</p>
+      <div class="aui-row">
+        <a class="aui-btn" href="/tools/pat/">Open the PAT trainers</a>
+        <a class="aui-btn aui-btn--quiet" href="/repair/">Repair</a>
+      </div>
+    </div>
+    <img src="/shared/art/pat.svg" alt="" width="900" height="678">
+  </header>
+
+  <section class="aui-card aui-card--flat" aria-label="Your PAT numbers">
+    <div class="aui-stats">
+      <div class="aui-stat"><b id="s-answers">0</b><span>answers</span></div>
+      <div class="aui-stat"><b id="s-right">0</b><span>right</span></div>
+      <div class="aui-stat"><b id="s-due">0</b><span>open in Repair</span></div>
+      <div class="aui-stat"><b id="s-miss">0</b><span>due back today</span></div>
+    </div>
+  </section>
+
+  <section class="aui-stack" aria-labelledby="c-title">
+    <h2 class="aui-h2" id="c-title">Course</h2>
+    <div class="aui-grid">
+    <a class="aui-card aui-card--flat" href="/tools/pat-retold/"><h3 class="aui-h3">PAT, Retold</h3><p class="aui-small">The course: ten nights, each with checks.</p></a>
+    <a class="aui-card aui-card--flat" href="/tools/pat/playbook.html"><h3 class="aui-h3">The Playbook</h3><p class="aui-small">The method for each of the six question types on one page.</p></a>
+    </div>
+  </section>
+
+  <section class="aui-stack" aria-labelledby="m-title">
+    <h2 class="aui-h2" id="m-title">See it</h2>
+    <div class="aui-grid">
+    <a class="aui-card aui-card--flat" href="/see/"><h3 class="aui-h3">Whiteboards</h3><p class="aui-small">PAT drawn big: predict first, then reveal.</p></a>
+    <a class="aui-card aui-card--flat" href="/games/six-views/"><h3 class="aui-h3">Six Views in 3D</h3><p class="aui-small">Turn the solid and watch each view change.</p></a>
+    <a class="aui-card aui-card--flat" href="/guides/pat-grids.html"><h3 class="aui-h3">Grid methods, printable</h3><p class="aui-small">The hole-punching grid and the cube-counting chart on paper.</p></a>
+    </div>
+  </section>
+
+  <section class="aui-stack" aria-labelledby="t-title">
+    <h2 class="aui-h2" id="t-title">Practice</h2>
+    <div class="aui-grid">
+    <a class="aui-card aui-card--flat" href="/tools/pat/keyholes.html"><h3 class="aui-h3">Keyholes</h3><p class="aui-small">Which opening does the solid pass through?</p></a>
+    <a class="aui-card aui-card--flat" href="/tools/pat/tfe.html"><h3 class="aui-h3">Top, front, end</h3><p class="aui-small">Solid means seen, dashed means hidden.</p></a>
+    <a class="aui-card aui-card--flat" href="/tools/pat/angles.html"><h3 class="aui-h3">Angle ranking</h3><p class="aui-small">Rank four angles from smallest to largest.</p></a>
+    <a class="aui-card aui-card--flat" href="/tools/pat/holepunch.html"><h3 class="aui-h3">Hole punching</h3><p class="aui-small">Unfold the paper with the grid method.</p></a>
+    <a class="aui-card aui-card--flat" href="/tools/pat/cubes.html"><h3 class="aui-h3">Cube counting</h3><p class="aui-small">Count painted faces with the chart.</p></a>
+    <a class="aui-card aui-card--flat" href="/tools/pat/patternfold.html"><h3 class="aui-h3">Pattern folding</h3><p class="aui-small">Match the flat pattern to its solid.</p></a>
+    <a class="aui-card aui-card--flat" href="/tools/pat/test.html"><h3 class="aui-h3">PAT test</h3><p class="aui-small">All ninety questions, timed. Misses come back in the trainers.</p></a>
+    </div>
+  </section>
+</main>
+<script src="/shared/ace-record.js?v=6"></script>
+<script src="/shared/ace-ui.js?v=5" defer></script>
+<script>
+(function () {
+  var R = window.AceRecord; if (!R) return;
+  try { R.migrate(); } catch (e) { /* fresh browser */ }
+  var st = R.stats({ section: 'pat' }), L = R.repairList({ now: Date.now() });
+  function mine(e) { return e.section === 'pat'; }
+  function set(id, v) { document.getElementById(id).textContent = String(v || 0); }
+  set('s-answers', st.answers); set('s-right', st.right); set('s-due', L.open.filter(mine).length); set('s-miss', L.due.filter(mine).length);
+})();
+</script>
+<script src="/shared/ace-tabs.js?v=4" defer></script>
+</body>
+</html>

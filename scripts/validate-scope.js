@@ -8,7 +8,7 @@
      (e.g. "5 fixed tests", "full simulation", "score predictor", ...)
    - The mock count claim drifts between scope.js and any HTML page
      that hard-codes a number near "fixed tests" or "fixed tests"
-   - Home (ace-labs.html) is missing the scope strip + disclaimer
+   - Home (index.html) is missing the scope strip + disclaimer
      placeholders that shared/scope.js renders into
    - mocks-catalog.html or prometric-mock.html is missing the scope
      strip placeholder
@@ -129,7 +129,9 @@ Object.keys(claimedMockCounts).forEach((rel) => {
 
 /* ---- 5. Required scope-strip / disclaimer placeholders ----------- */
 const required = [
-  { file: 'ace-labs.html',       needs: ['alScopeStrip', 'alDisclaimer', 'shared/scope.js'] },
+  // Home is index.html (served at /). ace-labs.html only forwards there. Home states the
+  // affiliation line itself and links to scope.html, which carries the full scope strip.
+  { file: 'index.html',          needs: ['alDisclaimer'] },
   { file: 'mocks-catalog.html',  needs: ['alScopeStrip', 'alDisclaimer', 'shared/scope.js'] },
   { file: 'prometric-mock.html', needs: ['alScopeStrip', 'shared/scope.js'] }
 ];
@@ -146,15 +148,15 @@ required.forEach(({ file, needs }) => {
 
 /* ---- 6. Home links to scope.html --------------------------------- */
 // Relative or root-relative: the home is served at / so both resolve to /scope.html.
-const home = readText(path.join(ROOT, 'ace-labs.html'));
+const home = readText(path.join(ROOT, 'index.html'));
 if (!/href\s*=\s*["'](?:\.?\/)?scope\.html["']/.test(home)) {
-  err('ace-labs.html does not link to scope.html');
+  err('index.html does not link to scope.html');
 }
 
 /* ---- 7. Footer disclaimer language is consistent ----------------- */
 // Look for the canonical "not affiliated with the American Dental Association"
 // substring on home + scope.html. Both should reference it.
-['ace-labs.html', 'scope.html'].forEach((rel) => {
+['index.html', 'scope.html'].forEach((rel) => {
   const text = readText(path.join(ROOT, rel));
   if (!/American\s+Dental\s+Association/i.test(text)) {
     warn(rel + ': missing the "American Dental Association" affiliation disclaimer string');

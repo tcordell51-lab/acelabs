@@ -2649,7 +2649,7 @@ body[data-theme="dark"] .dash-card .pat-due-row .go{color:var(--gold-m)}
     <div style="padding:14px 16px;background:rgba(213,107,151,.04);border-radius:8px;font-size:14px;color:#3a4148;line-height:1.6">
       <p style="margin:0 0 .6rem"><b>Why this matters more than a stopwatch.</b> Top-scoring students don't just go faster, they have a different decision pattern. They skip earlier, return more accurately, and never burn 3 minutes on a single question. Watching a clock teaches none of that. The Two-Pass Drill builds the skip-and-return reflex by making it the only way to finish the drill.</p>
       <p style="margin:0 0 .6rem"><b>What you get:</b> a forced 5-skip first pass, a Skip + Return button with a flagged-queue UI, throttled coach-whisper recommendations ("behind by &gt;30s: skip the next hard one"), and a lift-from-guessing debrief comparing your strategy to all-blank and all-guess baselines.</p>
-      <p style="margin:0"><a href="proposals/agent-08-pacing/pacing-sim.html" target="_blank" rel="noopener" style="display:inline-block;padding:8px 18px;background:#d56b97;color:#fff;text-decoration:none;border-radius:6px;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase">Open the Two-Pass Drill</a> <span style="margin-left:10px;color:#7e7b87;font-size:12.5px">opens in a new tab · 10 Q drill · 5 forced skips</span></p>
+      <p style="margin:0"><a href="/qr/pacing/" style="display:inline-block;padding:8px 18px;background:#d56b97;color:#fff;text-decoration:none;border-radius:6px;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase">Open the Two-Pass Drill</a> <span style="margin-left:10px;color:#7e7b87;font-size:12.5px">opens in a new tab · 10 Q drill · 5 forced skips</span></p>
     </div>
   </div>
 </section>
@@ -6222,7 +6222,6 @@ function renderModule(skillId){
         <p class="s">${M.sub}</p>
       </div>
       <span class="tag ${status==='mastered'?'good':status==='partial'?'gold':'teal'}">${status}</span>
-      <a class="btn ghost sm" href="tiktoks/topic-tiktok.html?topic=${encodeURIComponent(skillId)}" target="_blank" rel="noopener" style="text-decoration:none; margin-left:8px; white-space:nowrap" title="Watch the 75-sec TikTok on this topic">Watch</a>
     </div>
     <div class="card">
       <div class="card-h">
@@ -12135,6 +12134,15 @@ const ONBOARD = {
 };
 window.ONBOARD = ONBOARD;
 // Trigger on first visit
+/* Ace Labs has one setup: the study plan. When a plan exists, or the student arrived from a hub or the
+   plan (?from=), this engine does not ask again. It reads the test date from the saved plan instead. */
+function acePlanSeed(){
+  let date = null, arrived = false;
+  try { const s = JSON.parse(localStorage.getItem('acelabs_plan_v1') || 'null'); if (s && s.input && /^\d{4}-\d{2}-\d{2}$/.test(s.input.testDate || '')) date = s.input.testDate; } catch (e) {}
+  try { arrived = new URLSearchParams(location.search).has('from'); } catch (e) {}
+  return { date, skip: !!date || arrived };
+}
+if (acePlanSeed().skip) ST.set('onboarded', true);
 if (!ST.get('onboarded', false)){
   setTimeout(() => ONBOARD.start(), 600);
 }
@@ -13804,6 +13812,6 @@ console.log('%c AceTheDAT QR · Remediation v2 ', 'background:#0d2018;color:#E2C
 console.log('Modules live: 44 · Tree nodes: 45 · Diagnostic: 22 questions · Weak3 routing: ready · Sarah dash: ready · Pattern Library: 30 chunks');
 </script>
   <script src="qr-formats-module.js"></script>
-  <script src="/shared/ace-shell.js?v=4" defer></script>
+  <script src="/shared/ace-shell.js?v=5" defer></script>
 </body>
 </html>

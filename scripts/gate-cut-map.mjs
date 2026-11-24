@@ -41,8 +41,10 @@ const kept = map.pages.filter((p) => p.action === 'keep');
 function block() {
   const L = [BEGIN, '# Do not edit by hand: change scripts/cut-map.json and run this script with --write.', '# Old addresses of removed and merged pages (forced: the files still exist).'];
   for (const p of active) for (const a of addresses(p.path)) L.push(`${a}  ${p.now}  301!`);
-  L.push('# Clean addresses of kept pages. 302 for now: the files have not moved yet.');
-  for (const [clean, now] of Object.entries(map.clean)) if (clean !== now && !fileFor(clean)) L.push(`${clean}  ${now}  302`);
+  L.push('# Clean addresses of kept pages: 200 where the page is served in place, 302 where it still moves.');
+  // "rewrite" addresses are served in place (200): the lab opens at its clean address.
+  const rewrite = new Set(map.rewrite || []);
+  for (const [clean, now] of Object.entries(map.clean)) if (clean !== now && !fileFor(clean)) for (const from of (rewrite.has(clean) ? [clean, clean.replace(/\/$/, '')] : [clean])) L.push(`${from}  ${now}  ${rewrite.has(clean) ? 200 : 302}`);
   L.push(END);
   return L.join('\n');
 }

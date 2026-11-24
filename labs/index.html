@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Learn · Ace Labs</title>
+<title>Labs · Ace Labs</title>
 <meta name="description" content="Every visual lab on Ace Labs by section, with where to start and what to do next, plus the six courses.">
 <link rel="icon" type="image/svg+xml" href="/shared/ace-dat-mark.svg">
 <link rel="stylesheet" href="/shared/ace-ui.css?v=8">
@@ -11,7 +11,7 @@
 <style>
   .loop.lab-page { max-width: 980px; }
   .lab-jump { display: flex; flex-wrap: wrap; gap: 8px; }
-  .lab-jump a { min-height: 36px; display: inline-flex; align-items: center; padding: 0 14px; border-radius: 999px; border: 1px solid #e6dccb; background: #fffdf7; color: #0d2018; font-size: 13px; font-weight: 700; text-decoration: none; }
+  .lab-jump a { min-height: 44px; display: inline-flex; align-items: center; padding: 0 14px; border-radius: 999px; border: 1px solid #e6dccb; background: #fffdf7; color: #0d2018; font-size: 13px; font-weight: 700; text-decoration: none; }
   .lab-jump a:hover { border-color: #C9A84C; }
   .lab-sec { background: #fffdf7; border: 1px solid #e6dccb; border-radius: 22px; margin: 0 0 16px; overflow: hidden; scroll-margin-top: 12px; }
   .lab-sec > summary { list-style: none; cursor: pointer; display: flex; align-items: center; gap: 12px; padding: 18px 18px; min-height: 44px; }
@@ -38,7 +38,7 @@
   .lab-card { display: flex; flex-direction: column; gap: 6px; padding: 14px; border-radius: 16px; border: 1px solid #e6dccb; background: #FCFAF6; color: #0d2018 !important; text-decoration: none; }
   .lab-card:hover { border-color: #C9A84C; }
   .lab-card > a.lab-main { display: contents; color: inherit; text-decoration: none; }
-  .lab-card .lab-try { align-self: flex-start; display: inline-flex; align-items: center; min-height: 36px; padding: 0 12px; border-radius: 999px; border: 1.5px solid rgba(27,58,45,.3); background: #fffdf7; color: #1B3A2D; font-size: 13px; font-weight: 700; text-decoration: none; margin-top: 4px; }
+  .lab-card .lab-try { align-self: flex-start; display: inline-flex; align-items: center; min-height: 44px; padding: 0 12px; border-radius: 999px; border: 1.5px solid rgba(27,58,45,.3); background: #fffdf7; color: #1B3A2D; font-size: 13px; font-weight: 700; text-decoration: none; margin-top: 4px; }
   .lab-card.feat .lab-try { background: #C9A84C; border-color: #C9A84C; color: #0d2018; }
   .lab-for-you { display: flex; flex-direction: column; gap: 4px; padding: 16px; border-radius: 18px; background: #1B3A2D; color: #F5F0E8; text-decoration: none; margin: 4px 0 8px; }
   .lab-for-you[hidden] { display: none; }
@@ -71,6 +71,8 @@
     <h1 class="aui-h1">Labs: see it, then try it</h1>
     <p class="aui-lede">Every visual on Ace Labs, by section. Each lab card has questions on the same topic, and every missed question links back to its lab.</p>
   </header>
+  <a class="loop-card" href="/see/"><span class="ic" style="background:#f3ead2"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#7c6113" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="12" rx="2"></rect><path d="M7 12l3-3 3 2 4-4M9 20l3-4 3 4"></path></svg></span><span class="tx"><span class="k" style="color:#7c6113">All six sections</span><span class="t1">See it: whiteboards</span><span class="t2">One board per idea. Predict first, then watch it drawn.</span></span></a>
+  <nav class="lab-jump" aria-label="Section hubs"><a href="/bio/">Biology</a><a href="/gc/">Gen Chem</a><a href="/oc/">Organic Chem</a><a href="/pat/">PAT</a><a href="/rc/">Reading</a><a href="/qr/">QR</a></nav>
   <a class="lab-for-you" id="lab-for-you" hidden></a>
   <h2 class="loop-h2">Quick picks <span>7 labs</span></h2>
   <a class="loop-card" href="/bio/see/"><span class="ic"><img src="/shared/art/plates/brain.jpg" alt="" width="64" height="64"></span><span class="tx"><span class="k" style="color:#2f7d4f">Biology</span><span class="t1">Plates: predict, then label</span><span class="t2">Fifteen unlabeled plates. Labels drawn in code after you answer.</span></span></a>
@@ -100,7 +102,17 @@
 <script>
 (function () {
   'use strict';
-  var V = window.AceVisuals, host = document.getElementById('lab-sections'), jump = document.getElementById('lab-jump');
+  /* One Labs page. Production clips are not labs, and the QR labs have clean addresses
+     (served from /_redirects), so both are settled here before anything is drawn. */
+  var QR_CLEAN = { 'agent-04-prob-tree/probability-sandbox.html': '/qr/probability/', 'agent-05-stats/stats-lab.html': '/qr/statistics/', 'agent-06-geometry/geo-2d.html': '/qr/geometry/',
+    'agent-06-geometry/coord.html': '/qr/geometry/coordinates/', 'agent-06-geometry/tri-inv.html': '/qr/geometry/triangles/', 'agent-06-geometry/vol-sa.html': '/qr/geometry/solids/', 'agent-08-pacing/pacing-sim.html': '/qr/pacing/' };
+  function clean(u) { var m = /^\/tools\/qr\/proposals\/(.+)$/.exec(u || ''); return m && QR_CLEAN[m[1]] ? QR_CLEAN[m[1]] : u; }
+  var RAW = window.AceVisuals;
+  var V = Object.create(RAW);
+  V.tools = RAW.tools.filter(function (t) { return !/tiktok/i.test(t.path || ''); }).map(function (t) { var c = Object.create(t); c.path = clean(t.path); return c; });
+  V.sections = RAW.sections.map(function (x) { var c = Object.create(x); c.path = x.path.map(function (p) { return { step: p.step, title: p.title, href: clean(p.href) }; }); return c; });
+  V.match = function (q) { var m = RAW.match(q); if (m && /tiktok/i.test(m.url || '')) return null; if (m) m.url = clean(m.url); return m; };
+  var host = document.getElementById('lab-sections'), jump = document.getElementById('lab-jump');
   var wide = window.matchMedia('(min-width: 760px)').matches;
   var STEP = { see: 'See it', 'try': 'Try it', test: 'Test it' };
   var CHEV = '<svg class="chev" viewBox="0 0 24 24" fill="none" stroke="#3a4a42" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>';
@@ -186,7 +198,7 @@
   });
 })();
 </script>
-<script src="/shared/ace-ui.js?v=4"></script>
-<script src="/shared/ace-tabs.js?v=3" defer></script>
+<script src="/shared/ace-ui.js?v=5"></script>
+<script src="/shared/ace-tabs.js?v=4" defer></script>
 </body>
 </html>

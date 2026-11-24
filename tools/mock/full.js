@@ -132,7 +132,7 @@
       ACE.reviewer = !!j.reviewer;
       j.forms.forEach(function (f) {
         if (mockById(f.id)) return;
-        MOCKS.push({ id: f.id, name: f.name, ace: true, loaded: false, status: f.status, approved: f.approved, needed: f.needed, sections: null, pat: null, rc: null });
+        MOCKS.push({ id: f.id, name: f.name, ace: true, loaded: false, status: f.status, approved: f.approved, needed: f.needed, questions: f.questions || null, sections: null, pat: null, rc: null });
       });
     });
   }
@@ -146,6 +146,14 @@
   }
 
   /* ---------------- landing ---------------- */
+  // The real count for each test, never a fixed number: the four section lists plus the 90 PAT figures.
+  function qCount(m) {
+    if (m.questions) return m.questions;
+    if (!m.sections) return null;
+    try { var b = buildItems(m); return b.sons.length + 90 + b.rc.length + b.qr.length; } catch (e) { return null; }
+  }
+  // A plan task links here as ?test=3. The card is marked; nothing starts until the student taps it.
+  var WANT = (function () { try { var n = parseInt(new URLSearchParams(location.search).get('test'), 10); return n >= 1 && n <= 20 ? n : 0; } catch (e) { return 0; } })();
   function attempts() { return read(K_ATTEMPTS, []); }
   function renderLanding() {
     $('landing').classList.remove('hidden');
@@ -176,9 +184,14 @@
     $('tests').innerHTML = MOCKS.map(function (m, i) {
       var last = hist.filter(function (a) { return a.mockId === m.id; })[0];
       var lastLine = last ? '<span class="last">Last: ' + last.record.totalCorrect + ' of ' + last.record.totalQs + ' on ' + new Date(last.ts).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + '</span>' : '<span class="last">Not taken yet</span>';
-      var aceLine = m.ace && m.status !== 'ready' ? '<span class="last">Coach preview: awaiting review, ' + m.approved + ' of ' + m.needed + ' approved. Hidden from students.</span>' : '';
-      return '<button class="tcard" type="button" data-id="' + m.id + '"' + (m.ace ? ' data-ace="' + esc(m.status) + '"' : '') + '><span class="n">' + (i + 1) + '</span><span class="t">' + esc(m.name) + '</span><span class="d">280 questions, 4 hours 15 minutes plus the optional break</span>' + (aceLine || lastLine) + '</button>';
+      var aceLine = m.ace && m.status !== 'ready' ? '<span class="last">Unlocks for students when reviewed: ' + m.approved + ' of ' + m.needed + ' approved. Coach preview only.</span>' : '';
+      var n = qCount(m), picked = WANT === i + 1;
+      return '<button class="tcard' + (picked ? ' picked' : '') + '" type="button" data-id="' + m.id + '"' + (m.ace ? ' data-ace="' + esc(m.status) + '"' : '') + '><span class="n">' + (i + 1) + '</span><span class="t">' + esc(m.name) + '</span><span class="d">' + (n ? n + ' questions, ' : '') + '4 hours 15 minutes plus the optional break</span>' + (picked ? '<span class="last"><b>From your plan: this is today\'s test.</b></span>' : '') + (aceLine || lastLine) + '</button>';
     }).join('');
+    if (WANT && WANT > MOCKS.length && ACE.listed) {
+      $('tests').insertAdjacentHTML('afterbegin', '<div class="card" id="wantNote"><b>Full-length test ' + WANT + ' is not open yet.</b> ' + (MOCKS.length === 1 ? 'One test is' : MOCKS.length + ' tests are') + ' open right now. Retake the one you took longest ago, or take a rung of <a href="/tools/minitests/">The Climb</a> instead.</div>');
+    }
+    if (WANT && !R.wantSeen) { var pk = $('tests').querySelector('.tcard.picked') || $('wantNote'); if (pk && pk.scrollIntoView && (WANT <= MOCKS.length || ACE.listed)) { R.wantSeen = true; pk.scrollIntoView({ block: 'center' }); } }
     Array.prototype.forEach.call($('tests').querySelectorAll('.tcard'), function (b) {
       b.addEventListener('click', function () { chooseTest(b.dataset.id); });
     });
@@ -698,7 +711,7 @@
     $('report').classList.remove('hidden');
     $('report').innerHTML = '<header class="topbar"><a class="brand" href="/">Ace <em>Labs</em></a><span class="spacer"></span><a class="back" href="#" id="toList">Full-length tests</a></header>' +
       '<div class="wrap report"><div class="rail"><div class="kicker">Practice report</div><h1>' + esc(m ? m.name : '') + ', <em>done.</em></h1>' +
-      '<p class="big-line">You answered <b>' + rec.totalCorrect + ' of ' + rec.totalQs + '</b> across all four sections. Every miss is in Repair now. Next: go through the test question by question and tag why you missed each one.</p><p><a class="btn gold" href="/review/" id="rvTop" hidden>Review question by question</a></p></div>' +
+      '<p class="big-line">You got <b>' + rec.totalCorrect + ' of ' + rec.totalQs + '</b> right across all four sections. Every miss is in Repair now. Next: go through the test question by question and tag why you missed each one.</p><p><a class="btn gold" href="/review/" id="rvTop" hidden>Review question by question</a></p></div>' +
       '<div class="sec-grid">' + card('sons', 'Natural Sciences', 'var(--bio)') + card('pat', 'Perceptual Ability', 'var(--pat)') + card('rc', 'Reading', 'var(--rc)') + card('qr', 'Quantitative', 'var(--qr)') + '</div>' +
       '<p class="note" style="margin-top:10px">Optional break used: ' + minsec(rec.breakSec || 0) + '. Raw scores only; Ace Labs does not convert practice scores to the scaled score.</p>' +
       '<div id="nextSteps"></div>' +

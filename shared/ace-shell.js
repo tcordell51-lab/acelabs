@@ -26,11 +26,11 @@
 
   /* First match wins. Paths are normalized: no trailing slash, no .html, no /index. */
   var RULES = [
-    ['today', /^\/(index|ace-labs)?$/],
+    ['today', /^\/(index|ace-labs|plan|onboarding|for-retakers)?$/],
     ['test', /^\/(tests|diagnostic|review|prometric-mock|unified-mock|test-week|test-day-readiness|tools\/(mock|minitests)|tools\/pat\/test)(\/|$)/],
     ['repair', /^\/repair(\/|$)/],
     ['progress', /^\/(progress|performance)(\/|$)/],
-    ['labs', /^\/(labs|learn|bio|gc|oc|qr|rc|pat|games|guides|cheat-sheets|tricks|tools)(\/|$)/]
+    ['labs', /^\/(labs|see|learn|bio|gc|oc|qr|rc|pat|games|guides|cheat-sheets|tricks|tools)(\/|$)/]
   ];
 
 
@@ -155,7 +155,7 @@
   /* The phone tab bar: the same five places. Loaded here so every page with a bar has it. */
   function tabs() {
     if (window.AceTabs || document.querySelector('script[src*="/shared/ace-tabs.js"]')) return;
-    var t = document.createElement('script'); t.src = '/shared/ace-tabs.js?v=3'; t.defer = true; document.head.appendChild(t);
+    var t = document.createElement('script'); t.src = '/shared/ace-tabs.js?v=4'; t.defer = true; document.head.appendChild(t);
   }
 
   function mount() {

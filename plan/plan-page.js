@@ -1,6 +1,6 @@
 /* plan-page.js : the study plan page (/plan/). Reads the setup and the diagnostic to prefill,
    stores only the plan's input and what is marked done under 'acelabs_plan_v1', and rebuilds
-   the plan from that input on every visit with AcePlanBuilder (plan-core.js). */
+   the plan from that input on every visit with AcePlanBuilder (shared/ace-plan-core.js). */
 (function () {
   'use strict';
   var B = window.AcePlanBuilder;
@@ -28,6 +28,13 @@
   function readSetup() { try { return JSON.parse(localStorage.getItem('aceLabs:onboarding') || 'null'); } catch (e) { return null; } }
   function readTestDate() { try { return localStorage.getItem('acelabs_test_date'); } catch (e) { return null; } }
   function readDiag() { try { return JSON.parse(localStorage.getItem('acelabs_diagnostic_v1') || 'null'); } catch (e) { return null; } }
+  function readReport() { try { return JSON.parse(localStorage.getItem('acelabs_last_report') || 'null'); } catch (e) { return null; } }
+  // One saved plan: fold in the diagnostic and the last report's focus, the same way Home does.
+  function sync() {
+    if (!state) return;
+    var r = B.syncState(state, { today: TODAY, diagnostic: readDiag(), report: readReport() });
+    if (r.changed) { state = r.state; saveState(state); }
+  }
 
   /* ---------- dates in the student's own clock ---------- */
   function localToday() { var d = new Date(); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }
@@ -42,6 +49,7 @@
 
   var state = loadState();
   var TODAY = localToday();
+  var HAS_DIAG = !!readDiag();
   var plan = null;
   var showPast = false;
 
@@ -93,7 +101,8 @@
       days: Array.prototype.map.call(form.querySelectorAll('input[name="day"]:checked'), function (cb) { return +cb.value; }),
       hoursWeekday: +$('f-hwk').value, hoursWeekend: +$('f-hwe').value,
       attempt: (form.querySelector('input[name="attempt"]:checked') || {}).value || 'first',
-      confidence: conf, blackouts: blackouts.slice(), hasDiagnostic: !!readDiag()
+      confidence: conf, blackouts: blackouts.slice(), hasDiagnostic: !!readDiag(),
+      focus: B.focusFromReport(readReport(), TODAY) || (state && state.input.focus) || null
     };
   }
   // Prefill from the setup page and the diagnostic when there is no saved plan yet.
@@ -125,7 +134,8 @@
     if (!p.ok) { $('f-err').textContent = p.errors.join(' '); return; }
     $('f-err').textContent = '';
     var done = state ? state.done || {} : {};
-    state = { v: 1, input: inp, done: done };
+    state = { v: 1, input: inp, done: done, diagApplied: state && state.diagApplied };
+    var dg = readDiag(); if (dg && dg.perSection) state.diagApplied = String(dg.ts || dg.at || 'done');
     saveState(state);
     shareTestDate(inp);
     render(true);
@@ -142,11 +152,14 @@
   }
 
   /* ---------- render ---------- */
-  function isDone(d) { if (!state || !state.done) return false; if (state.done[d.date]) return true; return d.tasks.length > 0 && d.tasks.every(function (t) { return state.done[t.id]; }); }
-  function taskDone(t) { return !!(state && state.done && state.done[t.id]); }
+  function isDone(d) { if (!state || !state.done) return false; if (state.done[d.date]) return true; return d.tasks.length > 0 && d.tasks.every(taskDone); }
+  function taskDone(t) { return !!(state && state.done && state.done[t.id]) || (t.kind === 'diagnostic' && HAS_DIAG); }
 
   function render(scroll) {
-    if (!state) { $('today').hidden = true; $('overview').hidden = true; $('days').hidden = true; $('builder').open = true; return; }
+    sync();
+    if (!state) { $('today').hidden = true; $('overview').hidden = true; $('days').hidden = true; $('builder').open = true;
+      $('lede').textContent = HAS_DIAG ? 'Set your test date and your week. Your diagnostic already filled in four of the six sections below.' : 'Two steps to start. First, your test date and your week, right here. Then the 60-question diagnostic, which is the first task on your plan.';
+      return; }
     plan = B.generate(Object.assign({ nights: window.AceIndex && window.AceIndex.nights }, state.input));
     if (!plan.ok) { $('today').hidden = true; $('overview').hidden = true; $('days').hidden = true; $('builder').open = true; $('f-err').textContent = plan.errors.join(' '); return; }
     var past = TODAY > plan.testDate;
@@ -183,9 +196,9 @@
       $('today-pill').textContent = 'Test date passed';
       $('today-phase').textContent = '';
       $('today-h').textContent = 'Your test date has passed';
-      $('today-why').textContent = 'Going again? Set your next date below and the plan rebuilds around it. Going again works from your real attempt.';
-      $('today-tasks').innerHTML = taskRow({ id: 'x-retake', title: 'Read Going again', detail: 'Work from your real attempt: what it showed and what to fix first.', minutes: 20, href: '/for-retakers.html', section: null }, false);
-      $('today-go').href = S('/for-retakers.html'); $('today-go').textContent = 'Read Going again';
+      $('today-why').textContent = 'Going again? Set your next date below and choose Retake. The plan rebuilds around your real attempt: more drilling and timed work, less first-pass reading.';
+      $('today-tasks').innerHTML = '';
+      $('today-go').hidden = true; $('today-focus').hidden = true;
       $('today-total').textContent = ''; $('behind').innerHTML = '';
       $('builder').open = true;
       return;
@@ -196,6 +209,9 @@
     $('today-date').textContent = 'Today, ' + niceDate(TODAY, true);
     $('today-pill').textContent = left === 0 ? 'Test day' : left === 1 ? '1 day to test' : left + ' days to test';
     box.setAttribute('data-phase', d.phase);
+    var fo = plan.focus && B.diff(plan.focus.date, TODAY) <= B.FOCUS_DAYS ? plan.focus : null, fl = $('today-focus');
+    fl.hidden = !fo;
+    if (fo) fl.innerHTML = '<b>Focus from your ' + esc(fo.src === 'diagnostic' ? 'diagnostic' : (fo.title || 'last test')) + ':</b> ' + esc(fo.areas.map(function (a) { return a.label; }).join(', ')) + '. Your next study days start there.';
     $('today-phase').textContent = plan.phases.filter(function (p) { return p.id === d.phase; }).map(function (p) { return p.name; })[0] || '';
     if (!d.tasks.length) {
       var next = plan.days.slice(Math.max(0, idx) + 1).find(function (x) { return x.tasks.length; });
@@ -310,7 +326,7 @@
       state.done = state.done || {};
       if (state.done[id]) delete state.done[id]; else state.done[id] = 1;
       var day = id.slice(0, 10);
-      if (!plan.days.find(function (x) { return x.date === day; }).tasks.every(function (k) { return state.done[k.id]; })) delete state.done[day];
+      if (!plan.days.find(function (x) { return x.date === day; }).tasks.every(taskDone)) delete state.done[day];
       saveState(state); render(); return;
     }
     var m = e.target.closest('[data-day]');
@@ -331,7 +347,7 @@
     if (!p.ok) { $('builder').open = true; $('f-err').textContent = p.errors.join(' '); $('builder').scrollIntoView({ behavior: 'smooth' }); return; }
     // keep marks only for days before today; the days ahead are new
     var keep = {}; Object.keys(state.done || {}).forEach(function (k) { if (k.slice(0, 10) < TODAY) keep[k] = state.done[k]; });
-    state = { v: 1, input: inp, done: keep };
+    state = { v: 1, input: inp, done: keep, diagApplied: state.diagApplied };
     saveState(state); setForm(inp); render(true);
   }
   $('a-rebuild').addEventListener('click', rebuild);
@@ -350,6 +366,7 @@
 
   /* ---------- start ---------- */
   buildForm();
+  sync();
   if (state) { setForm(state.input); render(); }
   else { var pf = prefill(); setForm(pf.input, pf.sources); render(); }
 })();

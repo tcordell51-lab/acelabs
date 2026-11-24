@@ -34,7 +34,7 @@
   var CONTACT = 'https://acethedat.com/contact.html';
   var PORTAL_MSG = 'https://acethedat-portal.netlify.app/student/messages';
   var PLAN = '/plan/';
-  var PLAN_FALLBACK = '/onboarding.html';
+  var K_PLAN = 'acelabs_plan_v1';
   var K_LAST = 'acelabs_last_report';
   var SEC = {
     bio: { name: 'Biology', c: '#2f7d4f' }, gchem: { name: 'Gen Chem', c: '#2f5f9e' }, ochem: { name: 'Organic Chem', c: '#6b4fa0' },
@@ -244,19 +244,25 @@
     var s = document.createElement('style'); s.id = 'anx-css'; s.textContent = CSS; (document.head || document.documentElement).appendChild(s);
   }
 
-  /* /plan/ is the schedule builder. Until it ships, the link goes to onboarding (test date and plan). */
-  function wirePlan(host) {
-    var a = host.querySelector('[data-anx-plan]'); if (!a || typeof fetch !== 'function') return;
-    fetch(PLAN, { method: 'HEAD', credentials: 'same-origin', cache: 'no-store' }).then(function (r) {
-      if (r && r.ok && !r.redirected) { a.href = PLAN; a.textContent = 'Build my schedule'; }
-    }).catch(function () { /* keep the onboarding link */ });
-  }
-
+  /* The report's top focus goes two places: the last-report cache, and the saved study plan
+     (acelabs_plan_v1, input.focus), so the plan and Home point at the same thing the report does. */
+  function localDate() { var d = new Date(); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }
+  function link(l) { return l && l.href ? { href: String(l.href), label: String(l.label || '') } : null; }
   function remember(o, top) {
+    var focus = { src: o.src || 'test', title: o.title || '', date: localDate(), at: Date.now(), pct: o.pct == null ? null : Math.round(o.pct * 100) / 100,
+      areas: top.map(function (a) { return { section: a.section, label: a.label, correct: a.correct, total: a.total, learn: link(a.learn), drill: link(a.drill) }; }) };
+    var inPlan = false;
+    try { localStorage.setItem(K_LAST, JSON.stringify(focus)); } catch (e) { /* cache only */ }
     try {
-      localStorage.setItem(K_LAST, JSON.stringify({ src: o.src || 'test', title: o.title || '', at: Date.now(), pct: o.pct == null ? null : Math.round(o.pct * 100) / 100,
-        areas: top.map(function (a) { return { section: a.section, label: a.label, correct: a.correct, total: a.total }; }) }));
-    } catch (e) { /* cache only */ }
+      var st = JSON.parse(localStorage.getItem(K_PLAN) || 'null');
+      if (st && st.input) {
+        if (top.length) st.input.focus = { src: focus.src, title: focus.title, date: focus.date, areas: focus.areas };
+        else delete st.input.focus;
+        localStorage.setItem(K_PLAN, JSON.stringify(st));
+        inPlan = top.length > 0;
+      }
+    } catch (e) { /* the plan page reads the cache instead */ }
+    return inPlan;
   }
 
   function render(host, o) {
@@ -264,7 +270,7 @@
     o = o || {};
     css();
     var top = rank(o.areas), days = daysToTest();
-    remember(o, top);
+    var inPlan = remember(o, top);
     var h = '<section class="anx' + (top.length === 1 ? ' anx--one' : '') + '" aria-labelledby="anx-h">';
     if (!top.length) {
       h += '<div class="anx-head"><p class="anx-kicker">What to do next</p><h2 id="anx-h">Nothing missed. Keep it warm.</h2><p>No weak area showed up on this one. Keep each section warm with one short set a week, and take the next test under the clock.</p></div>';
@@ -284,11 +290,11 @@
         return '<li class="anx-step"><span class="anx-step__n" aria-hidden="true"></span><div><span class="anx-step__when">' + esc(s.when) + '</span><span class="anx-step__t">' + esc(s.title) + '</span><p class="anx-step__d">' + esc(s.detail) + '</p>' +
           (s.href ? '<a class="anx-step__a" href="' + esc(s.href) + '">' + esc(s.cta || 'Open') + '</a>' : '') + '</div></li>';
       }).join('') + '</ol>' +
-      '<div class="anx-plan"><p>Want this spread across every day until your test?</p><a class="anx-btn anx-btn--forest" data-anx-plan href="' + PLAN_FALLBACK + '">Set up my study plan</a></div></div>' +
+      (inPlan ? '<div class="anx-plan" data-anx-inplan><p>Added to your plan. Your next study days start with ' + esc(top[0].label) + '.</p><a class="anx-btn anx-btn--forest" data-anx-plan href="' + PLAN + '">See my plan</a></div></div>'
+        : '<div class="anx-plan"><p>Want this spread across every day until your test?</p><a class="anx-btn anx-btn--forest" data-anx-plan href="' + PLAN + '">Build my study plan</a></div></div>') +
       coach + '</div>';
     h += '</section>';
     host.innerHTML = h;
-    wirePlan(host);
     return { top: top, days: days };
   }
 

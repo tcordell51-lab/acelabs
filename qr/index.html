@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Quantitative Reasoning · Ace Labs</title>
+<meta name="description" content="Quantitative Reasoning on Ace Labs: the course, the labs that draw each method, and practice near your level.">
+<link rel="icon" type="image/svg+xml" href="/shared/ace-dat-mark.svg">
+<link rel="stylesheet" href="/shared/ace-ui.css?v=8">
+</head>
+<body class="aui">
+<main class="aui-wrap aui-stack" id="main">
+  <header class="aui-hubhead">
+    <div class="aui-stack">
+      <p class="aui-kicker">Section</p>
+      <h1 class="aui-h1">Quantitative Reasoning</h1>
+      <p class="aui-lede">Forty questions in forty-five minutes, with an on-screen calculator. Learn the method, see it drawn, then drill it near your level.</p>
+      <div class="aui-row">
+        <a class="aui-btn" href="/qr/drill/?run=daily">Start a set near your level</a>
+        <a class="aui-btn aui-btn--quiet" href="/repair/">Repair</a>
+      </div>
+    </div>
+    <img src="/shared/art/qr.webp" alt="" width="900" height="678">
+  </header>
+
+  <section class="aui-card aui-card--flat" aria-label="Your QR numbers">
+    <div class="aui-stats">
+      <div class="aui-stat"><b id="s-answers">0</b><span>answers</span></div>
+      <div class="aui-stat"><b id="s-right">0</b><span>right</span></div>
+      <div class="aui-stat"><b id="s-due">0</b><span>open in Repair</span></div>
+      <div class="aui-stat"><b id="s-miss">0</b><span>due back today</span></div>
+    </div>
+  </section>
+
+  <section class="aui-stack" aria-labelledby="c-title">
+    <h2 class="aui-h2" id="c-title">Course</h2>
+    <div class="aui-grid">
+    <a class="aui-card aui-card--flat" href="/tools/qr-retold/"><h3 class="aui-h3">QR, Retold</h3><p class="aui-small">The course: fourteen nights, each with checks.</p></a>
+    <a class="aui-card aui-card--flat" href="/tools/qr/?from=hub"><h3 class="aui-h3">Skill lessons</h3><p class="aui-small">One module per skill, from fractions to probability.</p></a>
+    </div>
+  </section>
+
+  <section class="aui-stack" aria-labelledby="m-title">
+    <h2 class="aui-h2" id="m-title">See it</h2>
+    <div class="aui-grid">
+    <a class="aui-card aui-card--flat" href="/see/"><h3 class="aui-h3">Whiteboards</h3><p class="aui-small">QR drawn big: predict first, then reveal.</p></a>
+    <a class="aui-card aui-card--flat" href="/qr/worked/"><h3 class="aui-h3">Worked solutions you can see</h3><p class="aui-small">Six problem families, the method drawn step by step.</p></a>
+    <a class="aui-card aui-card--flat" href="/qr/probability/"><h3 class="aui-h3">Probability sandbox</h3><p class="aui-small">Trees, joint and conditional views of the same problem.</p></a>
+    <a class="aui-card aui-card--flat" href="/qr/statistics/"><h3 class="aui-h3">Statistics lab</h3><p class="aui-small">Mean, median, spread and z-scores you can drag.</p></a>
+    <a class="aui-card aui-card--flat" href="/qr/geometry/"><h3 class="aui-h3">Geometry canvas</h3><p class="aui-small">Areas, angles and circles in two dimensions.</p></a>
+    <a class="aui-card aui-card--flat" href="/qr/geometry/triangles/"><h3 class="aui-h3">Triangles</h3><p class="aui-small">What stays the same when a triangle changes.</p></a>
+    <a class="aui-card aui-card--flat" href="/qr/geometry/coordinates/"><h3 class="aui-h3">Coordinate plane</h3><p class="aui-small">Slope, distance and midpoints on the grid.</p></a>
+    <a class="aui-card aui-card--flat" href="/qr/geometry/solids/"><h3 class="aui-h3">Volume and surface area</h3><p class="aui-small">Solids you can resize.</p></a>
+    </div>
+  </section>
+
+  <section class="aui-stack" aria-labelledby="t-title">
+    <h2 class="aui-h2" id="t-title">Practice</h2>
+    <div class="aui-grid">
+    <a class="aui-card aui-card--flat" href="/qr/drill/"><h3 class="aui-h3">QR drill</h3><p class="aui-small">Questions by topic, picked near your level. Every miss goes into Repair.</p></a>
+    <a class="aui-card aui-card--flat" href="/qr/pacing/"><h3 class="aui-h3">Pacing practice</h3><p class="aui-small">Hold test pace: skip, mark and come back.</p></a>
+    </div>
+  </section>
+</main>
+<script src="/shared/ace-record.js?v=6"></script>
+<script src="/shared/ace-ui.js?v=5" defer></script>
+<script>
+(function () {
+  var R = window.AceRecord; if (!R) return;
+  try { R.migrate(); } catch (e) { /* fresh browser */ }
+  var st = R.stats({ section: 'qr' }), L = R.repairList({ now: Date.now() });
+  function mine(e) { return e.section === 'qr'; }
+  function set(id, v) { document.getElementById(id).textContent = String(v || 0); }
+  set('s-answers', st.answers); set('s-right', st.right); set('s-due', L.open.filter(mine).length); set('s-miss', L.due.filter(mine).length);
+})();
+</script>
+<script src="/shared/ace-tabs.js?v=4" defer></script>
+</body>
+</html>
