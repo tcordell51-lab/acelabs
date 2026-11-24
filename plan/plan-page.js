@@ -12,7 +12,7 @@
   var SEC_SHORT = { bio: 'Bio', gchem: 'GChem', ochem: 'OChem', pat: 'PAT', rc: 'Reading', qr: 'QR' };
   var CONF_WORD = ['', 'Shaky', 'Unsure', 'Okay', 'Solid', 'Strong'];
   var WHY = {
-    learn: 'Learn first: a Retold night, then practice on exactly what it taught.',
+    learn: 'Learn first: a Chalk Talks night, then practice on exactly what it taught.',
     drill: 'Drill and repair: sets near your level, and every miss fixed while it is fresh.',
     testing: 'Full-length season: timed work, and a full test on a steady cadence.',
     final: 'The final stretch: lighter days, no cramming. Keep what you have sharp.',

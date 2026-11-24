@@ -98,9 +98,9 @@ test('eight weeks: learn, drill, testing, final; full-lengths every 7 to 10 days
     const g = gapDays(p.fullLengths[k - 1], p.fullLengths[k]);
     assert.ok(g >= 5 && g <= 12, 'spacing ' + g);
   }
-  // Retold nights carry the real titles and link to the right night
+  // Chalk Talks nights carry the real titles and link to the right night
   const night = p.days.flatMap((d) => d.tasks).find((t) => t.kind === 'learn');
-  assert.match(night.title, /Retold, night 1: /);
+  assert.match(night.title, /Chalk Talks, night 1: /);
   assert.match(night.href, /\?night=1$/);
   // weakest sections get more time than equally sized strong ones
   assert.ok(p.sectionMinutes.qr > p.sectionMinutes.ochem, 'shaky QR over steady OChem');
@@ -118,7 +118,7 @@ test('five months: long runway, lighter start, full-lengths only in the last eig
   for (let k = 1; k < p.fullLengths.length; k++) { const g = gapDays(p.fullLengths[k - 1], p.fullLengths[k]); assert.ok(g >= 5 && g <= 10, 'spacing ' + g); }
   const first = p.days.find((d) => d.kind === 'learn' && d.dow === 2);
   assert.ok(first.minutes < 120, 'early weekday runs lighter than the 2 hours given');
-  // every Retold night of a shaky section fits in five months
+  // every Chalk Talks night of a shaky section fits in five months
   const bioNights = p.days.flatMap((d) => d.tasks).filter((t) => t.kind === 'learn' && t.section === 'bio').length;
   assert.equal(bioNights, NIGHTS.bio.length);
 });

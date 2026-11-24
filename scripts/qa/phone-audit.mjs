@@ -53,7 +53,7 @@ function pages() {
   return files.map((f) => '/' + f.replace(/(^|\/)index\.html$/, '$1')).sort();
 }
 // Addresses that are a page state, not a file.
-const EXTRA = ['/gc/?check=buffers', '/gc/?run=daily', '/bio/?run=daily', '/oc/?run=daily', '/qr/drill/?run=daily'];
+const EXTRA = ['/gc/?check=buffers', '/gc/?run=daily', '/bio/?run=daily', '/oc/?run=daily', '/qr/drill/?run=daily', '/oc/models/?m=newman', '/oc/models/?m=chair', '/oc/models/?m=stereo', '/oc/models/?m=sn2', '/oc/models/?m=e2', '/oc/models/?m=benzene', '/oc/chalk/?t=chair-flip'];
 
 /* ------------------------------------------------------------------------------------------ */
 /* In the page                                                                                  */

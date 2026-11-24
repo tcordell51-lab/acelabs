@@ -1,14 +1,14 @@
 /* ============================================================
    Mini-Test Remediation Map
    For every (section, topic) a miss can carry, this routes the student to
-   the exact place to repair it: the Retold night that teaches it, the review
+   the exact place to repair it: the Chalk Talks night that teaches it, the review
    engine that drills it, AND the 15-second Trick short that fixes it. The
    review + master-mistake list read this, so a wrong answer always has a fix.
    ============================================================ */
 window.MINITEST_REMEDIATION = {
   bio: {
     name: 'Biology',
-    learn: '/tools/bio-retold/',      // Retold course (learn it)
+    learn: '/tools/bio-retold/',      // Chalk Talks course (learn it)
     review: '/tools/bio/',            // Bio Repair Lab (drill it)
     rail: '#57b487',
     topics: {
@@ -45,7 +45,7 @@ window.MINITEST_REMEDIATION = {
   ochem: {
     name: 'Organic Chemistry',
     learn: '/tools/organic/',
-    review: '/tools/ochem/',   // the engine (was the Retold course twice; fixed 2026-09-03)
+    review: '/tools/ochem/',   // the engine (was the Chalk Talks course twice; fixed 2026-09-03)
     rail: '#9b7bd0',
     topics: {
       'IUPAC nomenclature': 'Reading and naming the skeleton',
@@ -82,7 +82,7 @@ window.MINITEST_REMEDIATION = {
 /* Trick shorts (the 15-second fixes). Maps a (section, topic) to a Trick Series
    short key -> /tricks/series/topic-tiktok.html?topic=<key>. Only OChem and some
    GChem topics have a short today (the Trick Series is Orgo/GChem); the rest lean
-   on the Retold night + engine. GChem also routes to the Gen Chem tiktok player
+   on the Chalk Talks night + engine. GChem also routes to the Gen Chem tiktok player
    for topics the Trick Series doesn't cover. */
 window.MINITEST_TRICKS = {
   seriesBase: '/tricks/series/topic-tiktok.html?topic=',   // + key

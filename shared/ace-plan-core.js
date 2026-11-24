@@ -20,7 +20,7 @@
      attempt: 'first' | 'retake',
      confidence: { bio, gchem, ochem, pat, rc, qr }   1 shaky ... 5 strong (3 if missing)
      blackouts: ['YYYY-MM-DD', ...]   days with no study
-     nights: AceIndex.nights (optional; gives the Retold night titles)
+     nights: AceIndex.nights (optional; gives the Chalk Talks night titles)
      focus: { date, src, title, areas: [{ section, label, correct, total, learn:{href,label}, drill:{href,label} }] }
             (optional) the weakest areas of the last score report. The next study days on or
             after focus.date open with them, one area a day, so the report, Home and the plan
@@ -31,7 +31,7 @@
      test day, then the rest day before it, then the final stretch (14 days out when the
      runway allows it, else 10 or 7; it rotates all six sections, and Test-week mode takes
      over 7 days out), then full-length testing (up to about six weeks before the final stretch), then
-     drill and repair, then learn (the Retold nights) at the front.
+     drill and repair, then learn (the Chalk Talks nights) at the front.
      Time per section starts from a default study load (Bio 30, Gen Chem 22, OChem 22,
      PAT 26, Reading 12, QR 18). These are Ace Labs planning weights, not DAT statistics:
      the science sections carry the most content, Reading the least. That is times a
@@ -79,7 +79,7 @@
     retake: { 1: 1.9, 2: 1.5, 3: 1, 4: 0.7, 5: 0.5 }
   };
   var PHASE = {
-    learn: { name: 'Learn', blurb: 'Retold nights, each followed by practice on what it taught.' },
+    learn: { name: 'Learn', blurb: 'Chalk Talks nights, each followed by practice on what it taught.' },
     drill: { name: 'Drill and repair', blurb: 'Sets near your level, your Repair queue, a Climb mini test each week.' },
     testing: { name: 'Full-length testing', blurb: 'A timed full-length on a steady cadence, each followed by a review day.' },
     final: { name: 'Final stretch', blurb: 'Lighter days across all six sections: Repair, short sets, cheat sheets. Test-week mode takes over 7 days out.' },
@@ -258,7 +258,7 @@
     }
     var weakOrder = SECTIONS.slice().sort(function (a, b) { return input.confidence[a] - input.confidence[b] || share[b] - share[a]; });
 
-    /* ---------- Retold nights queue ---------- */
+    /* ---------- Chalk Talks nights queue ---------- */
     // Stride scheduling: each section's nights come up in proportion to its time share, shaky
     // sections first and more often, strong ones (4 or 5) rarely, so the course interleaves.
     var nightQ = {}, stride = {}, pass = {};
@@ -297,7 +297,7 @@
       var nt = nightQ[s].shift(), m = r5(minutes);
       pass[s] += stride[s];
       alloc[s] += m; taught[s] = true;
-      return { section: s, kind: 'learn', title: SHORT[s] + ' Retold, night ' + nt.n + (nt.t ? ': ' + nt.t : ''), detail: 'Read it actively: call each answer before you scroll.', minutes: m, href: COURSE[s] + '?night=' + nt.n };
+      return { section: s, kind: 'learn', title: SHORT[s] + ' Chalk Talks, night ' + nt.n + (nt.t ? ': ' + nt.t : ''), detail: 'Read it actively: call each answer before you scroll.', minutes: m, href: COURSE[s] + '?night=' + nt.n };
     }
     function task(kind, title, detail, minutes, href, s) { return { section: s || null, kind: kind, title: title, detail: detail, minutes: r5(minutes), href: href }; }
     function repairTask(m) { return task('repair', 'Clear your Repair queue', 'Each miss comes back as a fresh question. Fix it, then move on.', m, LINK.repair); }
@@ -524,7 +524,7 @@
     var maxBudget = Math.max.apply(null, days.map(function (d) { return d.budget || 0; }));
     if (fullDays.length && maxBudget < FULL_MIN) notes.push('A full-length takes about 4 hr 45 min with breaks, longer than any day you gave. Those days run long on purpose.');
     if (!fullDays.length && N >= 9) notes.push('No room for a full-length with these study days. Add a day in the last few weeks to fit one.');
-    if (nightsLeft.length && runway !== 'short' && runway !== 'test-week') notes.push('Not every Retold night fits for ' + nightsLeft.join(', ') + '. Read the rest when a day runs short, starting with the nights you find hardest.');
+    if (nightsLeft.length && runway !== 'short' && runway !== 'test-week') notes.push('Not every Chalk Talks night fits for ' + nightsLeft.join(', ') + '. Read the rest when a day runs short, starting with the nights you find hardest.');
 
     return {
       ok: true, version: 1, input: input, today: input.today, testDate: input.testDate,

@@ -1,12 +1,12 @@
 #!/usr/bin/env node
 /* build-ace-index.mjs : writes shared/ace-index.js, the small lookup table the
    shell pages (home, Learn, Review, Performance) use to route a concept to the
-   right Retold night, Canon sheet and drill.
+   right Chalk Talks night, Canon sheet and drill.
 
      node scripts/build-ace-index.mjs [--canon ~/code/ace-system/visuals/sheets]
 
    Sources (all read, nothing else written):
-   - the six Retold courses: NIGHTS[n] = { t: title }  -> nights (the old chapter field was removed 2026-11-16)
+   - the six Chalk Talks courses: NIGHTS[n] = { t: title }  -> nights (the old chapter field was removed 2026-11-16)
      (the chapter name is kept only as matching keywords, never displayed)
    - QR and GC engines: SKILLS = [{ id, name }]                           -> skill labels
    - QR modules on disk: tools/qr/proposals/<agent>/<skill>.html          -> drill pages

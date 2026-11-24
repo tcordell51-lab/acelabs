@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OChem Chalk Talks · Ace Labs</title>
+<meta name="description" content="Organic Chemistry drawn on the board, one idea at a time, in crash-course order: 19 Chalk Talks with a prediction, a step-by-step drawing, three questions, and 3D models you can turn.">
+<link rel="icon" type="image/svg+xml" href="/shared/ace-dat-mark.svg">
+<link rel="stylesheet" href="/shared/ace-ui.css?v=9">
+<link rel="stylesheet" href="/shared/ace-board.css?v=4">
+<style>
+  .ct-meter { display: flex; align-items: center; gap: var(--aui-3); font-size: var(--aui-t-sm); font-weight: 700; }
+  .ct-meter i { flex: 1; height: 8px; border-radius: 999px; background: var(--aui-line); overflow: hidden; }
+  .ct-meter i b { display: block; height: 100%; background: var(--aui-gold); border-radius: 999px; }
+  .ct-unit { display: grid; gap: var(--aui-3); }
+  .ct-list { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--aui-3); }
+  @media (min-width: 760px) { .ct-list { grid-template-columns: 1fr 1fr; } }
+  @media (min-width: 1100px) { .ct-list { grid-template-columns: 1fr 1fr 1fr; } }
+  .ct-talk { background: var(--aui-paper); border: 1px solid var(--aui-line); border-radius: var(--aui-r); overflow: hidden; display: flex; flex-direction: column; min-width: 0; }
+  .ct-art { display: block; width: 100%; padding: 0; border: 0; border-bottom: 1px solid var(--aui-line); background: #fdfbf6; cursor: pointer; aspect-ratio: 720 / 400; overflow: hidden; position: relative; }
+  .ct-art::after { content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 34%; background: linear-gradient(to bottom, rgba(253,251,246,0), #fdfbf6 88%); }
+  .ct-art .bd-board { pointer-events: none; }
+  .ct-art svg { display: block; width: 100%; height: auto; }
+  .ct-art [data-step] { opacity: 1 !important; visibility: visible !important; }
+  .ct-body { padding: var(--aui-3) var(--aui-4) var(--aui-4); display: grid; gap: 6px; flex: 1; align-content: start; }
+  .ct-num { font-size: var(--aui-t-xs); font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--aui-gold-ink); margin: 0; }
+  .ct-num span { color: var(--aui-forest); margin-left: 8px; }
+  .ct-title { font: 700 var(--aui-t-lg)/1.25 var(--aui-font-display, var(--aui-font)); margin: 0; }
+  .ct-blurb { font-size: var(--aui-t-sm); margin: 0; color: var(--aui-ink-2, inherit); }
+  .ct-acts { display: flex; flex-wrap: wrap; gap: var(--aui-2); margin-top: 6px; }
+  .ct-acts .aui-btn { min-height: 44px; }
+</style>
+</head>
+<body class="aui">
+<main class="aui-wrap aui-stack" id="main">
+  <header class="aui-stack">
+    <p class="aui-kicker">Organic Chemistry · Chalk Talks</p>
+    <h1 class="aui-h1">OChem Chalk Talks</h1>
+    <p class="aui-lede">The whole course drawn on the board, one idea at a time, in the order the crash course teaches it. Predict first, watch it drawn, then answer three questions. Where shape matters, turn the molecule in 3D.</p>
+    <div class="ct-meter" id="meter" aria-live="polite"><span id="meter-t">0 of 19 seen</span><i><b id="meter-b" style="width:0"></b></i></div>
+  </header>
+  <div class="aui-stack" id="units"></div>
+  <section class="aui-stack" aria-labelledby="more-t">
+    <h2 class="aui-h2" id="more-t">Keep going</h2>
+    <div class="aui-grid">
+      <a class="aui-card aui-card--flat" href="/oc/models/"><h3 class="aui-h3">OChem 3D models</h3><p class="aui-small">Seven molecules to turn and run, each beside its line drawing and the words.</p></a>
+      <a class="aui-card aui-card--flat" href="/tools/organic/"><h3 class="aui-h3">OChem Chalk Talks: the 13 nights</h3><p class="aui-small">The full course to read, night by night, with checks.</p></a>
+      <a class="aui-card aui-card--flat" href="/see/#ochem"><h3 class="aui-h3">Every whiteboard</h3><p class="aui-small">All sections, one gallery.</p></a>
+    </div>
+  </section>
+</main>
+<script src="/shared/ace-visuals.js?v=8"></script>
+<script src="/shared/ace-record.js?v=7"></script>
+<script src="/shared/ace-board.js?v=5"></script>
+<script src="/shared/boards/oc.js?v=2"></script>
+<script src="/shared/boards/oc2.js?v=2"></script>
+<script src="/shared/boards/oc3.js?v=1"></script>
+<script src="/shared/ace-ui.js?v=7" defer></script>
+<script>
+(function () {
+  'use strict';
+  var B = window.AceBoard;
+  /* crash-course order. Third entry: the 3D model that goes with the talk, if there is one. */
+  var UNITS = [
+    ['Structure and shape', [['hybridization', 'hybrid'], ['nomenclature'], ['arrow-pushing'], ['pka-ladder'], ['newman', 'newman'], ['chair-flip', 'chair'], ['stereo', 'stereo']]],
+    ['Substitution and elimination', [['sn-e-decide'], ['sn2-e2-shape', 'sn2']]],
+    ['Reactions by functional group', [['alkene-map'], ['alkynes'], ['alcohols-ethers'], ['aromaticity', 'benzene'], ['eas-directors'], ['carbonyl'], ['enolates'], ['amines']]],
+    ['Read it and build it', [['spectroscopy'], ['synthesis']]]
+  ];
+  function el(tag, cls, text) { var n = document.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; }
+  function seen() { try { return JSON.parse(localStorage.getItem('acelabs.boards') || '{}') || {}; } catch (e) { return {}; } }
+  var host = document.getElementById('units'), n = 0, ids = [], marks = {};
+  UNITS.forEach(function (u, ui) {
+    var sec = el('section', 'ct-unit'), h = el('h2', 'aui-h2', u[0]); h.id = 'u' + ui; sec.setAttribute('aria-labelledby', h.id); sec.appendChild(h);
+    var ol = el('ol', 'ct-list');
+    u[1].forEach(function (t) {
+      var b = B.get(t[0]); if (!b) return;
+      n++; ids.push(b.id);
+      var li = el('li', 'ct-talk'); li.id = 't-' + b.id;
+      var art = el('button', 'ct-art'); art.type = 'button'; art.setAttribute('aria-label', 'Open the board: ' + b.title);
+      var bd = el('div', 'bd-board'); bd.innerHTML = b.svg; var svg = bd.querySelector('svg'); if (svg) { svg.setAttribute('aria-hidden', 'true'); svg.setAttribute('viewBox', '0 20 720 400'); }
+      Array.prototype.forEach.call(bd.querySelectorAll('[data-step]'), function (g) { g.setAttribute('data-on', 'true'); });
+      art.appendChild(bd);
+      var body = el('div', 'ct-body'), num = el('p', 'ct-num', 'Talk ' + n); marks[b.id] = el('span', null, ''); num.appendChild(marks[b.id]);
+      body.appendChild(num); body.appendChild(el('h3', 'ct-title', b.title)); body.appendChild(el('p', 'ct-blurb', b.sub || ''));
+      var acts = el('div', 'ct-acts'), go = el('button', 'aui-btn', 'Start the talk'); go.type = 'button';
+      function open() { B.open(b.id, { from: 'labs', backLabel: 'Back to Chalk Talks' }); }
+      go.addEventListener('click', open); art.addEventListener('click', open); acts.appendChild(go);
+      if (t[1]) { var m = el('a', 'aui-btn aui-btn--quiet', 'Turn it in 3D'); m.href = '/oc/models/?m=' + t[1]; acts.appendChild(m); }
+      body.appendChild(acts); li.appendChild(art); li.appendChild(body); ol.appendChild(li);
+    });
+    sec.appendChild(ol); host.appendChild(sec);
+  });
+  function paint() {
+    var s = seen(), k = 0;
+    ids.forEach(function (id) { var on = !!s[id]; if (on) k++; marks[id].textContent = on ? 'Seen' : ''; });
+    document.getElementById('meter-t').textContent = k + ' of ' + ids.length + ' seen';
+    document.getElementById('meter-b').style.width = Math.round(k / ids.length * 100) + '%';
+  }
+  paint();
+  window.addEventListener('focus', paint); document.addEventListener('click', function () { setTimeout(paint, 50); });
+  var want = new URLSearchParams(location.search).get('t');
+  if (want && B.get(want)) { var card = document.getElementById('t-' + want); if (card) card.scrollIntoView({ block: 'center' }); B.open(want, { from: 'labs', backLabel: 'Back to Chalk Talks' }); }
+})();
+</script>
+<script src="/shared/ace-tabs.js?v=5" defer></script>
+</body>
+</html>

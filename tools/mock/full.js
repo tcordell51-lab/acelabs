@@ -743,7 +743,7 @@
   }
   /* The "what to do next" areas (shared/ace-next-steps.js): one per subtopic for the sciences and QR,
      one per subtest for PAT, one per question type for Reading. Each carries its misses' time, blanks
-     and (PAT) trap types, plus the Retold night and the engine that fix it. */
+     and (PAT) trap types, plus the Chalk Talks night and the engine that fix it. */
   var NX_SEC = { 'Biology': 'bio', 'Gen Chem': 'gchem', 'OChem': 'ochem', 'QR': 'qr', 'PAT': 'pat', 'RC': 'rc' };
   var PACE = { sons: 54, rc: 72, qr: 67 };   // test-day seconds per question: 90 min / 100, 60 min / 50, 45 min / 40
   var PAT_PACE = { keyholes: 45, tfe: 45, angles: 20, holepunch: 22, cubes: 25, patternfold: 50 };   // Ace pacing (tools/pat/test.html)
@@ -792,7 +792,7 @@
         r.drill = { href: st2.review, label: 'Timed passages in the ' + st2.engine };
       } else {
         var best = Object.keys(r.nightN).sort(function (a, b) { return r.nightN[b] - r.nightN[a]; })[0];
-        r.learn = best ? { href: st2.learn + '?night=' + best, label: nightName(r.section, +best, r.label) } : { href: st2.learn, label: subjName(r.sub) + ', Retold' };
+        r.learn = best ? { href: st2.learn + '?night=' + best, label: nightName(r.section, +best, r.label) } : { href: st2.learn, label: subjName(r.sub) + ' Chalk Talks' };
         r.drill = drillFor(r.sub, r.stop, r.type);
       }
       out.push(r);
@@ -814,7 +814,7 @@
       h += '<div class="why">' + (window.AceMockExplain ? window.AceMockExplain.html(it, ms.ans) : esc(it.why)) + '</div>';
       var night = it.nights && it.nights[0];
       h += seeChip({ section: x.sub, topic: it.stop || it.topic, topicName: it.topic, stem: it.q });
-      h += '<div class="links"><a href="' + st.learn + (night ? '?night=' + night : '') + '">' + (night ? 'Retold night ' + night + ': ' : 'Retold: ') + esc(it.topic) + '</a><a href="' + st.review + '">' + st.engine + '</a></div>';
+      h += '<div class="links"><a href="' + st.learn + (night ? '?night=' + night : '') + '">' + (night ? 'Chalk Talks night ' + night + ': ' : 'Chalk Talks: ') + esc(it.topic) + '</a><a href="' + st.review + '">' + st.engine + '</a></div>';
     } else if (x.kind === 'pat') {
       var p = x.it, P = PAT[p.type], ex = PAT.explain ? PAT.explain(p, ms.ans) : null;
       var fig = p.type === 'angles' ? PAT.angles.renderTruth(p) : p.type === 'cubes' ? PAT.cubes.renderFigure(p, { highlight: PAT.cubes.kCubes(p) }) : p.type === 'patternfold' && ex ? PAT.explain.figure(p, ex) : P.renderFigure(p);
@@ -823,12 +823,12 @@
         (ms.ans != null ? '<div style="max-width:160px"><div class="note">Your pick</div>' + P.renderOption(p, ms.ans) + '</div>' : '') + '<div style="max-width:160px"><div class="note">Correct</div>' + P.renderOption(p, p.answer) + '</div></div>';
       if (ex) h += PAT.explain.html(ex, { chosen: ms.ans, note: p.type === 'cubes' ? 'Highlighted in the figure: the cubes with exactly ' + p.meta.k + ' painted side' + (p.meta.k === 1 ? '' : 's') + '.' : null });
       h += seeChip({ section: 'pat', topic: p.type, skill: p.type });
-      h += '<div class="links"><a href="/tools/pat/' + PAT_PAGE[p.type] + '">Practice ' + esc((PAT.SECTIONS.filter(function (s) { return s.type === p.type; })[0] || {}).name || 'this subtest') + '</a><a href="' + st.learn + '">PAT, Retold</a></div>';
+      h += '<div class="links"><a href="/tools/pat/' + PAT_PAGE[p.type] + '">Practice ' + esc((PAT.SECTIONS.filter(function (s) { return s.type === p.type; })[0] || {}).name || 'this subtest') + '</a><a href="' + st.learn + '">PAT Chalk Talks</a></div>';
     } else {
       var q = x.q, pr = (q.proof || [])[0];
       h += '<div class="q">' + esc(q.stem) + '</div><div class="a">Your answer: <b>' + (ms.ans == null ? 'left open' : L[ms.ans] + '. ' + esc(q.choices[ms.ans])) + '</b><br>Correct: <b>' + L[q.key] + '. ' + esc(q.choices[q.key]) + '</b></div>' +
         '<div class="why">' + (window.AceMockExplain ? window.AceMockExplain.rcHtml(q, ms.ans) : (pr ? '<b>Proof line, paragraph ' + pr.paragraph + ':</b> "' + esc(pr.quote) + '"<br><br>' : '') + esc(q.why)) + '</div>' + seeChip({ section: 'rc', topic: q.type, topicName: (RC && RC.types && RC.types[q.type]) || q.type }) +
-        '<div class="links"><a href="/tools/rc/">Practice this passage in the RC player</a><a href="' + st.learn + '">Reading, Retold</a></div>';
+        '<div class="links"><a href="/tools/rc/">Practice this passage in the RC player</a><a href="' + st.learn + '">Reading Chalk Talks</a></div>';
     }
     return h + '</div>';
   }

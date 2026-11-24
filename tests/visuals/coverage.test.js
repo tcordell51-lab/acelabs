@@ -56,7 +56,7 @@ test('every topic in the free practice sets opens a visual', () => {
   }
 });
 
-test('Retold night titles, GuacaMOLE and the QR drill keys all resolve', () => {
+test('Chalk Talks night titles, GuacaMOLE and the QR drill keys all resolve', () => {
   const want = [
     ['gchem', 'The mole bridge', 'mole-bridge'], ['gchem', 'Proton traffic', 'acid-base'], ['gchem', 'Balance and the push-back', 'equilibrium'],
     ['gchem', 'The energy ledger', 'energy-ledger'], ['gchem', 'Downhill: entropy and free energy', 'energy-ledger'], ['gchem', 'Gases', 'gases'],

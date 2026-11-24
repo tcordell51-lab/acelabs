@@ -28,8 +28,8 @@
 (function (root) {
   'use strict';
   if (root && root.AceBoard) return;
-  var V = '4';
-  var FILES = ['gc', 'bio', 'oc', 'qr', 'gc2', 'bio2', 'oc2', 'qr2', 'pat', 'rc'];
+  var V = '5';
+  var FILES = ['gc', 'bio', 'oc', 'qr', 'gc2', 'bio2', 'oc2', 'qr2', 'pat', 'rc', 'oc3'];
   /* Board text is drawn in board units (720 wide). On a 390px phone the board runs edge to edge, so
      26 units is 14px: nothing smaller is ever drawn (tests/visuals/coverage.test.js holds the line). */
   var MIN_TEXT = 26;

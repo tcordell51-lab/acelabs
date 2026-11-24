@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OChem 3D models · Ace Labs</title>
+<meta name="description" content="Seven Organic Chemistry models you can turn and play with: hybrid orbitals, Newman projections, chair flips, mirror images, SN2, E2 and the benzene ring. Each one sits beside its line drawing and a written version.">
+<link rel="icon" type="image/svg+xml" href="/shared/ace-dat-mark.svg">
+<link rel="stylesheet" href="/shared/ace-ui.css?v=9">
+<style>
+  .m-picks { display: flex; gap: var(--aui-2); overflow-x: auto; padding: 2px 0 6px; margin: 0 calc(-1 * var(--aui-4)); padding-left: var(--aui-4); padding-right: var(--aui-4); scrollbar-width: none; }
+  .m-picks::-webkit-scrollbar { display: none; }
+  .m-picks a { flex: 0 0 auto; display: inline-flex; align-items: center; min-height: 44px; padding: 0 16px; border-radius: 999px; border: 1.5px solid var(--aui-line-2); background: var(--aui-paper); font: 700 var(--aui-t-sm) var(--aui-font); text-decoration: none; white-space: nowrap; }
+  .aui .m-picks a { color: var(--aui-ink); }
+  .aui .m-picks a[aria-current="true"] { background: var(--aui-forest); color: var(--aui-cream); border-color: var(--aui-forest); }
+  @media (min-width: 900px) { .m-picks { flex-wrap: wrap; overflow: visible; margin: 0; padding: 0; } }
+
+  .m-grid { display: grid; gap: var(--aui-4); }
+  @media (min-width: 900px) { .m-grid { grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); align-items: start; } }
+  .m-col { display: grid; gap: var(--aui-3); min-width: 0; }
+  .m-lbl { font-size: var(--aui-t-xs); font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--aui-gold-ink); margin: 0 0 6px; }
+
+  /* the 3D stage: a chalkboard, so white hydrogens and the gold highlights read at a glance */
+  .m-view { position: relative; aspect-ratio: 4 / 3; border-radius: var(--aui-r-lg); overflow: hidden; touch-action: none; cursor: grab; user-select: none; -webkit-user-select: none;
+    background: radial-gradient(120% 90% at 50% 35%, #2c5a46 0%, #1B3A2D 55%, #12281f 100%); box-shadow: inset 0 0 0 1px rgba(245,240,232,.08), var(--aui-shadow); }
+  .m-view:active { cursor: grabbing; }
+  .m-view canvas { display: block; width: 100%; height: 100%; }
+  .m-tag { position: absolute; left: 0; top: 0; transform: translate(-50%, -50%); padding: 1px 7px; border-radius: 9px; font: 700 13px/18px var(--aui-font); color: #F5F0E8; background: rgba(13,32,24,.62); pointer-events: none; white-space: nowrap; will-change: transform; }
+  .m-tag--gold { background: #C9A84C; color: #0d2018; }
+  .m-tag--rose { background: #f3a1b6; color: #3d0d1c; }
+  .m-tag--big { font-size: 15px; line-height: 22px; padding: 1px 9px; background: #F5F0E8; color: #0d2018; }
+  .m-hint { position: absolute; left: 10px; bottom: 8px; font: 600 13px/1 var(--aui-font); color: #dfe7df; background: rgba(13,32,24,.55); padding: 6px 10px; border-radius: 999px; pointer-events: none; transition: opacity .3s; }
+  .m-state { position: absolute; left: 10px; top: 10px; right: 10px; display: flex; justify-content: space-between; gap: 8px; pointer-events: none; }
+  .m-state span { font: 700 13px/1.2 var(--aui-font); color: #0d2018; background: #E2C97A; padding: 6px 10px; border-radius: 999px; }
+  .m-state span:empty { display: none; }
+  .m-state span + span { background: rgba(245,240,232,.92); }
+  .m-nogl { position: absolute; inset: 0; display: grid; place-items: center; text-align: center; padding: 20px; font-size: var(--aui-t-sm); color: #F5F0E8; }
+
+  .m-ctl { display: grid; gap: var(--aui-2); }
+  .m-seg { display: flex; flex-wrap: wrap; gap: var(--aui-2); }
+  .m-seg button, .m-btn { min-height: 44px; padding: 0 14px; border-radius: 999px; border: 1.5px solid var(--aui-line-2); background: var(--aui-paper); color: var(--aui-ink); font: 700 var(--aui-t-sm) var(--aui-font); cursor: pointer; }
+  .m-seg button[aria-pressed="true"] { background: var(--aui-forest); color: var(--aui-cream); border-color: var(--aui-forest); }
+  .m-btn--go { background: var(--aui-gold); border-color: var(--aui-gold); color: #0d2018; }
+  .m-btn[disabled] { opacity: .45; cursor: not-allowed; }
+  .m-range { display: grid; gap: 2px; }
+  .m-range label { display: flex; justify-content: space-between; gap: 8px; font-size: var(--aui-t-sm); font-weight: 700; }
+  .m-range output { color: var(--aui-gold-ink); font-variant-numeric: tabular-nums; }
+  .m-range input { width: 100%; height: 44px; margin: 0; accent-color: #1B3A2D; }
+
+  .m-card { background: var(--aui-paper); border: 1px solid var(--aui-line); border-radius: var(--aui-r); padding: var(--aui-3) var(--aui-4) var(--aui-4); }
+  .m-draw svg { display: block; width: 100%; height: auto; max-width: 460px; margin: 0 auto; }
+  .m-words { font-size: var(--aui-t-md); line-height: 1.5; }
+  .m-words p { margin: 0 0 8px; }
+  .m-words p:last-child { margin-bottom: 0; }
+  .m-words .big { font-size: var(--aui-t-lg); font-weight: 700; line-height: 1.3; }
+  .m-words .rule { background: var(--aui-gold-soft); border-radius: var(--aui-r-sm); padding: 8px 12px; font-size: var(--aui-t-sm); }
+  .m-next { display: flex; flex-wrap: wrap; gap: var(--aui-2); }
+</style>
+</head>
+<body class="aui">
+<main class="aui-wrap aui-stack" id="main">
+  <header class="aui-stack">
+    <p class="aui-kicker">Organic Chemistry · See it</p>
+    <h1 class="aui-h1" id="title">OChem 3D models</h1>
+    <p class="aui-lede" id="lede">Turn it, flip it, run it. The line drawing and the words stay right beside the model.</p>
+  </header>
+  <nav class="m-picks" id="picks" aria-label="Models"></nav>
+  <div class="m-grid">
+    <div class="m-col">
+      <div>
+        <p class="m-lbl">3D model · drag to turn</p>
+        <div class="m-view" id="view" role="img" aria-label="3D model">
+          <div class="m-state"><span id="badge"></span><span id="badge2"></span></div>
+          <span class="m-hint" id="hint">Drag to turn</span>
+        </div>
+      </div>
+      <div class="m-ctl" id="ctl"></div>
+    </div>
+    <div class="m-col">
+      <div class="m-card m-draw"><p class="m-lbl">The line drawing</p><div id="draw"></div></div>
+      <div class="m-card"><p class="m-lbl">In words</p><div class="m-words" id="words"></div></div>
+      <div class="m-next" id="next"></div>
+    </div>
+  </div>
+  <p class="aui-small">Every label, angle and energy on this page is computed from the model's coordinates and checked against OpenStax Organic Chemistry: 1.6 to 1.9 (hybrid orbitals), 3.7 (butane), 4.7 (chairs), 5.5 (R and S), 5.7 (meso compounds), 11.2 (S<sub>N</sub>2), 11.8 (E2) and 15.3 (aromaticity).</p>
+</main>
+<script src="/shared/ace-ui.js?v=7" defer></script>
+<script src="/oc/models/chem.js?v=1"></script>
+<script type="module" src="/oc/models/lab.js?v=1"></script>
+<script src="/shared/ace-tabs.js?v=5" defer></script>
+</body>
+</html>

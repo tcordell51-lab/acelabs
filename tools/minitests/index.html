@@ -250,7 +250,7 @@
 <script src="/shared/ace-route.js?v=4"></script>
 <script src="/shared/ace-skills.js?v=2"></script>
 <script src="/shared/ace-record.js?v=7"></script>
-<script src="/shared/ace-visuals.js?v=7"></script>
+<script src="/shared/ace-visuals.js?v=8"></script>
 <script src="/shared/ace-test-review.js?v=7"></script>
 <script src="/shared/ace-next-steps.js?v=5"></script>
 <script src="remediation-map.js"></script>
@@ -504,14 +504,14 @@ function renderResults(){
                                     : { href:'/tools/minitests/', label:'Retry this rung', detail:'A fresh pass at '+(PASS*100)+'% to clear, after the fixes above.', cta:'Open The Ladder' } });
 }
 /* The "what to do next" areas (shared/ace-next-steps.js): one per topic on this rung, with blanks and the
-   same Retold night and engine links the miss cards use (fixLinks). The Climb keeps no per-question clock. */
+   same Chalk Talks night and engine links the miss cards use (fixLinks). The Climb keeps no per-question clock. */
 var SECT_ENGINE={bio:'Bio engine',gchem:'GChem engine',ochem:'OChem engine',qr:'QR engine'};
 function climbAreas(){
   var by={}, out=[];
   T.qs.forEach(function(q,i){ var k=q.section+'|'+q.topic, a=by[k]||(by[k]={section:q.section,label:q.topic,correct:0,total:0,blank:0}); a.total++;
     if(T.ans[i]===q.correct) a.correct++; else if(T.ans[i]==null||T.ans[i]<0) a.blank++; });
   Object.keys(by).forEach(function(k){ var a=by[k], fx=fixLinks(a.section,a.label);
-    a.learn={href:fx.learn,label:fx.night?('Night '+fx.night+': '+(fx.nightTitle||a.label)):((SECT[a.section]||'')+', Retold')};
+    a.learn={href:fx.learn,label:fx.night?('Night '+fx.night+': '+(fx.nightTitle||a.label)):((SECT[a.section]||'')+' Chalk Talks')};
     a.drill={href:fx.drill,label:a.label+' in the '+(SECT_ENGINE[a.section]||'engine')};
     out.push(a); });
   return out;
@@ -519,7 +519,7 @@ function climbAreas(){
 
 /* ============================================================ per-miss card (shared by review + mistake list) ============================================================ */
 var _tid=0;
-/* Where a miss is fixed: the exact Retold night and the engine module from the shared router
+/* Where a miss is fixed: the exact Chalk Talks night and the engine module from the shared router
    (shared/ace-route.js), with the section-level map as the fallback. Same answer as /review/. */
 function fixLinks(section, topic){
   var rem=(REM[section]||{}), out={ learn: rem.learn||'/labs/', drill: rem.review||'/labs/', night: null, nightTitle: '' };
@@ -546,7 +546,7 @@ function missCard(q, pickedIdx, opts){
     '<div class="exp">'+q.explanation+'</div>'+seeChip(q)+
     '<div class="fixrow">'+
       (trick?'<a class="fx trick" onclick="toggleTrick(\''+id+'\',\''+trick+'\')">Watch the trick</a>':'')+
-      '<a class="fx learn" href="'+learn+'">Learn it · Retold ('+hint+')</a>'+
+      '<a class="fx learn" href="'+learn+'">Learn it · Chalk Talks ('+hint+')</a>'+
       '<a class="fx drill" href="'+review+'">Drill it · engine</a>'+
       (q.section==='ochem' && window.ROOTS_URL ? '<a class="fx root" href="'+window.ROOTS_URL({topic:q.topic, text:q.stem}, '/tools/ochem/roots/')+'">Fix the root</a>' : '')+
     '</div><div class="trick-embed" id="'+id+'"></div>'+
@@ -907,7 +907,7 @@ function fixPanel(it,q){
   else { lead='Treat it as new - learn it from the ground up.'; order=['learn','trick','drill']; }
   var link={
     trick: trick?'<a class="fx trick" onclick="toggleTrick(\''+id+'\',\''+trick+'\')">Watch the trick</a>':'',
-    learn: '<a class="fx learn" href="'+learn+'">Learn it · Retold ('+hint+')</a>',
+    learn: '<a class="fx learn" href="'+learn+'">Learn it · Chalk Talks ('+hint+')</a>',
     drill: '<a class="fx drill" href="'+review+'">Drill it · engine</a>'
   };
   var fixes=order.map(function(o){return link[o];}).filter(Boolean).join('');

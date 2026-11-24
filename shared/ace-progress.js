@@ -117,7 +117,7 @@
     };
   }
 
-  /* ---------------- Learn progress (Retold nights) ---------------- */
+  /* ---------------- Learn progress (Chalk Talks nights) ---------------- */
   var RETOLD_PREFIX = { ochem: 'retold', gchem: 'gchem', bio: 'bioret', qr: 'qrret', pat: 'patret', rc: 'rcret' };
   function learnProgress(section, total) {
     var p = RETOLD_PREFIX[section], started = [];
@@ -462,7 +462,7 @@
       var l = top && window.AceRoute ? window.AceRoute.links(top) : null;
       var lp = learnProgress(ws, 20);
       var n = (l && l.night) || (lp && lp.next) || 1;
-      tasks.push({ kind: 'learn', title: (R.SECTION_SHORT ? R.SECTION_SHORT[ws] : ws) + ', Retold: night ' + n,
+      tasks.push({ kind: 'learn', title: (R.SECTION_SHORT ? R.SECTION_SHORT[ws] : ws) + ' Chalk Talks: night ' + n,
         detail: (window.AceRoute ? window.AceRoute.nightTitle(ws, n) : '') || 'Pick up the course where it helps most.', minutes: 30, href: window.AceIndex.courses[ws].url + '?night=' + n });
     }
     var nt = nextTest();

@@ -78,7 +78,7 @@ test('sync adapter: writes queue, push drains, failures stay queued', async () =
   assert.ok(pushed.includes('review'));
 });
 
-test('router: concept -> Canon sheet, Retold night, drill', () => {
+test('router: concept -> Canon sheet, Chalk Talks night, drill', () => {
   const { R } = load({});
   const l = R.links({ section: 'qr', concept: 'Percent Increase/Decrease', skill: 'pct-chg' });
   assert.match(l.sheet, /sheets\/qr-percent-change\.html$/);

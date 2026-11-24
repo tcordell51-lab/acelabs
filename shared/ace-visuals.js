@@ -117,11 +117,29 @@
     B('spectroscopy', 'ochem', 'IR and NMR: reading the peaks', 'Four IR regions worth knowing, and proton NMR in four ideas.',
       ['spectroscopy', 'ir and nmr', 'ir spectroscopy', 'infrared', 'nmr', '1h nmr', '1h nmr shifts multiplicity', '13c nmr', 'spectroscopy and lab technique', 'spectroscopy lab technique', 'chemical shift', 'splitting']),
     B('alkene-map', 'ochem', 'Alkene reactions: one map', 'Six reagents around one double bond: where each piece lands, and on which face.',
-      ['alkene', 'alkene addition', 'alkene addition reaction', 'markovnikov', 'markovnikov rule', 'anti markovnikov', 'hydroboration', 'hydroboration oxidation', 'halogenation anti addition', 'ozonolysis', 'alkyne', 'alkyne reaction', 'alkyne reduction lindlar vs na nh3', 'hydrogenation', 'acid catalyzed hydration', 'dihydroxylation']),
+      ['alkene', 'alkene addition', 'alkene addition reaction', 'markovnikov', 'markovnikov rule', 'anti markovnikov', 'hydroboration', 'hydroboration oxidation', 'halogenation anti addition', 'ozonolysis', 'hydrogenation', 'acid catalyzed hydration', 'dihydroxylation']),
     B('carbonyl', 'ochem', 'Carbonyls: one attack, two endings', 'Addition for aldehydes and ketones, substitution for acid derivatives.',
       ['carbonyl', 'carbonyl chemistry', 'aldehydes and ketones', 'ketones aldehydes', 'carboxylic acids and derivatives', 'carboxylic acid derivative', 'carboxylic acid derivatives and amines', 'acid derivative reactivity order', 'nucleophilic addition', 'acyl substitution', 'saponification', 'fischer esterification', 'reduction lialh4 nabh4', 'grignard reagent', 'hemiacetals acetal', 'imines enamine']),
     B('synthesis', 'ochem', 'Synthesis roadmap: getting from A to B', 'Six functional groups and the reagents that connect them.',
-      ['synthesis', 'synthesis general', 'retrosynthesis', 'multistep synthesis', 'roadmap', 'functional group interconversion', 'alcohol oxidation', 'alcohol dehydration']),
+      ['synthesis', 'synthesis general', 'retrosynthesis', 'multistep synthesis', 'roadmap', 'functional group interconversion']),
+    B('hybridization', 'ochem', 'sp, sp2, sp3: count the groups', 'Count what is attached. The number gives the hybrid, the shape and the angle.',
+      ['hybridization', 'hybrid orbital', 'sp3', 'sp2', 'sp hybrid', 'orbital hybridization', 'bond angle', 'sigma and pi bond', 'molecular geometry of carbon']),
+    B('arrow-pushing', 'ochem', 'Curved arrows: electrons move, atoms follow', 'Tail on the electrons, head where they go. Then recount the charges.',
+      ['arrow pushing', 'curved arrow', 'electron pushing', 'mechanism arrow', 'nucleophile electrophile', 'nucleophiles and electrophiles', 'formal charge', 'reaction mechanism basic']),
+    B('newman', 'ochem', 'Newman projections: staggered and eclipsed', 'Look down one bond of butane, turn the back carbon, watch the energy.',
+      ['newman', 'newman projection', 'conformation', 'conformer', 'conformational analysis', 'gauche', 'staggered', 'eclipsed', 'torsional strain', 'anti conformation']),
+    B('chair-flip', 'ochem', 'Chairs: axial, equatorial and the ring flip', 'One bond up or down, one out to the side. Big groups go equatorial.',
+      ['chair conformation', 'chair flip', 'ring flip', 'axial', 'equatorial', 'axial equatorial', 'cyclohexane conformation', '1 3 diaxial', 'cycloalkane']),
+    B('sn2-e2-shape', 'ochem', 'SN2 and E2 in 3D: backside and anti', 'Backside attack inverts. E2 needs the hydrogen anti to the leaving group.',
+      ['backside attack', 'inversion of configuration', 'walden inversion', 'anti periplanar', 'antiperiplanar', 'e2 stereochemistry', 'sn2 stereochemistry', 'trans diaxial']),
+    B('alkynes', 'ochem', 'Alkynes: reduce, hydrate, extend', 'One triple bond, four things the DAT asks you to do with it.',
+      ['alkyne', 'alkyne reaction', 'alkyne reduction lindlar vs na nh3', 'lindlar', 'acetylide', 'terminal alkyne', 'alkyne hydration', 'dissolving metal reduction']),
+    B('alcohols-ethers', 'ochem', 'Alcohols and ethers: oxidize, swap, lose water', 'What happens to an OH depends on its carbon and the reagent you pick.',
+      ['alcohol', 'alcohols and ether', 'ether', 'epoxide', 'alcohol oxidation', 'alcohol dehydration', 'williamson ether synthesis', 'williamson', 'pcc', 'tosylate', 'epoxide opening']),
+    B('amines', 'ochem', 'Amines: the lone pair does everything', 'Base, nucleophile, hydrogen-bond partner: all the lone pair on nitrogen.',
+      ['amine', 'amine basicity', 'reductive amination', 'gabriel synthesis', 'aniline', 'amide basicity', 'basicity of amine']),
+    B('aromaticity', 'ochem', 'Aromatic or not: four checks', 'Ring, flat, a p orbital on every atom, and 4n + 2 pi electrons.',
+      ['huckel', 'huckel rule', 'antiaromatic', 'aromatic or not', 'aromatic heterocycle', '4n 2', 'benzene structure', 'pi electron count']),
     B('units', 'qr', 'Unit conversions: the train track', 'Multiply by 1 until the unwanted units cancel.',
       ['unit conversion', 'conversion', 'unit', 'dimensional analysis', 'ratios proportions and unit conversion']),
     B('probability', 'qr', 'Probability: the tree', 'Multiply along a branch, add across branches, and use 1 minus the opposite.',
@@ -246,6 +264,11 @@
       blurb: 'Seven stereocenters and two chairs, model next to drawing.',
       does: 'Turn the model and match it to the DAT drawing.', next: 'Then call R or S on the Chirality Bench.',
       topics: ['chair', 'wedge and dash', 'fischer projection', 'cyclohexane', '3d'] },
+    { id: 'oc-models', section: 'ochem', group: 'Stereochemistry and 3D', step: 'try',
+      title: 'OChem 3D models', path: '/oc/models/',
+      blurb: 'Seven models to turn and run, each beside its line drawing and the words.',
+      does: 'Flip a chair, turn a Newman, run SN2 and E2.', next: 'Then read the matching Chalk Talk.',
+      topics: ['3d model', 'ring flip model', 'hybrid orbital model', 'newman model'] },
     { id: 'oc-stereo-lab', section: 'ochem', group: 'Stereochemistry and 3D', step: 'test',
       title: 'Stereochemistry lab', path: OC + '#stereo-lab',
       blurb: 'The stereo hub inside Reaction Maps.',
@@ -631,7 +654,7 @@
     var go = function () { if (href) root.location.href = href; };
     var run = function () { try { root.AceBoard.ready(function () { if (!root.AceBoard.get(id)) return go(); root.AceBoard.open(id, { from: from }); }); } catch (e) { go(); } };
     if (root.AceBoard) return run();
-    var sc = document.createElement('script'); sc.src = '/shared/ace-board.js?v=4'; sc.onload = run; sc.onerror = go; document.head.appendChild(sc);
+    var sc = document.createElement('script'); sc.src = '/shared/ace-board.js?v=5'; sc.onload = run; sc.onerror = go; document.head.appendChild(sc);
   }
   if (typeof document !== 'undefined' && document.addEventListener) {
     document.addEventListener('click', function (e) {
