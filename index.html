@@ -154,6 +154,7 @@
     <h2 class="sec-h" id="sec-title">The six sections</h2>
     <ul class="bands" id="sections"></ul>
     <p class="aui-small" style="margin-top:12px">Bars are bands, not score predictions. They move only on answers you give on your own, over different days. <a href="/progress/">Progress</a> has the detail. <a href="/scope.html">What Ace Labs covers</a></p>
+    <p class="aui-small" id="alDisclaimer">Ace Labs is practice, not a score prediction. It is not affiliated with the American Dental Association or Prometric.</p>
   </section>
 </main>
 
@@ -162,7 +163,7 @@
 <script src="/shared/ace-progress.js?v=6"></script>
 <script src="/shared/ace-record.js?v=6"></script>
 <script src="/shared/ace-plan.js?v=1"></script>
-<script src="/plan/plan-core.js?v=2"></script>
+<script src="/shared/ace-plan-core.js?v=1"></script>
 <script src="/shared/ace-ui.js?v=5" defer></script>
 <script>
 (function () {
@@ -214,12 +215,7 @@
   /* ---- (a) Today and (b) the week, from the saved plan ---- */
   var state = ls('acelabs_plan_v1'); if (!state || !state.input) state = null;
   var diag = ls('acelabs_diagnostic_v1');
-  if (state) {
-    var r = B.syncState(state, { today: TODAY, diagnostic: diag, report: ls('acelabs_last_report') });
-    if (r.changed) { state = r.state; state.savedAt = Date.now(); try { localStorage.setItem('acelabs_plan_v1', JSON.stringify(state)); } catch (e) {} }
-  }
-  var plan = state ? B.generate(Object.assign({ nights: window.AceIndex && window.AceIndex.nights }, state.input)) : null;
-  var go = $('t-go'), label = $('t-go-label');
+  var plan = null, go = $('t-go'), label = $('t-go-label');
 
   function recordSteps() {
     // A student with answers but no plan still sees what the record points to.
@@ -235,10 +231,23 @@
     $('rec').hidden = !P.steps.length;
   }
 
-  if (!plan || !plan.ok) {
+  function noPlan() {
     if (diag) $('t-lede').textContent = 'Your diagnostic is in. Set your test date and your week, and the plan lays out every day from today to the test, starting with what the diagnostic showed.';
     go.href = S('/plan/');
     recordSteps();
+  }
+  if (!state) { noPlan(); return; }
+
+  B = window.AcePlanBuilder;
+  var r = B.syncState(state, { today: TODAY, diagnostic: diag, report: ls('acelabs_last_report') });
+  if (r.changed) { state = r.state; state.savedAt = Date.now(); try { localStorage.setItem('acelabs_plan_v1', JSON.stringify(state)); } catch (e) {} }
+  plan = B.generate(Object.assign({ nights: window.AceIndex && window.AceIndex.nights }, state.input));
+  if (!plan.ok) {
+    var past = plan.state === 'past';
+    $('t-k').textContent = 'Your plan';
+    $('t-h').textContent = past ? 'Your test date has passed' : 'Your plan needs a new date';
+    $('t-lede').textContent = past ? 'Going again? Set your next date and choose Retake. The plan rebuilds around your real attempt.' : 'Open the plan and set your test date again.';
+    label.textContent = 'Set a new test date'; go.href = S('/plan/');
     return;
   }
 

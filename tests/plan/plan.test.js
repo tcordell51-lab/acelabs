@@ -1,4 +1,4 @@
-// tests/plan/plan.test.js : the study plan generator (plan/plan-core.js).
+// tests/plan/plan.test.js : the study plan generator (shared/ace-plan-core.js).
 // node --test tests/plan/*.test.js
 'use strict';
 const test = require('node:test');
@@ -6,7 +6,7 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
 const vm = require('node:vm');
-const P = require('../../plan/plan-core.js');
+const P = require('../../shared/ace-plan-core.js');
 
 const ROOT = path.resolve(__dirname, '..', '..');
 const ctx = { window: {} };

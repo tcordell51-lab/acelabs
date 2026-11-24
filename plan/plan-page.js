@@ -1,6 +1,6 @@
 /* plan-page.js : the study plan page (/plan/). Reads the setup and the diagnostic to prefill,
    stores only the plan's input and what is marked done under 'acelabs_plan_v1', and rebuilds
-   the plan from that input on every visit with AcePlanBuilder (plan-core.js). */
+   the plan from that input on every visit with AcePlanBuilder (shared/ace-plan-core.js). */
 (function () {
   'use strict';
   var B = window.AcePlanBuilder;

@@ -1,4 +1,6 @@
-/* plan-core.js : the Ace Labs study plan generator (2026-11-24).
+/* ace-plan-core.js : the Ace Labs study plan generator. Pure scheduling logic, no questions.
+   It lives in /shared/ so Home (a free page) and the plan page build the same plan.
+   Was plan/plan-core.js until 2026-11-24.
 
    Pure and deterministic: the same input always gives the same plan, so the page stores only
    the input and the days marked done, and rebuilds the plan on every visit. No DOM, no storage.
