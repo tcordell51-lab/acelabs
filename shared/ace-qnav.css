@@ -1,0 +1,66 @@
+/* ace-qnav.css : the question navigator for a test runner (shared/ace-qnav.js draws it).
+
+   A slim bar stays at the top of the screen: where you are, the clock, and one "Questions" button.
+   The numbered grid is never laid over the question. On a phone it opens as a sheet from the
+   bottom of the screen and closes when a number is picked. On a wide screen the grid sits in the
+   bar itself, in small squares, because there is room for it.
+   Colors come from shared/ace-ui.css (with plain fallbacks for a page that does not load it). */
+.aqn { position: sticky; top: 0; z-index: 40; display: flex; align-items: center; gap: 8px 14px; flex-wrap: wrap;
+  margin: 0 0 14px; padding: 8px 12px; min-height: 56px; box-sizing: border-box;
+  background: var(--aui-paper, #FCFAF6); border: 1px solid var(--aui-line, rgba(27,58,45,.16)); border-radius: 14px;
+  box-shadow: 0 2px 10px rgba(13,32,24,.06); font-family: var(--aui-font, system-ui, sans-serif); color: var(--aui-ink, #0d2018); }
+.aqn__where { flex: 1 1 auto; min-width: 0; font-size: 14px; font-weight: 700; letter-spacing: .02em; color: var(--aui-ink-2, #3a4a42); }
+.aqn__time { font-size: 15px; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--aui-ink, #0d2018); white-space: nowrap; }
+.aqn__time--none { font-weight: 500; color: var(--aui-ink-3, #5c6a63); }
+html:root body .aqn .aqn__toggle { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; min-width: 44px; padding: 6px 14px; margin: 0;
+  border-radius: 999px; border: 1.5px solid var(--aui-forest, #1B3A2D); background: transparent; color: var(--aui-forest, #1B3A2D);
+  font: inherit; font-size: 15px; font-weight: 700; cursor: pointer; }
+.aqn__count { font-weight: 500; font-size: 13px; color: var(--aui-ink-3, #5c6a63); }
+
+.aqn__scrim { display: none; }
+.aqn__panel { display: none; }
+.aqn__head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 0 0 10px; }
+.aqn__title { font-size: 16px; font-weight: 700; color: var(--aui-ink, #0d2018); }
+html:root body .aqn .aqn__close { min-height: 44px; min-width: 44px; padding: 6px 16px; border-radius: 999px; border: 1.5px solid var(--aui-forest, #1B3A2D);
+  background: transparent; color: var(--aui-forest, #1B3A2D); font: inherit; font-size: 15px; font-weight: 700; cursor: pointer; }
+.aqn__grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(46px, 1fr)); gap: 8px; }
+html:root body .aqn .aqn__cell { min-width: 44px; min-height: 46px; width: auto; height: auto; padding: 0; margin: 0; border-radius: 10px;
+  border: 1.5px solid var(--aui-line-2, rgba(27,58,45,.30)); background: var(--aui-paper, #FCFAF6); color: var(--aui-ink, #0d2018);
+  font: inherit; font-size: 16px; font-weight: 600; font-variant-numeric: tabular-nums; cursor: pointer; box-shadow: none; }
+html:root body .aqn .aqn__cell.is-done { background: var(--aui-forest, #1B3A2D); border-color: var(--aui-forest, #1B3A2D); color: var(--aui-cream, #F5F0E8); }
+html:root body .aqn .aqn__cell.is-flag { background: var(--aui-gold, #C9A84C); border-color: var(--aui-brass, #8C7235); color: var(--aui-ink, #0d2018); }
+html:root body .aqn .aqn__cell.is-now { outline: 3px solid var(--aui-gold, #C9A84C); outline-offset: 2px; }
+.aqn__key { display: flex; flex-wrap: wrap; gap: 6px 16px; margin: 12px 0 0; font-size: 13px; color: var(--aui-ink-2, #3a4a42); }
+.aqn__key span { display: inline-flex; align-items: center; gap: 6px; }
+.aqn__key i { width: 14px; height: 14px; border-radius: 4px; border: 1.5px solid var(--aui-line-2, rgba(27,58,45,.30)); background: var(--aui-paper, #FCFAF6); display: inline-block; }
+.aqn__key i.k-done { background: var(--aui-forest, #1B3A2D); border-color: var(--aui-forest, #1B3A2D); }
+.aqn__key i.k-flag { background: var(--aui-gold, #C9A84C); border-color: var(--aui-brass, #8C7235); }
+.aqn__key i.k-now { outline: 2px solid var(--aui-gold, #C9A84C); outline-offset: 1px; }
+
+/* Open: a sheet from the bottom of the screen, over a scrim. The question stays where it is. */
+/* the bar is its own stacking context, so it rises above the tab bar while the sheet is open */
+.aqn.is-open { z-index: 2147482100; }
+.aqn.is-open .aqn__scrim { display: block; position: fixed; inset: 0; z-index: 2147482100; background: rgba(13,32,24,.45); }
+.aqn.is-open .aqn__panel { display: block; position: fixed; left: 0; right: 0; bottom: 0; z-index: 2147482101; box-sizing: border-box;
+  max-height: 72vh; max-height: 72dvh; overflow-y: auto; overscroll-behavior: contain;
+  padding: 14px 16px calc(18px + env(safe-area-inset-bottom)); background: var(--aui-cream, #F5F0E8);
+  border-radius: 18px 18px 0 0; border-top: 1px solid var(--aui-line, rgba(27,58,45,.16)); box-shadow: 0 -12px 40px rgba(13,32,24,.25); }
+
+/* Wide screens: the grid has room in the bar, so it sits there in small squares and needs no button.
+   A long test (over 60 questions) keeps the button and opens the grid as a centered panel. */
+@media (min-width: 760px) {
+  html:root body .aqn:not(.aqn--long) .aqn__toggle, .aqn:not(.aqn--long) .aqn__head, .aqn:not(.aqn--long) .aqn__key, .aqn:not(.aqn--long) .aqn__scrim { display: none; }
+  .aqn:not(.aqn--long), .aqn:not(.aqn--long).is-open { z-index: 40; flex-wrap: nowrap; padding: 10px 16px; }
+  .aqn:not(.aqn--long) .aqn__panel, .aqn:not(.aqn--long).is-open .aqn__panel { display: block; position: static; order: 2; flex: 1 1 320px; animation: none; padding: 0; max-height: none; overflow: visible; background: none; border: 0; box-shadow: none; }
+  .aqn:not(.aqn--long) .aqn__where { flex: 0 0 auto; order: 1; }
+  .aqn:not(.aqn--long) .aqn__time { order: 3; margin-left: auto; }
+  .aqn:not(.aqn--long) .aqn__grid { display: flex; flex-wrap: wrap; gap: 4px; }
+  html:root body .aqn:not(.aqn--long) .aqn__cell { min-width: 30px; min-height: 30px; width: 30px; height: 30px; font-size: 13px; border-radius: 7px; }
+  .aqn--long.is-open .aqn__panel { left: 50%; right: auto; bottom: auto; top: 50%; transform: translate(-50%, -50%); width: min(720px, 92vw); border-radius: 18px; border: 1px solid var(--aui-line, rgba(27,58,45,.16)); }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .aqn.is-open .aqn__panel { animation: aqn-up .18s ease-out; }
+  @keyframes aqn-up { from { transform: translateY(24px); opacity: .6; } to { transform: none; opacity: 1; } }
+}
+@media (min-width: 760px) and (prefers-reduced-motion: no-preference) { .aqn--long.is-open .aqn__panel { animation: none; } }
+@media print { .aqn { display: none; } }

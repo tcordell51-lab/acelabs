@@ -93,15 +93,17 @@ function start(mode, redoItems){
   if (mode === 'timed') run.timer = setInterval(tick, 1000);
   window.scrollTo({ top: 0 });
 }
-function tick(){ if (!run || run.left == null) return; run.left--; const t = document.querySelector('.bar .time'); if (t) t.textContent = fmt(run.left); if (run.left <= 0){ clearInterval(run.timer); finish(true); } }
+function tick(){ if (!run || run.left == null) return; run.left--; const t = document.querySelector('.aqn__time'); if (t) t.textContent = fmt(run.left); if (run.left <= 0){ clearInterval(run.timer); finish(true); } }
 function fmt(s){ s = Math.max(0, s); return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'); }
 
 function renderSection(){
   const sec = $('section'); sec.textContent = '';
-  const bar = el('div', { class: 'bar' },
-    el('span', { class: 'where', text: (run.mode === 'redo' ? 'Redo' : run.mode === 'timed' ? 'Timed' : 'Untimed') + ' · question ' + (run.at + 1) + ' of ' + run.items.length }),
-    el('div', { class: 'grid' }, run.items.map((it, i) => el('button', { type: 'button', text: String(i + 1), class: (run.answers[i] != null ? 'done ' : '') + (run.flags.has(i) ? 'flag ' : '') + (i === run.at ? 'now' : ''), onclick: () => { run.at = i; renderSection(); } }))),
-    el('span', { class: 'time', text: run.left != null ? fmt(run.left) : 'no clock' }));
+  // The shared question navigator (shared/ace-qnav.js): a slim bar, the grid opens as a sheet on a phone.
+  const bar = window.AceQNav.render({
+    label: (run.mode === 'redo' ? 'Redo' : run.mode === 'timed' ? 'Timed' : 'Untimed') + ' · question ' + (run.at + 1) + ' of ' + run.items.length,
+    time: run.left != null ? fmt(run.left) : null, noClock: 'No clock',
+    count: run.items.length, at: run.at, done: (i) => run.answers[i] != null, flagged: (i) => run.flags.has(i),
+    onJump: (i) => { run.at = i; renderSection(); } });
   sec.append(bar);
   const it = run.items[run.at];
   const card = el('div', { class: 'item' });

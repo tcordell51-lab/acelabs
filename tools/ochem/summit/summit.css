@@ -8,14 +8,6 @@
 .hist th{text-align:left;font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink3);padding:6px 8px;border-bottom:1px solid var(--line)}
 .hist td{padding:8px;border-bottom:1px solid rgba(255,255,255,.04);color:var(--ink2)}
 .hist td.gold{color:var(--goldhi);font-family:var(--serif);font-size:16px}
-.bar{position:sticky;top:0;z-index:40;background:rgba(20,18,12,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);margin:0 -20px;padding:10px 20px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
-.bar .where{font-family:var(--mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3)}
-.bar .time{font-family:var(--mono);font-size:14px;color:var(--ink);margin-left:auto}
-.bar .grid{display:flex;gap:4px;flex-wrap:wrap}
-.bar .grid button{width:22px;height:22px;padding:0;border-radius:5px;border:1px solid var(--line);background:var(--panel);color:var(--ink3);font-family:var(--mono);font-size:10px}
-.bar .grid button.done{border-color:var(--gold);color:var(--ink)}
-.bar .grid button.flag{background:rgba(217,138,43,.25)}
-.bar .grid button.now{box-shadow:0 0 0 2px var(--goldhi)}
 .item{background:var(--card);border:1px solid var(--line);border-top:3px solid var(--warm);border-radius:14px;padding:22px;margin:18px 0}
 .item .stem{font-size:18px;margin:0 0 14px;max-width:70ch}
 .item .figure{display:flex;gap:16px;align-items:center;flex-wrap:wrap;margin:0 0 14px}
@@ -40,13 +32,19 @@
 .area{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
 .area b{display:block;font-family:var(--serif);font-weight:400;font-size:24px;color:var(--gold)}
 .area span{font-size:13px;color:var(--ink2)}
-@media (max-width:640px){.item .opts{grid-template-columns:1fr}.bar .time{margin-left:0}}
+@media (max-width:640px){.item .opts{grid-template-columns:1fr}}
 .miss .box{display:inline-block;max-width:220px;vertical-align:top}
 .miss .box .mol,.item .figure .box .mol{max-width:220px;width:220px}
 .miss .figure{gap:24px}
-/* phone: the sticky bar must not reach past the page edge (it scrolled sideways at 390px) */
-@media (max-width:640px){.bar{margin-left:0;margin-right:0}}
 /* results: the review link is a gold button; give it the same light text as button.primary and no underline (dark underlined text on gold read poorly) */
 html:root body a.primary{color:#F5F0E8;text-decoration:none}
 /* phone: the mono subtitle wraps under the title instead of trailing it */
 @media (max-width:640px){.brand small{display:block;margin:6px 0 0;line-height:1.5}}
+
+/* Phone taps: links that act as controls get a 44px hit area and 13px text. */
+@media (max-width:759px){
+.nav{flex-wrap:wrap;gap:4px 14px}
+.nav a,.next-link,.map a,.miss .fix a{display:inline-flex;align-items:center;min-height:44px}
+.nav a{font-size:13px}
+.chip{min-height:44px}
+}

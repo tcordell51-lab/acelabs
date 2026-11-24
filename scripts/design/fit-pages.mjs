@@ -37,7 +37,10 @@ export const PAGES = {
   'tools/bio/bio-micrographs.html': 'rail bio', 'tools/bio/bio-bonus.html': 'rail bio', 'tools/bio/bio-repair-sheet.html': 'rail bio',
   'tools/bio/bio-osmosis.html': 'osmosis', 'tools/bio/bio-ap-bootcamp.html': 'sidebar apboot',
   'tools/gc/index.html': 'rail engine', 'tools/qr/index.html': 'rail engine', 'tools/ochem/index.html': 'sidebar ochem',
-  'tools/pat/index.html': 'pat', 'tools/pat/playbook.html': 'pat', 'tools/pat/test.html': 'pattest'
+  'tools/pat/index.html': 'pat', 'tools/pat/playbook.html': 'pat', 'tools/pat/test.html': 'pattest',
+  // test runners and the OChem tree family (added 2026-11-24 with the phone audit, scripts/qa/phone-audit.mjs)
+  'tools/ochem/summit/index.html': 'summit', 'tools/ochem/tree/index.html': 'tree', 'tools/ochem/roots/index.html': 'roots', 'tools/ochem/decide/index.html': 'decide',
+  'tools/minitests/index.html': 'climb', 'tools/rc/index.html': 'rc', 'tools/mock/full.html': 'fullmock'
 };
 // Not rewritten here: floors for these go into shared/ace-cream.css
 const PAT_SHARED = ['tools/pat/holepunch.html', 'tools/pat/tfe.html', 'tools/pat/patternfold.html', 'tools/pat/keyholes.html', 'tools/pat/angles.html', 'tools/pat/cubes.html'];

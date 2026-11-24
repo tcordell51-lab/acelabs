@@ -283,8 +283,13 @@ details.sec[open] summary{margin-bottom:12px}
   /* one slim row: every control 44px tall, the question keeps the rest of the screen */
   .pm-foot{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);gap:4px;padding:6px 6px calc(6px + env(safe-area-inset-bottom))}
   .pm-btn{min-width:0;min-height:44px;padding:2px;letter-spacing:0;line-height:1.15;white-space:normal}
-  .pm-btn{font-size:10.5px}
-  .pm-btn.end{font-size:10.5px}
+  /* 13px labels: sentence case so six fit across a phone (PREVIOUS in capitals broke mid-word) */
+  .pm-btn,.pm-btn.end{font-size:13px;text-transform:none;font-style:normal;overflow-wrap:normal;word-break:normal}
+  /* the periodic table keeps readable numbers and scrolls sideways inside its window */
+  .pm-pt .inner{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .pm-pt table{margin:0}
+  .pm-pt td{min-width:44px;height:52px;padding:2px 3px}
+  .pm-pt td .z,.pm-pt td .m{font-size:13px!important;line-height:1.1}
   table.tbl td,table.tbl th{overflow-wrap:anywhere;word-break:normal}
   table.tbl td a{display:inline-block;min-height:44px}
   .miss .why{font-size:15px}
@@ -323,3 +328,5 @@ details.sec[open] summary{margin-bottom:12px}
   .report h1{font-size:28px}
 }
 .tcard.picked{border-color:var(--gold);box-shadow:0 0 0 3px rgba(201,168,76,.35)}
+
+@media (max-width:759px){.topbar a.back{display:inline-flex;align-items:center;min-height:44px}}

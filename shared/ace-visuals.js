@@ -609,7 +609,7 @@
      answers alike. A whiteboard opens in a bottom sheet over the page; anything else is a link. */
   var EYE = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>';
   var CSS = '.see-chip{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 16px;margin:8px 0 0;border-radius:999px;border:0;background:#C9A84C;color:#0d2018 !important;font:700 15px/1.2 "DM Sans",system-ui,-apple-system,sans-serif;text-decoration:none !important;cursor:pointer;max-width:100%;text-align:left;box-sizing:border-box}' +
-    '.see-chip:hover{background:#d6b862}.see-chip svg{flex:none;width:18px;height:18px}.see-chip span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}' +
+    '.see-chip:hover{background:#d6b862}.see-chip svg{flex:none;width:18px;height:18px}.see-chip span{min-width:0;overflow-wrap:anywhere}.see-chip{padding-block:8px;border-radius:22px}' +
     '.see-chip:focus-visible{outline:3px solid #1B3A2D;outline-offset:2px}';
   function esc(x) { return String(x == null ? '' : x).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
   function style() {
@@ -631,7 +631,7 @@
     var go = function () { if (href) root.location.href = href; };
     var run = function () { try { root.AceBoard.ready(function () { if (!root.AceBoard.get(id)) return go(); root.AceBoard.open(id, { from: from }); }); } catch (e) { go(); } };
     if (root.AceBoard) return run();
-    var sc = document.createElement('script'); sc.src = '/shared/ace-board.js?v=3'; sc.onload = run; sc.onerror = go; document.head.appendChild(sc);
+    var sc = document.createElement('script'); sc.src = '/shared/ace-board.js?v=4'; sc.onload = run; sc.onerror = go; document.head.appendChild(sc);
   }
   if (typeof document !== 'undefined' && document.addEventListener) {
     document.addEventListener('click', function (e) {

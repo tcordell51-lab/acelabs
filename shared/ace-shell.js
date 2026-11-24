@@ -15,7 +15,7 @@
   'use strict';
   if (window.AceShell) return;
   var VERSION = '4';
-  var CREAM = '4';   /* the ?v= pages use for /shared/ace-cream.css (tests/shell/ace-tokens.test.js) */
+  var CREAM = '5';   /* the ?v= pages use for /shared/ace-cream.css (tests/shell/ace-tokens.test.js) */
   /* Keep in step with PLACES in shared/ace-ui.js. */
   var DOORS = [
     { id: 'today', label: 'Today', href: '/' },
@@ -141,9 +141,12 @@
   }
 
   /* A tool's own fixed top bar: keep it just under the shell until the shell
-     scrolls away, then let it sit at the top as designed. */
+     scrolls away, then let it sit at the top as designed. The same for a small
+     fixed control pinned in the top corner (a tool's own Menu button): under the
+     shell it could not be seen or pressed until the page was scrolled. */
   var held = [];
   function findFixedBars(host) {
+    for (var k = 0; k < held.length; k++) held[k].el.style.top = '';
     held = [];
     var vw = window.innerWidth;
     var cands = document.querySelectorAll('body > *, body > * > *, body > * > * > *');
@@ -152,9 +155,13 @@
       var cs = getComputedStyle(el);
       if (cs.position !== 'fixed') continue;
       var r = el.getBoundingClientRect();
-      if (r.width < vw * 0.5 || r.height < 24 || r.height > 180) continue;
-      if (Math.abs(parseFloat(cs.top) || 0) > 2) continue;
-      held.push(el);
+      var w = r.width || parseFloat(cs.width) || 0, ht = r.height || parseFloat(cs.height) || 0;   /* a hidden control still has its CSS size */
+      var top = parseFloat(cs.top);
+      if (isNaN(top) || top < -2 || top > 24) continue;
+      var wide = w >= vw * 0.5 && ht >= 24 && ht <= 180 && top <= 2;
+      var corner = w >= 24 && w < vw * 0.5 && ht >= 24 && ht <= 72 && /^(BUTTON|A)$/.test(el.tagName);
+      if (!wide && !corner) continue;
+      held.push({ el: el, top: top });
     }
     hold(host);
   }
@@ -162,7 +169,7 @@
     if (!held.length) return;
     var h = host.hidden ? 0 : host.offsetHeight;
     var off = Math.max(0, h - (window.scrollY || window.pageYOffset || 0));
-    for (var i = 0; i < held.length; i++) held[i].style.top = off + 'px';
+    for (var i = 0; i < held.length; i++) held[i].el.style.top = (held[i].top + off) + 'px';
   }
 
 

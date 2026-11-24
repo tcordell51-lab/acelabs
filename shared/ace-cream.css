@@ -1,4 +1,4 @@
-/* ace-cream.css (v4) : puts every older page on the one Ace Labs system.
+/* ace-cream.css (v5) : puts every older page on the one Ace Labs system.
 
    ace-ui.css is the only place colors, type and shape are defined. This file imports it,
    then maps the token names the older pages use (--bg, --card, --ink, --gold, --serif ...)
@@ -6,7 +6,7 @@
    one header, one h1 scale, one button family, one card, 44px taps, phone text floors.
 
    A page gets it with one line at the end of its <head> and a family on <html>:
-     <html data-cream="games">  ...  <link rel="stylesheet" href="/shared/ace-cream.css?v=4">
+     <html data-cream="games">  ...  <link rel="stylesheet" href="/shared/ace-cream.css?v=5">
    scripts/design/fit-pages.mjs writes both, plus the page's own phone text floors.
    The @import version below must equal the ?v= pages use for ace-ui.css
    (tests/shell/ace-tokens.test.js). */
@@ -239,6 +239,17 @@ html[data-cream~="bio"] .topbar .btn.primary { background: transparent; color: v
   html[data-cream~="bio"] .mn > .topbar :is(.tb-where, .tb-spacer) { display: none; }
   html[data-cream~="bio"] .lab { padding: var(--aui-4) var(--aui-4) var(--aui-6); }
   html[data-cream~="rail"] .topbar { padding-left: var(--aui-4); padding-right: var(--aui-4); }
+}
+
+/* A&P review on a phone: the session list sits in the page, under the tab bar, not over it. */
+@media (max-width: 900px) { html[data-cream~="apboot"] #sidebar { z-index: 1; } }
+
+/* Rail pages under 900px: the tool's own Menu button is fixed in the top left corner (shared/ace-shell.js
+   holds it under the Ace Labs bar until that bar scrolls away). The tool's top bar and the open menu
+   leave that corner free, so the button never sits on their text. */
+@media (max-width: 900px) {
+  html[data-cream~="rail"] .topbar { padding-left: 68px; min-height: 68px; box-sizing: border-box; }
+  html[data-cream~="rail"] .sb { padding-top: 68px; }
 }
 
 /* Engine first-run card: one row of actions, forest for the way forward */

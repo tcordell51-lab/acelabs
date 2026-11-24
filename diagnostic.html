@@ -284,7 +284,7 @@ body{
 }
 .diag-q-topic{
   font-size:.8rem;
-  color:var(--al-ink-soft);
+  color:var(--aui-ink-2,#3a4a42);
   margin-left:auto;
   text-transform:capitalize;
 }
@@ -418,7 +418,7 @@ body{
   font-size:.7rem;
   text-transform:uppercase;
   letter-spacing:.06em;
-  color:var(--al-ink-soft);
+  color:var(--aui-ink-2,#3a4a42);
   margin-top:.5rem;
   margin-bottom:.15rem;
 }
@@ -462,6 +462,8 @@ body{
 }
 .diag-result-hero p{font-size:.9rem;opacity:.75;margin:0}
 .diag-result-hero .diag-review-row{opacity:1;margin-top:1rem}
+html:root body .diag-result-hero h2{color:#F6F1E5}
+html:root body .diag-result-hero p{color:#F6F1E5;opacity:.9}
 .diag-review-btn{display:inline-flex;align-items:center;min-height:48px;padding:.6rem 1.2rem;border-radius:10px;background:#C9A84C;color:#16120A;font-weight:700;font-size:1rem;text-decoration:none}
 .diag-review-btn[hidden]{display:none}
 .diag-review-btn:hover,.diag-review-btn:focus-visible{background:#E2C97A;outline:none}
@@ -653,7 +655,7 @@ html:not(.diag-running) header.al-top{display:none}
 .diag-section-card h3,.diag-weak-rank{font-size:13px!important}
 }
 </style>
-<link rel="stylesheet" href="/shared/ace-cream.css?v=4">
+<link rel="stylesheet" href="/shared/ace-cream.css?v=5">
 </head>
 <body>
 
@@ -837,7 +839,7 @@ function clearProgress(){ try{ localStorage.removeItem(INPROG_KEY); }catch(e){} 
 function readProgress(){
   try{ const p = JSON.parse(localStorage.getItem(INPROG_KEY) || 'null'); return p && Array.isArray(p.ids) && p.ids.length ? p : null; }catch(e){ return null; }
 }
-/* The six-door shell hides itself while a timed section runs (shared/ace-shell.js?v=6 reads acelabs.timed). */
+/* The six-door shell hides itself while a timed section runs (shared/ace-shell.js?v=7 reads acelabs.timed). */
 function setTimed(sec){ try{ localStorage.setItem('acelabs.timed', JSON.stringify({ until: Date.now() + sec * 1000 })); window.dispatchEvent(new Event('acelabs:timed')); }catch(e){} }
 function clearTimed(){ try{ localStorage.setItem('acelabs.timed', JSON.stringify({ until: 0 })); window.dispatchEvent(new Event('acelabs:timed')); }catch(e){} }
 function leaveDiagnostic(){
@@ -1555,6 +1557,6 @@ function retakeDiagnostic(){
   <script src="/shared/ace-record.js?v=7"></script>
   <script src="/shared/ace-test-review.js?v=7"></script>
   <script src="/shared/ace-next-steps.js?v=5"></script>
-  <script src="/shared/ace-shell.js?v=6" defer></script>
+  <script src="/shared/ace-shell.js?v=7" defer></script>
 </body>
 </html>
